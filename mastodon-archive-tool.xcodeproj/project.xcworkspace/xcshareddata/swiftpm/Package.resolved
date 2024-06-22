@@ -1,0 +1,33 @@
+{
+  "originHash" : "1d530e90ca964e9f5dd299aad00ff77d651b2e67ff6c97028fd0a8eb49054049",
+  "pins" : [
+    {
+      "identity" : "sqlite.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/stephencelis/SQLite.swift.git",
+      "state" : {
+        "revision" : "a95fc6df17d108bd99210db5e8a9bac90fe984b8",
+        "version" : "0.15.3"
+      }
+    },
+    {
+      "identity" : "tarscape",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kayembi/Tarscape.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "ce026160f8f009275afd1cc8175a199aa3ec0072"
+      }
+    },
+    {
+      "identity" : "zipfoundation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/weichsel/ZIPFoundation.git",
+      "state" : {
+        "revision" : "02b6abe5f6eef7e3cbd5f247c5cc24e246efcfe0",
+        "version" : "0.9.19"
+      }
+    }
+  ],
+  "version" : 3
+}
