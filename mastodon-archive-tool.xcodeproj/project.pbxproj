@@ -19,6 +19,7 @@
 		39A192272C27549E000C3FE6 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 39A192262C27549E000C3FE6 /* ZIPFoundation */; };
 		39A1922A2C275560000C3FE6 /* Tarscape in Frameworks */ = {isa = PBXBuildFile; productRef = 39A192292C275560000C3FE6 /* Tarscape */; };
 		39A1922C2C2755A2000C3FE6 /* ReadArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A1922B2C2755A2000C3FE6 /* ReadArchive.swift */; };
+		39A1922E2C280A74000C3FE6 /* DbInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A1922D2C280A74000C3FE6 /* DbInterface.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -45,6 +46,7 @@
 		39A1921D2C2746F2000C3FE6 /* APubAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APubAction.swift; sourceTree = "<group>"; };
 		39A1921E2C2746F2000C3FE6 /* APubOutbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APubOutbox.swift; sourceTree = "<group>"; };
 		39A1922B2C2755A2000C3FE6 /* ReadArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadArchive.swift; sourceTree = "<group>"; };
+		39A1922D2C280A74000C3FE6 /* DbInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbInterface.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +88,7 @@
 				392D46E72C273CCA00561231 /* Assets.xcassets */,
 				392D46E92C273CCA00561231 /* Preview Content */,
 				39A1922B2C2755A2000C3FE6 /* ReadArchive.swift */,
+				39A1922D2C280A74000C3FE6 /* DbInterface.swift */,
 			);
 			path = "mastodon-archive-tool";
 			sourceTree = "<group>";
@@ -193,6 +196,7 @@
 				392D46E62C273CC900561231 /* ContentView.swift in Sources */,
 				392D46E42C273CC900561231 /* mastodon_archive_toolApp.swift in Sources */,
 				39A192212C2746F2000C3FE6 /* APubAction.swift in Sources */,
+				39A1922E2C280A74000C3FE6 /* DbInterface.swift in Sources */,
 				39A1921F2C2746F2000C3FE6 /* APubActor.swift in Sources */,
 				39A1922C2C2755A2000C3FE6 /* ReadArchive.swift in Sources */,
 				39A192222C2746F2000C3FE6 /* APubOutbox.swift in Sources */,

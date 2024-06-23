@@ -14,23 +14,23 @@ public class APubActor {
     let url: String;
     let created: Date;
     let table: [(String, String)];
-    let iconPath: URL?;
-    let headerImagePath: URL?;
+    let icon: (Data, String)?;
+    let headerImage: (Data, String)?;
     
-    init(id: String, name: String, bio: String, url: String, created: Date, table: [(String, String)], iconPath: URL?, headerImagePath: URL?) {
+    init(id: String, name: String, bio: String, url: String, created: Date, table: [(String, String)], icon: (Data, String)?, headerImage: (Data, String)?) {
         self.id = id
         self.name = name
         self.bio = bio
         self.url = url
         self.created = created
         self.table = table
-        self.iconPath = iconPath
-        self.headerImagePath = headerImagePath
+        self.icon = icon
+        self.headerImage = headerImage
     }
 }
 
 public extension APubActor {
-    convenience init(fromJson json: [String: Any], inDirectory: URL) throws {
+    convenience init(fromJson json: [String: Any], withFilesystemFetcher filesystemFetcher: (String) throws -> (Data)) throws {
         let id = try tryGet(field: "id", ofType: .string, fromObject: json, called: "Actor") as! String
         
         let actorNameForErrors = "Actor \(id)"
@@ -55,14 +55,14 @@ public extension APubActor {
                 return try APubActor.parseTableRow(fromJson: row, called: "\(itemNameForErrors) in \(objNameForErrors)")
         })
         
-        let iconPath = try APubActor.parseImage(fromField: "icon", ofJson: json, inDirectory: inDirectory, asPartOfActor: actorNameForErrors)
+        let icon = try APubActor.parseImage(fromField: "icon", ofJson: json, withFilesystemFetcher: filesystemFetcher, asPartOfActor: actorNameForErrors)
         
-        let headerImagePath = try APubActor.parseImage(fromField: "image", ofJson: json, inDirectory: inDirectory, asPartOfActor: actorNameForErrors)
+        let headerImage = try APubActor.parseImage(fromField: "image", ofJson: json, withFilesystemFetcher: filesystemFetcher, asPartOfActor: actorNameForErrors)
         
-        self.init(id: id, name: name, bio: bio, url: url, created: created, table: table, iconPath: iconPath, headerImagePath: headerImagePath)
+        self.init(id: id, name: name, bio: bio, url: url, created: created, table: table, icon: icon, headerImage: headerImage)
     }
     
-    private static func parseImage(fromField fieldName: String, ofJson json: [String: Any], inDirectory: URL, asPartOfActor actorName: String) throws -> URL? {
+    private static func parseImage(fromField fieldName: String, ofJson json: [String: Any], withFilesystemFetcher filesystemFetcher: (String) throws -> (Data), asPartOfActor actorName: String) throws -> (Data, String)? {
         
         let imageField = try tryGetNullable(field: fieldName, ofType: .object, fromObject: json, called: actorName) as! [String: Any]?
         
@@ -71,13 +71,9 @@ public extension APubActor {
         }
         
         let imagePath = try tryGet(field: "url", ofType: .string, fromObject: imageField, called: "\(fieldName) on \(actorName)") as! String
+        let imageType = try tryGet(field: "mediaType", ofType: .string, fromObject: imageField, called: "\(fieldName) on \(actorName)") as! String
         
-        if #available(macOS 13.0, iOS 16.0, *) {
-            return inDirectory.appending(path: imagePath)
-        } else {
-            // Fallback on earlier versions
-            return inDirectory.appendingPathComponent(imagePath)
-        }
+        return (try filesystemFetcher(imagePath), imageType)
     }
     
     private static func parseTableRow(fromJson json: [String: Any], called nameForErrors: String) throws -> (String, String) {
