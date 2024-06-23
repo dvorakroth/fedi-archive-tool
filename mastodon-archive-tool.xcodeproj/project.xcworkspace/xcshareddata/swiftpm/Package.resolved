@@ -1,6 +1,15 @@
 {
-  "originHash" : "1d530e90ca964e9f5dd299aad00ff77d651b2e67ff6c97028fd0a8eb49054049",
+  "originHash" : "7c767dbf338a9bb228d90b2c3f6aa0736dc7f04af4504b79dd8a2e43b1f6f036",
   "pins" : [
+    {
+      "identity" : "datacompression",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mw99/DataCompression.git",
+      "state" : {
+        "revision" : "5ab15951321b08b74511601cbd0497667649d70b",
+        "version" : "3.8.0"
+      }
+    },
     {
       "identity" : "sqlite.swift",
       "kind" : "remoteSourceControl",

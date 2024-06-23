@@ -20,6 +20,11 @@
 		39A1922A2C275560000C3FE6 /* Tarscape in Frameworks */ = {isa = PBXBuildFile; productRef = 39A192292C275560000C3FE6 /* Tarscape */; };
 		39A1922C2C2755A2000C3FE6 /* ReadArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A1922B2C2755A2000C3FE6 /* ReadArchive.swift */; };
 		39A1922E2C280A74000C3FE6 /* DbInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A1922D2C280A74000C3FE6 /* DbInterface.swift */; };
+		39A192312C283BAC000C3FE6 /* ActorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A192302C283BAC000C3FE6 /* ActorView.swift */; };
+		39A192332C283D2F000C3FE6 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A192322C283D2F000C3FE6 /* AboutView.swift */; };
+		39A192352C285B8A000C3FE6 /* AddArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A192342C285B8A000C3FE6 /* AddArchiveView.swift */; };
+		39A192392C28654A000C3FE6 /* DataCompression in Frameworks */ = {isa = PBXBuildFile; productRef = 39A192382C28654A000C3FE6 /* DataCompression */; };
+		39A1923B2C2867D1000C3FE6 /* TempDir.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A1923A2C2867D1000C3FE6 /* TempDir.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -47,6 +52,10 @@
 		39A1921E2C2746F2000C3FE6 /* APubOutbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APubOutbox.swift; sourceTree = "<group>"; };
 		39A1922B2C2755A2000C3FE6 /* ReadArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadArchive.swift; sourceTree = "<group>"; };
 		39A1922D2C280A74000C3FE6 /* DbInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbInterface.swift; sourceTree = "<group>"; };
+		39A192302C283BAC000C3FE6 /* ActorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActorView.swift; sourceTree = "<group>"; };
+		39A192322C283D2F000C3FE6 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		39A192342C285B8A000C3FE6 /* AddArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddArchiveView.swift; sourceTree = "<group>"; };
+		39A1923A2C2867D1000C3FE6 /* TempDir.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempDir.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +66,7 @@
 				39A1922A2C275560000C3FE6 /* Tarscape in Frameworks */,
 				39A192192C274486000C3FE6 /* SQLite in Frameworks */,
 				39A192272C27549E000C3FE6 /* ZIPFoundation in Frameworks */,
+				39A192392C28654A000C3FE6 /* DataCompression in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,13 +92,14 @@
 		392D46E22C273CC900561231 /* mastodon-archive-tool */ = {
 			isa = PBXGroup;
 			children = (
+				39A192362C285DC4000C3FE6 /* Views */,
 				39A1921A2C2746E9000C3FE6 /* APub */,
 				392D46E32C273CC900561231 /* mastodon_archive_toolApp.swift */,
-				392D46E52C273CC900561231 /* ContentView.swift */,
 				392D46E72C273CCA00561231 /* Assets.xcassets */,
 				392D46E92C273CCA00561231 /* Preview Content */,
 				39A1922B2C2755A2000C3FE6 /* ReadArchive.swift */,
 				39A1922D2C280A74000C3FE6 /* DbInterface.swift */,
+				39A1923A2C2867D1000C3FE6 /* TempDir.swift */,
 			);
 			path = "mastodon-archive-tool";
 			sourceTree = "<group>";
@@ -112,6 +123,17 @@
 			path = APub;
 			sourceTree = "<group>";
 		};
+		39A192362C285DC4000C3FE6 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				392D46E52C273CC900561231 /* ContentView.swift */,
+				39A192302C283BAC000C3FE6 /* ActorView.swift */,
+				39A192322C283D2F000C3FE6 /* AboutView.swift */,
+				39A192342C285B8A000C3FE6 /* AddArchiveView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -133,6 +155,7 @@
 				39A192182C274486000C3FE6 /* SQLite */,
 				39A192262C27549E000C3FE6 /* ZIPFoundation */,
 				39A192292C275560000C3FE6 /* Tarscape */,
+				39A192382C28654A000C3FE6 /* DataCompression */,
 			);
 			productName = "mastodon-archive-tool";
 			productReference = 392D46E02C273CC900561231 /* mastodon-archive-tool.app */;
@@ -166,6 +189,7 @@
 				39A192172C274486000C3FE6 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
 				39A192252C27549E000C3FE6 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 				39A192282C275560000C3FE6 /* XCRemoteSwiftPackageReference "Tarscape" */,
+				39A192372C28654A000C3FE6 /* XCRemoteSwiftPackageReference "DataCompression" */,
 			);
 			productRefGroup = 392D46E12C273CC900561231 /* Products */;
 			projectDirPath = "";
@@ -196,9 +220,13 @@
 				392D46E62C273CC900561231 /* ContentView.swift in Sources */,
 				392D46E42C273CC900561231 /* mastodon_archive_toolApp.swift in Sources */,
 				39A192212C2746F2000C3FE6 /* APubAction.swift in Sources */,
+				39A1923B2C2867D1000C3FE6 /* TempDir.swift in Sources */,
 				39A1922E2C280A74000C3FE6 /* DbInterface.swift in Sources */,
+				39A192352C285B8A000C3FE6 /* AddArchiveView.swift in Sources */,
+				39A192332C283D2F000C3FE6 /* AboutView.swift in Sources */,
 				39A1921F2C2746F2000C3FE6 /* APubActor.swift in Sources */,
 				39A1922C2C2755A2000C3FE6 /* ReadArchive.swift in Sources */,
+				39A192312C283BAC000C3FE6 /* ActorView.swift in Sources */,
 				39A192222C2746F2000C3FE6 /* APubOutbox.swift in Sources */,
 				39A192202C2746F2000C3FE6 /* APubParseUtils.swift in Sources */,
 			);
@@ -259,7 +287,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -316,7 +344,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -444,6 +472,14 @@
 				kind = branch;
 			};
 		};
+		39A192372C28654A000C3FE6 /* XCRemoteSwiftPackageReference "DataCompression" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mw99/DataCompression.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.8.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -461,6 +497,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 39A192282C275560000C3FE6 /* XCRemoteSwiftPackageReference "Tarscape" */;
 			productName = Tarscape;
+		};
+		39A192382C28654A000C3FE6 /* DataCompression */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 39A192372C28654A000C3FE6 /* XCRemoteSwiftPackageReference "DataCompression" */;
+			productName = DataCompression;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

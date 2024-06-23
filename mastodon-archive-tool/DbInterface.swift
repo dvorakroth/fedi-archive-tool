@@ -18,9 +18,9 @@ class DbInterface {
         
         var dbFile: String
         if #available(iOS 16.0, *) {
-            dbFile = containingDir.appending(path: DbInterface.DB_FILENAME).absoluteString
+            dbFile = containingDir.appending(path: DbInterface.DB_FILENAME).absoluteURL.path
         } else {
-            dbFile = containingDir.appendingPathComponent(DbInterface.DB_FILENAME).absoluteString
+            dbFile = containingDir.appendingPathComponent(DbInterface.DB_FILENAME).absoluteURL.path
         }
         
         let dbAlreadyExists = FileManager.default.fileExists(atPath: dbFile)
@@ -61,6 +61,7 @@ class DbInterface {
         
         try db.run(DbInterface.actors.create { t in
             t.column(DbInterface.actor_id, primaryKey: true)
+            t.column(DbInterface.actor_username)
             t.column(DbInterface.actor_name)
             t.column(DbInterface.actor_bio)
             t.column(DbInterface.actor_url)
@@ -75,6 +76,7 @@ class DbInterface {
     
     fileprivate static let actors = Table("actors")
     fileprivate static let actor_id = Expression<String>("id")
+    fileprivate static let actor_username = Expression<String>("username")
     fileprivate static let actor_name = Expression<String>("name")
     fileprivate static let actor_bio = Expression<String>("bio")
     fileprivate static let actor_url = Expression<String>("url")
@@ -113,6 +115,7 @@ extension APubActor {
         try DbInterface.getDbInterface().db.run(DbInterface.actors.insert(
             or: .replace,
             DbInterface.actor_id <- id,
+            DbInterface.actor_username <- username,
             DbInterface.actor_name <- name,
             DbInterface.actor_bio <- bio,
             DbInterface.actor_url <- url,
@@ -151,6 +154,7 @@ extension APubActor {
         
         return APubActor(
             id: actorRow[DbInterface.actor_id],
+            username: actorRow[DbInterface.actor_username],
             name: actorRow[DbInterface.actor_name],
             bio: actorRow[DbInterface.actor_bio],
             url: actorRow[DbInterface.actor_url],
