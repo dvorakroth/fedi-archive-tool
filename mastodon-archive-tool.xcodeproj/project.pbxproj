@@ -11,6 +11,9 @@
 		392D46E62C273CC900561231 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392D46E52C273CC900561231 /* ContentView.swift */; };
 		392D46E82C273CCA00561231 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 392D46E72C273CCA00561231 /* Assets.xcassets */; };
 		392D46EB2C273CCA00561231 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 392D46EA2C273CCA00561231 /* Preview Assets.xcassets */; };
+		39816CE82C2B3EEC0074740C /* ImageOrRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39816CE72C2B3EEC0074740C /* ImageOrRectangle.swift */; };
+		39816CEA2C2B4B290074740C /* Junkyard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39816CE92C2B4B290074740C /* Junkyard.swift */; };
+		39816CEC2C2B4BBB0074740C /* ActorTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39816CEB2C2B4BBB0074740C /* ActorTable.swift */; };
 		39A192192C274486000C3FE6 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 39A192182C274486000C3FE6 /* SQLite */; };
 		39A1921F2C2746F2000C3FE6 /* APubActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A1921B2C2746F2000C3FE6 /* APubActor.swift */; };
 		39A192202C2746F2000C3FE6 /* APubParseUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A1921C2C2746F2000C3FE6 /* APubParseUtils.swift */; };
@@ -46,6 +49,9 @@
 		392D46E52C273CC900561231 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		392D46E72C273CCA00561231 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		392D46EA2C273CCA00561231 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		39816CE72C2B3EEC0074740C /* ImageOrRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOrRectangle.swift; sourceTree = "<group>"; };
+		39816CE92C2B4B290074740C /* Junkyard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Junkyard.swift; sourceTree = "<group>"; };
+		39816CEB2C2B4BBB0074740C /* ActorTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActorTable.swift; sourceTree = "<group>"; };
 		39A1921B2C2746F2000C3FE6 /* APubActor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APubActor.swift; sourceTree = "<group>"; };
 		39A1921C2C2746F2000C3FE6 /* APubParseUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APubParseUtils.swift; sourceTree = "<group>"; };
 		39A1921D2C2746F2000C3FE6 /* APubAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APubAction.swift; sourceTree = "<group>"; };
@@ -100,6 +106,7 @@
 				39A1922B2C2755A2000C3FE6 /* ReadArchive.swift */,
 				39A1922D2C280A74000C3FE6 /* DbInterface.swift */,
 				39A1923A2C2867D1000C3FE6 /* TempDir.swift */,
+				39816CE92C2B4B290074740C /* Junkyard.swift */,
 			);
 			path = "mastodon-archive-tool";
 			sourceTree = "<group>";
@@ -110,6 +117,15 @@
 				392D46EA2C273CCA00561231 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		39816CE62C2B3EDD0074740C /* Random Components */ = {
+			isa = PBXGroup;
+			children = (
+				39816CE72C2B3EEC0074740C /* ImageOrRectangle.swift */,
+				39816CEB2C2B4BBB0074740C /* ActorTable.swift */,
+			);
+			path = "Random Components";
 			sourceTree = "<group>";
 		};
 		39A1921A2C2746E9000C3FE6 /* APub */ = {
@@ -126,6 +142,7 @@
 		39A192362C285DC4000C3FE6 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				39816CE62C2B3EDD0074740C /* Random Components */,
 				392D46E52C273CC900561231 /* ContentView.swift */,
 				39A192302C283BAC000C3FE6 /* ActorView.swift */,
 				39A192322C283D2F000C3FE6 /* AboutView.swift */,
@@ -220,6 +237,7 @@
 				392D46E62C273CC900561231 /* ContentView.swift in Sources */,
 				392D46E42C273CC900561231 /* mastodon_archive_toolApp.swift in Sources */,
 				39A192212C2746F2000C3FE6 /* APubAction.swift in Sources */,
+				39816CEC2C2B4BBB0074740C /* ActorTable.swift in Sources */,
 				39A1923B2C2867D1000C3FE6 /* TempDir.swift in Sources */,
 				39A1922E2C280A74000C3FE6 /* DbInterface.swift in Sources */,
 				39A192352C285B8A000C3FE6 /* AddArchiveView.swift in Sources */,
@@ -227,8 +245,10 @@
 				39A1921F2C2746F2000C3FE6 /* APubActor.swift in Sources */,
 				39A1922C2C2755A2000C3FE6 /* ReadArchive.swift in Sources */,
 				39A192312C283BAC000C3FE6 /* ActorView.swift in Sources */,
+				39816CE82C2B3EEC0074740C /* ImageOrRectangle.swift in Sources */,
 				39A192222C2746F2000C3FE6 /* APubOutbox.swift in Sources */,
 				39A192202C2746F2000C3FE6 /* APubParseUtils.swift in Sources */,
+				39816CEA2C2B4B290074740C /* Junkyard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

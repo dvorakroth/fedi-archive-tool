@@ -12,6 +12,7 @@ import DataCompression
 
 func readArchive(_ url: URL) async throws -> APubActor {
     let getFileFromArchive: (String) async throws -> Data
+    var tmpDir: TempDir? = nil
     
     if url.pathExtension == "zip" {
         let archive = try Archive(url: url, accessMode: .read)
@@ -38,12 +39,12 @@ func readArchive(_ url: URL) async throws -> APubActor {
             })
         }
     } else if url.absoluteString.hasSuffix(".tar.gz") {
-        let tmpDir = try TempDir()
+        tmpDir = try TempDir()
         let tarUrl: URL
         if #available(iOS 16.0, *) {
-            tarUrl = tmpDir.url.appending(path: url.lastPathComponent.dropLast(3))
+            tarUrl = tmpDir!.url.appending(path: url.lastPathComponent.dropLast(3))
         } else {
-            tarUrl = tmpDir.url.appendingPathComponent(String(url.lastPathComponent.dropLast(3)))
+            tarUrl = tmpDir!.url.appendingPathComponent(String(url.lastPathComponent.dropLast(3)))
         }
         
         if let uncompressedData = try Data(contentsOf: url).gunzip() {

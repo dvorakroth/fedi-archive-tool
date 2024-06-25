@@ -16,15 +16,15 @@ struct ContentView: View {
         NavigationView {
             List {
                 Section("My Archives") {
-                    ForEach(actors) { actor in
+                    ForEach($actors) { actor in
                         NavigationLink {
-                            ActorView(actor: actor)
+                            ActorView(actor: actor.wrappedValue)
                         } label: {
                             HStack(content: {
-                                if let icon = actor.icon {
-                                    Image(uiImage: UIImage(data: icon.0)!).resizable().frame(width: 27, height: 27).padding(.trailing)
+                                if let icon = actor.wrappedValue.icon {
+                                    Image(uiImage: UIImage(data: icon.0)!).resizable().frame(width: 27, height: 27).padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
                                 }
-                                Text(actor.fullUsername)
+                                Text(actor.wrappedValue.fullUsername)
                             })
                         }
                     }
