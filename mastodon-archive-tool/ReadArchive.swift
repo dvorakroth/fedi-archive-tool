@@ -69,6 +69,10 @@ func readArchive(_ url: URL) async throws -> APubActor {
                 throw ArchiveReadingError.fileNotFoundInArchive(filename: filename)
             }
             
+            // fun fact! tarscape is the only decent swift tar library i could find, but it' sbeen unmaintained for 3 years (and counting??) and it has all sorts of weird ass behaviors and bugs!!! such as!!!!! it returns files with their entire ass tar header AND with the last ${HEADER_SIZE} bytes straight up missing??????????? note to self: fork that shit lmao
+            entry.fileLocation += 512
+            defer { entry.fileLocation -= 512 }
+            
             if let contents = entry.regularFileContents() {
                 return contents
             } else {
