@@ -58,6 +58,7 @@
 		39816CF12C2C76340074740C /* ActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionView.swift; sourceTree = "<group>"; };
 		39816CF32C2C79190074740C /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 		39816CF52C2C79760074740C /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
+		39816D112C2CB6CF0074740C /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
 		39A1921B2C2746F2000C3FE6 /* APubActor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APubActor.swift; sourceTree = "<group>"; };
 		39A1921C2C2746F2000C3FE6 /* APubParseUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APubParseUtils.swift; sourceTree = "<group>"; };
 		39A1921D2C2746F2000C3FE6 /* APubAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APubAction.swift; sourceTree = "<group>"; };
@@ -88,6 +89,7 @@
 		392D46D72C273CC900561231 = {
 			isa = PBXGroup;
 			children = (
+				39816D112C2CB6CF0074740C /* TODO.md */,
 				392D46E22C273CC900561231 /* mastodon-archive-tool */,
 				392D46E12C273CC900561231 /* Products */,
 			);
