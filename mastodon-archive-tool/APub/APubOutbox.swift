@@ -7,34 +7,31 @@
 
 import Foundation
 
-public struct APubOutbox {
+public class APubOutbox {
     let orderedItems: [APubActionEntry]
-    weak var actor: APubActor?
+    
+    init(orderedItems: [APubActionEntry]) {
+        self.orderedItems = orderedItems
+    }
 }
 
 public extension APubOutbox {
-    init(forActor actor: APubActor, fromJson json: [String: Any], inDirectory: URL) throws {
-        
-        self.actor = actor
+    convenience init(fromJson json: [String: Any], withFilesystemFetcher filesystemFetcher: (String) async throws -> (Data)) async throws {
         
         if try tryGet(field: "type", ofType: .string, fromObject: json, called: "Outbox") as! String != "OrderedCollection" {
             throw APubParseError.wrongValueForField("type", onObject: "Outbox", expected: "OrderedCollection");
         }
         
-        self.orderedItems = try tryGetArray(inField: "orderedItems", fromObject: json, called: "Outbox", parsingObjectsUsing: {
+        let orderedItems = try await tryGetArrayAsync(inField: "orderedItems", fromObject: json, called: "Outbox", parsingObjectsUsing: {
             (item: Any, itemNameForErrors: String, objNameForErrors: String) throws in
             
             guard let item = item as? [String: Any] else {
                 throw APubParseError.wrongTypeForField(itemNameForErrors, onObject: objNameForErrors, expected: [.object])
             }
             
-            return try APubActionEntry(fromJson: item, inDirectory: inDirectory, withAPubActorStore: { actorId in
-                if actorId == actor.id {
-                    return actor
-                } else {
-                    return nil
-                }
-            })
+            return try await APubActionEntry(fromJson: item, withFilesystemFetcher: filesystemFetcher)
         })
+        
+        self.init(orderedItems: orderedItems)
     }
 }

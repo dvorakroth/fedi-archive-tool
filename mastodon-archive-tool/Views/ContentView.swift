@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct ContentView: View {
-    
-    @State private var db: DbInterface? = nil
     @State private var actors: [APubActor] = []
     
     var body: some View {

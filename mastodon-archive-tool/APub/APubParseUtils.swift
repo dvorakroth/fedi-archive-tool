@@ -118,3 +118,20 @@ func tryGetArray<T>(inField field: String, fromObject object: [String: Any], cal
     
     return result
 }
+
+func tryGetArrayAsync<T>(inField field: String, fromObject object: [String: Any], called objName: String, parsingObjectsUsing objParser: (Any, String, String) async throws -> T) async throws -> [T] {
+    
+    let items = try tryGetArray(
+        inField: field,
+        fromObject: object,
+        called: objName) {
+            item, itemName, objName in (item, itemName, objName)
+        }
+    
+    var result: [T] = []
+    for (item, itemName, objName) in items {
+        result.append(try await objParser(item, itemName, objName))
+    }
+    
+    return result
+}

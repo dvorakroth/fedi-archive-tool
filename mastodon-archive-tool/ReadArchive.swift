@@ -17,7 +17,15 @@ func readArchive(_ url: URL) async throws -> APubActor {
     if url.pathExtension == "zip" {
         let archive = try Archive(url: url, accessMode: .read)
         
-        getFileFromArchive = { filename in
+        getFileFromArchive = { rawFilename in
+            let filename: String
+            if rawFilename.starts(with: "/") {
+                let afterFirstChar = rawFilename.index(rawFilename.startIndex, offsetBy: 1)
+                filename = String(rawFilename[afterFirstChar...])
+            } else {
+                filename = rawFilename
+            }
+            
             guard let entry = archive[filename] else {
                 throw ArchiveReadingError.fileNotFoundInArchive(filename: filename)
             }
@@ -74,6 +82,11 @@ func readArchive(_ url: URL) async throws -> APubActor {
     let actor = try await readActor(getFileFromArchive)
     try actor.save()
     
+    let outbox = try await readOutbox(getFileFromArchive)
+    for actionEntry in outbox.orderedItems {
+        try actionEntry.save()
+    }
+    
     return actor
 }
 
@@ -94,4 +107,16 @@ func readActor(_ getFileFromArchive: (String) async throws -> (Data)) async thro
     }
     
     return try await APubActor(fromJson: jsonObj, withFilesystemFetcher: getFileFromArchive)
+}
+
+func readOutbox(_ getFileFromArchive: (String) async throws -> (Data)) async throws -> APubOutbox {
+    let jsonObj = try JSONSerialization.jsonObject(
+        with: try await getFileFromArchive("outbox.json")
+    )
+    
+    guard let jsonObj = jsonObj as? [String: Any] else {
+        throw ArchiveReadingError.malformedFile(filename: "outbox.json", details: nil)
+    }
+    
+    return try await APubOutbox(fromJson: jsonObj, withFilesystemFetcher: getFileFromArchive)
 }

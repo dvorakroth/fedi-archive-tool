@@ -7,40 +7,44 @@
 
 import Foundation
 
-public struct APubActionEntry {
-    let id: String;
-    weak var actor: APubActor?;
+public class APubActionEntry: Identifiable {
+    public let id: String;
+    let actorId: String;
     let published: Date;
     let action: APubAction;
+    
+    init(id: String, actorId: String, published: Date, action: APubAction) {
+        self.id = id
+        self.actorId = actorId
+        self.published = published
+        self.action = action
+    }
 }
 
 public extension APubActionEntry {
-    init(fromJson json: [String: Any], inDirectory: URL, withAPubActorStore getAPubActor: (String) -> APubActor?) throws {
+    convenience init(fromJson json: [String: Any], withFilesystemFetcher filesystemFetcher: (String) async throws -> (Data)) async throws {
         
-        self.id = try tryGet(field: "id", ofType: .string, fromObject: json, called: "Action") as! String
+        let id = try tryGet(field: "id", ofType: .string, fromObject: json, called: "Action") as! String
         
-        let actionNameForErrors = "Action \(self.id)"
+        let actionNameForErrors = "Action \(id)"
         
         let actorId = try tryGet(field: "actor", ofType: .string, fromObject: json, called: actionNameForErrors) as! String
-        guard let actor = getAPubActor(actorId) else {
-            throw APubParseError.wrongValueForField("actor", onObject: actionNameForErrors, expected: "a valid Actor id")
-        }
-        self.actor = actor
         
-        self.published = try tryGetDate(inField: "published", fromObject: json, called: actionNameForErrors)
+        let published = try tryGetDate(inField: "published", fromObject: json, called: actionNameForErrors)
         
         let type = try tryGet(field: "type", ofType: .string, fromObject: json, called: actionNameForErrors) as! String
         
+        let action: APubAction
         switch(type) {
         case "Announce":
             let (object, objectType) = try tryGet(field: "object", ofAnyTypeOf: [.string, .object], fromObject: json, called: actionNameForErrors)
             
             switch(objectType) {
             case .string:
-                self.action = .announce(object as! String)
+                action = .announce(object as! String)
             case .object:
                 let object = object as! [String: Any]
-                self.action = .announce(try tryGet(field: "id", ofType: .string, fromObject: object, called: "object in \(actionNameForErrors)") as! String)
+                action = .announce(try tryGet(field: "id", ofType: .string, fromObject: object, called: "object in \(actionNameForErrors)") as! String)
             default:
                 throw APubParseError.wrongTypeForField("object", onObject: actionNameForErrors, expected: [.string, .object])
             }
@@ -48,11 +52,13 @@ public extension APubActionEntry {
             
         case "Create":
             let object = try tryGet(field: "object", ofType: .object, fromObject: json, called: actionNameForErrors) as! [String: Any]
-            self.action = .create(try APubNote(fromJson: object, inDirectory: inDirectory))
+            action = .create(try await APubNote(fromJson: object, withFilesystemFetcher: filesystemFetcher))
         
         default:
             throw APubParseError.wrongValueForField("type", onObject: actionNameForErrors, expected: "\"Announce\" or \"Create\"")
         }
+        
+        self.init(id: id, actorId: actorId, published: published, action: action)
     }
 }
 
@@ -62,10 +68,13 @@ public enum APubAction {
     
     /// the action the user took was: boosting a user's post (their own or someone else's)
     case announce(String)
+    
+    /// the action the user took was: boosting their own post
+    case announceOwn(APubNote)
 }
 
 /// this is a post
-public struct APubNote {
+public class APubNote {
     let id: String;
     let published: Date;
     let url: String;
@@ -75,39 +84,51 @@ public struct APubNote {
     let mediaAttachments: [APubDocument]?;
     let pollOptions: [APubPollOption]?;
     // TODO language tag?
+    
+    init(id: String, published: Date, url: String, replyingToNoteId: String?, cw: String?, content: String, mediaAttachments: [APubDocument]?, pollOptions: [APubPollOption]?) {
+        self.id = id
+        self.published = published
+        self.url = url
+        self.replyingToNoteId = replyingToNoteId
+        self.cw = cw
+        self.content = content
+        self.mediaAttachments = mediaAttachments
+        self.pollOptions = pollOptions
+    }
 }
 
 public extension APubNote {
-    init(fromJson json: [String: Any], inDirectory: URL) throws {
-        self.id = try tryGet(field: "id", ofType: .string, fromObject: json, called: "Note") as! String
+    convenience init(fromJson json: [String: Any], withFilesystemFetcher filesystemFetcher: (String) async throws -> (Data)) async throws {
+        let id = try tryGet(field: "id", ofType: .string, fromObject: json, called: "Note") as! String
         
-        let noteNameForErrors = "Note \(self.id)"
+        let noteNameForErrors = "Note \(id)"
         
         let type = try tryGet(field: "type", ofType: .string, fromObject: json, called: noteNameForErrors) as! String
         if type != "Note" && type != "Question" {
             throw APubParseError.wrongValueForField("type", onObject: noteNameForErrors, expected: "\"Note\" or \"Question\"")
         }
         
-        self.published = try tryGetDate(inField: "published", fromObject: json, called: noteNameForErrors)
+        let published = try tryGetDate(inField: "published", fromObject: json, called: noteNameForErrors)
         
-        self.url = try tryGet(field: "url", ofType: .string, fromObject: json, called: noteNameForErrors) as! String
+        let url = try tryGet(field: "url", ofType: .string, fromObject: json, called: noteNameForErrors) as! String
         
-        self.replyingToNoteId = try tryGetNullable(field: "inReplyTo", ofType: .string, fromObject: json, called: noteNameForErrors) as! String?
-        self.cw = try tryGetNullable(field: "summary", ofType: .string, fromObject: json, called: noteNameForErrors) as! String?
-        self.content = try tryGet(field: "content", ofType: .string, fromObject: json, called: noteNameForErrors) as! String
+        let replyingToNoteId = try tryGetNullable(field: "inReplyTo", ofType: .string, fromObject: json, called: noteNameForErrors) as! String?
+        let cw = try tryGetNullable(field: "summary", ofType: .string, fromObject: json, called: noteNameForErrors) as! String?
+        let content = try tryGet(field: "content", ofType: .string, fromObject: json, called: noteNameForErrors) as! String
         
-        self.mediaAttachments = try tryGetArray(inField: "attachment", fromObject: json, called: noteNameForErrors, parsingObjectsUsing: {
+        let mediaAttachments = try await tryGetArrayAsync(inField: "attachment", fromObject: json, called: noteNameForErrors, parsingObjectsUsing: {
             (obj: Any, itemNameForErrors: String, objNameForErrors: String) throws -> APubDocument in
             
             guard let obj = obj as? [String: Any] else {
                 throw APubParseError.wrongTypeForField(itemNameForErrors, onObject: objNameForErrors, expected: [.object])
             }
             
-            return try APubDocument(fromJson: obj, called: "\(itemNameForErrors) in \(objNameForErrors)", inDirectory: inDirectory)
+            return try await APubDocument(fromJson: obj, called: "\(itemNameForErrors) in \(objNameForErrors)", withFilesystemFetcher: filesystemFetcher)
         })
         
+        let pollOptions: [APubPollOption]?
         if json.keys.contains("oneOf") {
-            self.pollOptions = try tryGetArray(inField: "oneOf", fromObject: json, called: noteNameForErrors, parsingObjectsUsing: {
+            pollOptions = try tryGetArray(inField: "oneOf", fromObject: json, called: noteNameForErrors, parsingObjectsUsing: {
                 (obj: Any, itemNameForErrors: String, objNameForErrors: String) throws -> APubPollOption in
                 
                 guard let obj = obj as? [String: Any] else {
@@ -117,60 +138,70 @@ public extension APubNote {
                 return try APubPollOption(fromJson: obj, called: "\(itemNameForErrors) in \(objNameForErrors)")
             })
         } else {
-            self.pollOptions = nil
+            pollOptions = nil
         }
+        
+        self.init(id: id, published: published, url: url, replyingToNoteId: replyingToNoteId, cw: cw, content: content, mediaAttachments: mediaAttachments, pollOptions: pollOptions)
     }
 }
 
 /// this has an extremely confusing name in the ActivityPub/ActivityStreams/whatever standard, but it's basically just a media attachment on a post
-public struct APubDocument {
+public class APubDocument {
     let mediaType: String;
-    let filePath: URL;
+    let data: Data;
     let altText: String?;
     let blurhash: String?;
     let focalPoint: (Float, Float)?;
     let size: (UInt, UInt)?;
+    
+    init(mediaType: String, data: Data, altText: String?, blurhash: String?, focalPoint: (Float, Float)?, size: (UInt, UInt)?) {
+        self.mediaType = mediaType
+        self.data = data
+        self.altText = altText
+        self.blurhash = blurhash
+        self.focalPoint = focalPoint
+        self.size = size
+    }
 }
 
 public extension APubDocument {
-    init(fromJson json: [String: Any], called objNameForErrors: String, inDirectory: URL) throws {
+    convenience init(fromJson json: [String: Any], called objNameForErrors: String, withFilesystemFetcher filesystemFetcher: (String) async throws -> (Data)) async throws {
         if try tryGet(field: "type", ofType: .string, fromObject: json, called: objNameForErrors) as! String != "Document" {
             throw APubParseError.wrongValueForField("type", onObject: objNameForErrors, expected: "Document")
         }
         
-        self.mediaType = try tryGet(field: "mediaType", ofType: .string, fromObject: json, called: objNameForErrors) as! String
+        let mediaType = try tryGet(field: "mediaType", ofType: .string, fromObject: json, called: objNameForErrors) as! String
         
         let relativePath = try tryGet(field: "url", ofType: .string, fromObject: json, called: objNameForErrors) as! String
-        if #available(macOS 13.0, iOS 16.0, *) {
-            self.filePath = inDirectory.appending(path: relativePath)
-        } else {
-            // Fallback on earlier versions
-            self.filePath = inDirectory.appendingPathComponent(relativePath)
-        }
+        let data = try await filesystemFetcher(relativePath)
         
-        self.altText = try tryGetNullable(field: "name", ofType: .string, fromObject: json, called: objNameForErrors) as! String?
-        self.blurhash = try tryGetNullable(field: "blurhash", ofType: .string, fromObject: json, called: objNameForErrors) as! String?
+        let altText = try tryGetNullable(field: "name", ofType: .string, fromObject: json, called: objNameForErrors) as! String?
+        let blurhash = try tryGetNullable(field: "blurhash", ofType: .string, fromObject: json, called: objNameForErrors) as! String?
         
         let focalPointArr = try tryGetNullable(field: "focalPoint", ofType: .array, fromObject: json, called: objNameForErrors) as! [Any]?;
         
+        let focalPoint: (Float, Float)?
         if let focalPointArr = focalPointArr {
             guard focalPointArr.count == 2, let focalPointArr = focalPointArr as? [NSNumber] else {
                 throw APubParseError.wrongValueForField("focalPoint", onObject: objNameForErrors, expected: "an array with exactly two elements, both numbers")
             }
             
-            self.focalPoint = (focalPointArr[0].floatValue, focalPointArr[1].floatValue)
+            focalPoint = (focalPointArr[0].floatValue, focalPointArr[1].floatValue)
         } else {
-            self.focalPoint = nil
+            focalPoint = nil
         }
         
         let width = try tryGetNullable(field: "width", ofType: .number, fromObject: json, called: objNameForErrors) as! NSNumber?
         let height = try tryGetNullable(field: "height", ofType: .number, fromObject: json, called: objNameForErrors) as! NSNumber?
         
+        let size: (UInt, UInt)?
         if let width = width, let height = height {
-            self.size = (width.uintValue, height.uintValue)
+            size = (width.uintValue, height.uintValue)
         } else {
-            self.size = nil
+            size = nil
         }
+        
+        self.init(mediaType: mediaType, data: data, altText: altText, blurhash: blurhash, focalPoint: focalPoint, size: size)
     }
 }
 
