@@ -13,3 +13,10 @@ func formatDateWithoutTime(_ dateTime: Date) -> String {
     formatter.dateStyle = .long
     return formatter.string(from: dateTime)
 }
+
+func formatLongDateTime(_ dateTime: Date) -> String {
+    let formatter = DateFormatter()
+    formatter.timeStyle = .medium
+    formatter.dateStyle = .long
+    return formatter.string(from: dateTime)
+}

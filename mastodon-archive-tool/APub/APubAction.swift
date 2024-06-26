@@ -71,6 +71,24 @@ public enum APubAction {
     
     /// the action the user took was: boosting their own post
     case announceOwn(APubNote)
+    
+    func getUrl() -> String {
+        switch self {
+        case .create(let note), .announceOwn(let note):
+            return note.url
+        case .announce(let url):
+            return url
+        }
+    }
+    
+    func getNote() -> APubNote? {
+        switch self {
+        case .create(let note), .announceOwn(let note):
+            return note
+        default:
+            return nil
+        }
+    }
 }
 
 /// this is a post
