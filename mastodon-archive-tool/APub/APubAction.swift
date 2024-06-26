@@ -166,13 +166,13 @@ public extension APubNote {
 /// this has an extremely confusing name in the ActivityPub/ActivityStreams/whatever standard, but it's basically just a media attachment on a post
 public class APubDocument {
     let mediaType: String;
-    let data: Data;
+    let data: Data?;
     let altText: String?;
     let blurhash: String?;
     let focalPoint: (Float, Float)?;
     let size: (UInt, UInt)?;
     
-    init(mediaType: String, data: Data, altText: String?, blurhash: String?, focalPoint: (Float, Float)?, size: (UInt, UInt)?) {
+    init(mediaType: String, data: Data?, altText: String?, blurhash: String?, focalPoint: (Float, Float)?, size: (UInt, UInt)?) {
         self.mediaType = mediaType
         self.data = data
         self.altText = altText
@@ -191,7 +191,13 @@ public extension APubDocument {
         let mediaType = try tryGet(field: "mediaType", ofType: .string, fromObject: json, called: objNameForErrors) as! String
         
         let relativePath = try tryGet(field: "url", ofType: .string, fromObject: json, called: objNameForErrors) as! String
-        let data = try await filesystemFetcher(relativePath)
+        let data: Data?
+        do {
+            data = try await filesystemFetcher(relativePath)
+        } catch ArchiveReadingError.fileNotFoundInArchive(filename: _) {
+            print("WARNING: File not found in archive: \(relativePath)")
+            data = nil
+        }
         
         let altText = try tryGetNullable(field: "name", ofType: .string, fromObject: json, called: objNameForErrors) as! String?
         let blurhash = try tryGetNullable(field: "blurhash", ofType: .string, fromObject: json, called: objNameForErrors) as! String?

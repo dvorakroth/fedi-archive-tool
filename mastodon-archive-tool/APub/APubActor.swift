@@ -81,7 +81,12 @@ public extension APubActor {
         let imagePath = try tryGet(field: "url", ofType: .string, fromObject: imageField, called: "\(fieldName) on \(actorName)") as! String
         let imageType = try tryGet(field: "mediaType", ofType: .string, fromObject: imageField, called: "\(fieldName) on \(actorName)") as! String
         
-        return (try await filesystemFetcher(imagePath), imageType)
+        do {
+            return (try await filesystemFetcher(imagePath), imageType)
+        } catch(ArchiveReadingError.fileNotFoundInArchive(filename: _)) {
+            print("WARNING: file not found in archive: \(imagePath)")
+            return nil
+        }
     }
     
     private static func parseTableRow(fromJson json: [String: Any], called nameForErrors: String) throws -> (String, String) {
