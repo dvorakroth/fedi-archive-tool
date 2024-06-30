@@ -24,7 +24,7 @@ struct ActorTable: View {
                         Spacer()
                     }.padding(.horizontal)
                     HStack {
-                        Text(content).fixedSize(horizontal: false, vertical: true)
+                        Text(convertHTML(content)).fixedSize(horizontal: false, vertical: true)
                         Spacer()
                     }.padding(.horizontal)
                     Spacer().frame(height: 4)

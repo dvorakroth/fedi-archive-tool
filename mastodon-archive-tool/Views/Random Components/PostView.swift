@@ -60,7 +60,7 @@ struct PostView: View {
                 if post.cw != nil {
                     Spacer().frame(height: 10)
                 }
-                Text(post.content)
+                Text(convertHTML(post.content))
             }
             
             Spacer().frame(height: 15)

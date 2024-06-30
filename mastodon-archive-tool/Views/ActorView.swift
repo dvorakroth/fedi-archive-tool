@@ -56,28 +56,33 @@ struct ActorView: View {
                     Spacer()
                 }
                 
-                Spacer().frame(height: 15)
+//                Spacer().frame(height: 15)
+                Text(" ")
                 
                 HStack {
-                    Text(actor.bio)
+                    Text(convertHTML(actor.bio))
+                        .padding(.horizontal)
+                    Spacer()
+                }
+                
+//                Spacer().frame(height: 15)
+                Text(" ")
+                
+                HStack {
+                    Text("Signed up " + formatDateWithoutTime(actor.created))
                         .padding(.horizontal)
                     Spacer()
                 }
                 
                 Spacer().frame(height: 15)
-                
-                HStack {
-                    Text("Signed up " + formatDateWithoutTime(actor.created)).padding(.horizontal)
-                    Spacer()
-                }
-                
-                Spacer().frame(height: 15)
+//                Text(" ")
                 
                 if (actor.table.count > 0) {
                     ActorTable(actor.table)
                 }
                 
-                Spacer().frame(height: 15)
+//                Spacer().frame(height: 15)
+                Text(" ")
                 
                 LazyVStack(spacing: 10) {
                     Divider()

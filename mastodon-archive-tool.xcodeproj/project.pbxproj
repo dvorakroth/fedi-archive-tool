@@ -17,6 +17,8 @@
 		39816CF22C2C76340074740C /* ActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39816CF12C2C76340074740C /* ActionView.swift */; };
 		39816CF42C2C79190074740C /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39816CF32C2C79190074740C /* PostView.swift */; };
 		39816CF62C2C79760074740C /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39816CF52C2C79760074740C /* MockData.swift */; };
+		39816D132C3060D10074740C /* ConvertHTML.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39816D122C3060D10074740C /* ConvertHTML.swift */; };
+		39816D162C3064B00074740C /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 39816D152C3064B00074740C /* SwiftSoup */; };
 		39A192192C274486000C3FE6 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 39A192182C274486000C3FE6 /* SQLite */; };
 		39A1921F2C2746F2000C3FE6 /* APubActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A1921B2C2746F2000C3FE6 /* APubActor.swift */; };
 		39A192202C2746F2000C3FE6 /* APubParseUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A1921C2C2746F2000C3FE6 /* APubParseUtils.swift */; };
@@ -59,6 +61,7 @@
 		39816CF32C2C79190074740C /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 		39816CF52C2C79760074740C /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		39816D112C2CB6CF0074740C /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
+		39816D122C3060D10074740C /* ConvertHTML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertHTML.swift; sourceTree = "<group>"; };
 		39A1921B2C2746F2000C3FE6 /* APubActor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APubActor.swift; sourceTree = "<group>"; };
 		39A1921C2C2746F2000C3FE6 /* APubParseUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APubParseUtils.swift; sourceTree = "<group>"; };
 		39A1921D2C2746F2000C3FE6 /* APubAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APubAction.swift; sourceTree = "<group>"; };
@@ -80,6 +83,7 @@
 				39A192192C274486000C3FE6 /* SQLite in Frameworks */,
 				39A192272C27549E000C3FE6 /* ZIPFoundation in Frameworks */,
 				39A192392C28654A000C3FE6 /* DataCompression in Frameworks */,
+				39816D162C3064B00074740C /* SwiftSoup in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -115,6 +119,7 @@
 				39A1922D2C280A74000C3FE6 /* DbInterface.swift */,
 				39A1923A2C2867D1000C3FE6 /* TempDir.swift */,
 				39816CE92C2B4B290074740C /* Junkyard.swift */,
+				39816D122C3060D10074740C /* ConvertHTML.swift */,
 			);
 			path = "mastodon-archive-tool";
 			sourceTree = "<group>";
@@ -184,6 +189,7 @@
 				39A192262C27549E000C3FE6 /* ZIPFoundation */,
 				39A192292C275560000C3FE6 /* Tarscape */,
 				39A192382C28654A000C3FE6 /* DataCompression */,
+				39816D152C3064B00074740C /* SwiftSoup */,
 			);
 			productName = "mastodon-archive-tool";
 			productReference = 392D46E02C273CC900561231 /* mastodon-archive-tool.app */;
@@ -218,6 +224,7 @@
 				39A192252C27549E000C3FE6 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 				39A192282C275560000C3FE6 /* XCRemoteSwiftPackageReference "Tarscape" */,
 				39A192372C28654A000C3FE6 /* XCRemoteSwiftPackageReference "DataCompression" */,
+				39816D142C3064B00074740C /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 			);
 			productRefGroup = 392D46E12C273CC900561231 /* Products */;
 			projectDirPath = "";
@@ -250,6 +257,7 @@
 				39A192212C2746F2000C3FE6 /* APubAction.swift in Sources */,
 				39816CEC2C2B4BBB0074740C /* ActorTable.swift in Sources */,
 				39816CF22C2C76340074740C /* ActionView.swift in Sources */,
+				39816D132C3060D10074740C /* ConvertHTML.swift in Sources */,
 				39A1923B2C2867D1000C3FE6 /* TempDir.swift in Sources */,
 				39A1922E2C280A74000C3FE6 /* DbInterface.swift in Sources */,
 				39A192352C285B8A000C3FE6 /* AddArchiveView.swift in Sources */,
@@ -482,6 +490,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		39816D142C3064B00074740C /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scinfu/SwiftSoup.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.7.2;
+			};
+		};
 		39A192172C274486000C3FE6 /* XCRemoteSwiftPackageReference "SQLite.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/stephencelis/SQLite.swift.git";
@@ -517,6 +533,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		39816D152C3064B00074740C /* SwiftSoup */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 39816D142C3064B00074740C /* XCRemoteSwiftPackageReference "SwiftSoup" */;
+			productName = SwiftSoup;
+		};
 		39A192182C274486000C3FE6 /* SQLite */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 39A192172C274486000C3FE6 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
