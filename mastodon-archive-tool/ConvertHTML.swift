@@ -8,26 +8,7 @@
 import UIKit
 import SwiftSoup
 
-func convertHTML(_ htmlString: String/*, keepInvisibles: Bool = false*/) -> AttributedString {
-//    let newHtmlString = keepInvisibles ? htmlString : stripInvisibles(fromHtmlString: htmlString)
-//    
-//    let result: NSAttributedString
-//    do {
-//        result = try NSAttributedString(
-//            data: newHtmlString.data(using: .utf8)!,
-//            options: [
-//                .documentType: NSAttributedString.DocumentType.html,
-//                .characterEncoding: NSNumber(value: NSUTF8StringEncoding)
-//            ],
-//            documentAttributes: nil
-//        )
-//    } catch {
-//        print("Could not convert updated HTML to NSAtributedString: \(error)")
-//        result = NSAttributedString(string: newHtmlString)
-//    }
-//    
-//    return AttributedString(result)
-    
+func convertHTML(_ htmlString: String) -> AttributedString {
     let doc: Document
     do {
         doc = try SwiftSoup.parseBodyFragment(htmlString)
@@ -38,40 +19,6 @@ func convertHTML(_ htmlString: String/*, keepInvisibles: Bool = false*/) -> Attr
     
     return convertHTML(element: doc.body()!)
 }
-
-//fileprivate func stripInvisibles(fromHtmlString htmlString: String) -> String {
-//    let doc: Document
-//    do {
-//        doc = try SwiftSoup.parseBodyFragment(htmlString)
-//    } catch {
-//        print("Error parsing HTML: \(error) (Original HTML: \(htmlString)")
-//        return htmlString
-//    }
-//    
-//    let invisibles: Elements?
-//    do {
-//        invisibles = try doc.body()!.getElementsByAttributeValue("class", "invisible")
-//    } catch {
-//        print("Could not get .invisible from HTML body: \(error)")
-//        invisibles = nil
-//    }
-//
-//    if let invisibles = invisibles {
-//        for el in invisibles {
-//            try? el.remove()
-//        }
-//    }
-//    
-//    let newHtmlString: String
-//    do {
-//        newHtmlString = try doc.body()!.html()
-//    } catch {
-//        print("Could not get HTML of updated body: \(error)")
-//        newHtmlString = htmlString
-//    }
-//    
-//    return newHtmlString
-//}
 
 fileprivate enum CustomAttributes {
     case bold
@@ -86,11 +33,12 @@ fileprivate enum CustomAttributes {
     case link(to: String)
 }
 
-fileprivate let BLOCK_DISPLAY_TAGS = ["p", "div", "h1", "h2", "h3", "h4", "h5", "h6"]
+fileprivate let BLOCK_DISPLAY_TAGS = ["p", "div", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol"]
 
 fileprivate func convertHTML(
     element: Element,
-    parentAttributes: [CustomAttributes] = []
+    parentAttributes: [CustomAttributes] = [],
+    currentListState: (indent: Int, order: Int)? = nil
 ) -> AttributedString {
     if element.hasClass("invisible") {
         return AttributedString()
@@ -140,6 +88,7 @@ fileprivate func convertHTML(
     
     var result = AttributedString()
     var previousTagWasBlockDisplay = false
+    var listItemsEncountered = 0
     
     for childNode in element.getChildNodes() {
         guard !(childNode is Comment || childNode is DocumentType) else {
@@ -147,21 +96,63 @@ fileprivate func convertHTML(
         }
         
         if previousTagWasBlockDisplay {
-            result += AttributedString("\n\n")
+            if currentListState == nil {
+                result += AttributedString("\n\n")
+            }
             previousTagWasBlockDisplay = false
         }
         
         if let childNode = childNode as? TextNode {
             result += AttributedString(
-                childNode.text(),
+                childNode.text().replacingOccurrences(of: "\n", with: ""),
                 attributes: customAttributesToRealAttributes(updatedAttributes)
             )
         } else if let childElement = childNode as? Element {
-            result += convertHTML(element: childElement, parentAttributes: updatedAttributes)
+            let newListState: (indent: Int, order: Int)?
+            if childElement.tagName() == "ul" || childElement.tagName() == "ol" {
+                newListState = (
+                    indent: (currentListState?.indent ?? 0) + 1,
+                    order: 0
+                )
+            } else if childElement.tagName() == "li" {
+                if let (indent, _) = currentListState {
+                    listItemsEncountered += 1
+                    
+                    newListState = (
+                        indent: indent,
+                        order: listItemsEncountered
+                    )
+                } else {
+                    newListState = nil
+                }
+            } else {
+                newListState = currentListState
+            }
+            
+            result += convertHTML(
+                element: childElement,
+                parentAttributes: updatedAttributes,
+                currentListState: newListState
+            )
             
             if BLOCK_DISPLAY_TAGS.firstIndex(of: childElement.tagName()) != nil {
                 previousTagWasBlockDisplay = true
             }
+        }
+    }
+    
+    if let (indent, order) = currentListState {
+        let parentTagName = element.parent()?.tagName()
+        if element.tagName() == "li" && (parentTagName == "ul" || parentTagName == "ol") {
+            let bulletString = parentTagName == "ul"
+                ? BULLETS[(indent - 1) % BULLETS.count]
+                : orderedListNumber(order, atLevel: indent)
+
+            result =
+                ((order == 1 && indent == 1) ? AttributedString() : AttributedString("\n")) +
+                AttributedString(String(repeating: "\t", count: indent)) +
+                AttributedString(bulletString) +
+                result
         }
     }
     
@@ -267,3 +258,60 @@ fileprivate func customAttributesToRealAttributes(_ customAttributes: [CustomAtt
     return AttributeContainer(result)
 }
 
+fileprivate let BULLETS = ["● ", "○ ", "◘ "]
+
+fileprivate func orderedListNumber(_ number: Int, atLevel level: Int) -> String {
+    // 1., then a., then i., then back to 1.
+    switch (level - 1) % 3 {
+    case 0:
+        return "\(number). "
+    case 1:
+        return letterAtPosition(number) + ". "
+    case 2:
+        return romanNumeral(number) + ". "
+    default:
+        return "" // "shouldn't" happen??
+    }
+}
+
+fileprivate func letterAtPosition(_ pos: Int) -> String {
+    var pos = pos
+    var result = ""
+    
+    while pos > 0 {
+        result = String(data: Data(repeating: UInt8((pos - 1) % 26) + 97, count: 1), encoding: .utf8)! + result
+        pos = pos / 26
+    }
+    
+    return result
+}
+
+fileprivate let ROMAN_NUMERAL_CONSTS = [
+    ("M", 1000),
+    ("CM", 900),
+    ("D", 500),
+    ("CD", 400),
+    ("C", 100),
+    ("XC", 90),
+    ("L", 50),
+    ("XL", 40),
+    ("X", 10),
+    ("IX", 9),
+    ("V", 5),
+    ("IV", 4),
+    ("I", 1),
+]
+
+fileprivate func romanNumeral(_ number: Int) -> String {
+    var result = ""
+    var number = number
+    
+    for (letter, value) in ROMAN_NUMERAL_CONSTS {
+        if number >= value {
+            result += String(repeating: letter, count: number / value)
+            number %= value
+        }
+    }
+    
+    return result.lowercased()
+}

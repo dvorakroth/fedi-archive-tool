@@ -38,6 +38,6 @@ struct ActorTable: View {
 #Preview {
     ActorTable([
         ("Pronouns", "they/them"),
-        ("Amateur nouns", "har/har")
+        ("Amateur nouns", "<a href=\"https://example.com/\">har/har</a>")
     ])
 }

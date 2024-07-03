@@ -37,7 +37,21 @@ class MockData {
                     url: "https://social.example.net/posts/124",
                     replyingToNoteId: nil,
                     cw: "second post??",
-                    content: "<p>This is my second fake post!</p>",
+                    content: """
+<h1>Another post</h1>
+<p>This is my second fake post!</p>
+<ol>
+    <li>One fish</li>
+    <li>Two fish</li>
+    <li>Fish of various colors:
+        <ol>
+            <li>Red fish</li>
+            <li>Blue fish</li>
+        </ol>
+    </li>
+</ol>
+<p>End of the post</p><p>Wait actually there's more!! I lied! I actually have a lot more to say in this second example post! So so so much more! In fact I cannot contain myself with so much to say! Amazing amounts of things to say! Incredible, unbelieveable, scarcely reasonable amounts of things to say!</p><p>...</p><p>ok bye</p>
+""",
                     mediaAttachments: nil,
                     pollOptions: nil
                 )
