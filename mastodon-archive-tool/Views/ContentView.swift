@@ -27,6 +27,14 @@ struct ContentView: View {
                         }
                     }
                     
+                    #if DEBUG
+                    NavigationLink {
+                        ActorView(actor: MockData.actor, overridePostList: MockData.posts)
+                    } label: {
+                        Label("test actor", systemImage: "ant.circle")
+                    }
+                    #endif
+                    
                     NavigationLink {
                         AddArchiveView() {
                             do {
