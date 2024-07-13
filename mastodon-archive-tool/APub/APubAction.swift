@@ -99,17 +99,19 @@ public class APubNote {
     let replyingToNoteId: String?;
     let cw: String?;
     let content: String;
+    let sensitive: Bool;
     let mediaAttachments: [APubDocument]?;
     let pollOptions: [APubPollOption]?;
     // TODO language tag?
     
-    init(id: String, published: Date, url: String, replyingToNoteId: String?, cw: String?, content: String, mediaAttachments: [APubDocument]?, pollOptions: [APubPollOption]?) {
+    init(id: String, published: Date, url: String, replyingToNoteId: String?, cw: String?, content: String, sensitive: Bool, mediaAttachments: [APubDocument]?, pollOptions: [APubPollOption]?) {
         self.id = id
         self.published = published
         self.url = url
         self.replyingToNoteId = replyingToNoteId
         self.cw = cw
         self.content = content
+        self.sensitive = sensitive
         self.mediaAttachments = mediaAttachments
         self.pollOptions = pollOptions
     }
@@ -133,6 +135,12 @@ public extension APubNote {
         let replyingToNoteId = try tryGetNullable(field: "inReplyTo", ofType: .string, fromObject: json, called: noteNameForErrors) as! String?
         let cw = try tryGetNullable(field: "summary", ofType: .string, fromObject: json, called: noteNameForErrors) as! String?
         let content = try tryGet(field: "content", ofType: .string, fromObject: json, called: noteNameForErrors) as! String
+        let sensitive: Bool
+        do {
+            sensitive = try tryGetNullable(field: "sensitive", ofType: .boolean, fromObject: json, called: noteNameForErrors) as! Bool? ?? false
+        } catch APubParseError.missingField(_, onObject: _) {
+            sensitive = false
+        }
         
         let mediaAttachments = try await tryGetArrayAsync(inField: "attachment", fromObject: json, called: noteNameForErrors, parsingObjectsUsing: {
             (obj: Any, itemNameForErrors: String, objNameForErrors: String) throws -> APubDocument in
@@ -159,7 +167,7 @@ public extension APubNote {
             pollOptions = nil
         }
         
-        self.init(id: id, published: published, url: url, replyingToNoteId: replyingToNoteId, cw: cw, content: content, mediaAttachments: mediaAttachments, pollOptions: pollOptions)
+        self.init(id: id, published: published, url: url, replyingToNoteId: replyingToNoteId, cw: cw, content: content, sensitive: sensitive, mediaAttachments: mediaAttachments, pollOptions: pollOptions)
     }
 }
 
@@ -169,10 +177,10 @@ public class APubDocument {
     let data: Data?;
     let altText: String?;
     let blurhash: String?;
-    let focalPoint: (Float, Float)?;
-    let size: (UInt, UInt)?;
+    let focalPoint: (Double, Double)?;
+    let size: (Int, Int)?;
     
-    init(mediaType: String, data: Data?, altText: String?, blurhash: String?, focalPoint: (Float, Float)?, size: (UInt, UInt)?) {
+    init(mediaType: String, data: Data?, altText: String?, blurhash: String?, focalPoint: (Double, Double)?, size: (Int, Int)?) {
         self.mediaType = mediaType
         self.data = data
         self.altText = altText
@@ -204,13 +212,13 @@ public extension APubDocument {
         
         let focalPointArr = try tryGetNullable(field: "focalPoint", ofType: .array, fromObject: json, called: objNameForErrors) as! [Any]?;
         
-        let focalPoint: (Float, Float)?
+        let focalPoint: (Double, Double)?
         if let focalPointArr = focalPointArr {
             guard focalPointArr.count == 2, let focalPointArr = focalPointArr as? [NSNumber] else {
                 throw APubParseError.wrongValueForField("focalPoint", onObject: objNameForErrors, expected: "an array with exactly two elements, both numbers")
             }
             
-            focalPoint = (focalPointArr[0].floatValue, focalPointArr[1].floatValue)
+            focalPoint = (focalPointArr[0].doubleValue, focalPointArr[1].doubleValue)
         } else {
             focalPoint = nil
         }
@@ -218,9 +226,9 @@ public extension APubDocument {
         let width = try tryGetNullable(field: "width", ofType: .number, fromObject: json, called: objNameForErrors) as! NSNumber?
         let height = try tryGetNullable(field: "height", ofType: .number, fromObject: json, called: objNameForErrors) as! NSNumber?
         
-        let size: (UInt, UInt)?
+        let size: (Int, Int)?
         if let width = width, let height = height {
-            size = (width.uintValue, height.uintValue)
+            size = (width.intValue, height.intValue)
         } else {
             size = nil
         }

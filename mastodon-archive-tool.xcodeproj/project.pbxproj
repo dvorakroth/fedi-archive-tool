@@ -11,6 +11,8 @@
 		392D46E62C273CC900561231 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392D46E52C273CC900561231 /* ContentView.swift */; };
 		392D46E82C273CCA00561231 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 392D46E72C273CCA00561231 /* Assets.xcassets */; };
 		392D46EB2C273CCA00561231 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 392D46EA2C273CCA00561231 /* Preview Assets.xcassets */; };
+		393F12532C42A1410083FB03 /* AttachmentPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393F12522C42A1410083FB03 /* AttachmentPreviewView.swift */; };
+		393F12562C42C30A0083FB03 /* BlurHash in Frameworks */ = {isa = PBXBuildFile; productRef = 393F12552C42C30A0083FB03 /* BlurHash */; };
 		39816CE82C2B3EEC0074740C /* ImageOrRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39816CE72C2B3EEC0074740C /* ImageOrRectangle.swift */; };
 		39816CEA2C2B4B290074740C /* Junkyard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39816CE92C2B4B290074740C /* Junkyard.swift */; };
 		39816CEC2C2B4BBB0074740C /* ActorTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39816CEB2C2B4BBB0074740C /* ActorTable.swift */; };
@@ -54,6 +56,7 @@
 		392D46E52C273CC900561231 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		392D46E72C273CCA00561231 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		392D46EA2C273CCA00561231 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		393F12522C42A1410083FB03 /* AttachmentPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPreviewView.swift; sourceTree = "<group>"; };
 		39816CE72C2B3EEC0074740C /* ImageOrRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOrRectangle.swift; sourceTree = "<group>"; };
 		39816CE92C2B4B290074740C /* Junkyard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Junkyard.swift; sourceTree = "<group>"; };
 		39816CEB2C2B4BBB0074740C /* ActorTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActorTable.swift; sourceTree = "<group>"; };
@@ -82,6 +85,7 @@
 				39A1922A2C275560000C3FE6 /* Tarscape in Frameworks */,
 				39A192192C274486000C3FE6 /* SQLite in Frameworks */,
 				39A192272C27549E000C3FE6 /* ZIPFoundation in Frameworks */,
+				393F12562C42C30A0083FB03 /* BlurHash in Frameworks */,
 				39A192392C28654A000C3FE6 /* DataCompression in Frameworks */,
 				39816D162C3064B00074740C /* SwiftSoup in Frameworks */,
 			);
@@ -139,6 +143,7 @@
 				39816CEB2C2B4BBB0074740C /* ActorTable.swift */,
 				39816CF12C2C76340074740C /* ActionView.swift */,
 				39816CF32C2C79190074740C /* PostView.swift */,
+				393F12522C42A1410083FB03 /* AttachmentPreviewView.swift */,
 			);
 			path = "Random Components";
 			sourceTree = "<group>";
@@ -190,6 +195,7 @@
 				39A192292C275560000C3FE6 /* Tarscape */,
 				39A192382C28654A000C3FE6 /* DataCompression */,
 				39816D152C3064B00074740C /* SwiftSoup */,
+				393F12552C42C30A0083FB03 /* BlurHash */,
 			);
 			productName = "mastodon-archive-tool";
 			productReference = 392D46E02C273CC900561231 /* mastodon-archive-tool.app */;
@@ -225,6 +231,7 @@
 				39A192282C275560000C3FE6 /* XCRemoteSwiftPackageReference "Tarscape" */,
 				39A192372C28654A000C3FE6 /* XCRemoteSwiftPackageReference "DataCompression" */,
 				39816D142C3064B00074740C /* XCRemoteSwiftPackageReference "SwiftSoup" */,
+				393F12542C42C30A0083FB03 /* XCRemoteSwiftPackageReference "blurhash-swift" */,
 			);
 			productRefGroup = 392D46E12C273CC900561231 /* Products */;
 			projectDirPath = "";
@@ -253,6 +260,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				392D46E62C273CC900561231 /* ContentView.swift in Sources */,
+				393F12532C42A1410083FB03 /* AttachmentPreviewView.swift in Sources */,
 				392D46E42C273CC900561231 /* mastodon_archive_toolApp.swift in Sources */,
 				39A192212C2746F2000C3FE6 /* APubAction.swift in Sources */,
 				39816CEC2C2B4BBB0074740C /* ActorTable.swift in Sources */,
@@ -490,6 +498,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		393F12542C42C30A0083FB03 /* XCRemoteSwiftPackageReference "blurhash-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/patricks/blurhash-swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		39816D142C3064B00074740C /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/scinfu/SwiftSoup.git";
@@ -533,6 +549,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		393F12552C42C30A0083FB03 /* BlurHash */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 393F12542C42C30A0083FB03 /* XCRemoteSwiftPackageReference "blurhash-swift" */;
+			productName = BlurHash;
+		};
 		39816D152C3064B00074740C /* SwiftSoup */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 39816D142C3064B00074740C /* XCRemoteSwiftPackageReference "SwiftSoup" */;

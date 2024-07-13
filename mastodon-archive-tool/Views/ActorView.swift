@@ -23,7 +23,7 @@ struct ActorView: View {
             VStack {
                 ZStack {
                     VStack(spacing: 0) {
-                        ImageOrRectangle(image: actor.headerImage?.0, fallbackColor: .secondary, width: .infinity, height: 200)
+                        ImageOrRectangle(image: .data(actor.headerImage?.0), fallbackColor: .secondary, fallbackIcon: nil, width: .infinity, height: 200)
                         HStack(spacing: 0) {
                             Spacer()
                             Button("Go to profile") {
@@ -37,7 +37,7 @@ struct ActorView: View {
                     VStack(spacing: 0) {
                         Spacer().frame(height: 260 - 80)
                         HStack {
-                            ImageOrRectangle(image: actor.icon?.0, fallbackColor: .secondary, width: 80, height: 80)
+                            ImageOrRectangle(image: .data(actor.icon?.0), fallbackColor: .secondary, fallbackIcon: nil, width: 80, height: 80)
                                 .cornerRadius(8)
                                 .padding(.leading)
                             

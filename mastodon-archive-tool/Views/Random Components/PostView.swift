@@ -31,7 +31,7 @@ struct PostView: View {
             }
             
             HStack {
-                ImageOrRectangle(image: actor.icon?.0, fallbackColor: .secondary, width: 50, height: 50).cornerRadius(5)
+                ImageOrRectangle(image: .data(actor.icon?.0), fallbackColor: .secondary, fallbackIcon: nil, width: 50, height: 50).cornerRadius(5)
                 
                 VStack(alignment: .leading) {
                     Text(actor.name)
@@ -46,7 +46,18 @@ struct PostView: View {
             if let cw = post.cw {
                 Text(cw)
                 
-                Button(self.isExpanded ? "Show less" : "Show more") {
+                let hasAttachments: Bool
+                if let mediaAttachments = post.mediaAttachments {
+                    if mediaAttachments.count > 0 {
+                        let _ = hasAttachments = true
+                    } else {
+                        let _ = hasAttachments = false
+                    }
+                } else {
+                    let _ = hasAttachments = false
+                }
+                
+                Button(self.isExpanded ? "Show less" : "Show more", systemImage: hasAttachments ? "paperclip" : "") {
                     withAnimation {
                         isExpanded.toggle()
                     }
@@ -61,6 +72,25 @@ struct PostView: View {
                     Spacer().frame(height: 10)
                 }
                 Text(convertHTML(post.content))
+            }
+            
+            if let mediaAttachments = post.mediaAttachments {
+                if mediaAttachments.count > 0 && (self.isExpanded || post.cw == nil) {
+                    let attachmentPairs = divideIntoPairs(mediaAttachments)
+                    Spacer().frame(height: 15)
+                    VStack {
+                        ForEach(attachmentPairs, id: \.id) { (id: _, first, second) in
+                            if let second = second {
+                                HStack {
+                                    AttachmentPreviewView(attachment: first, hiddenByDefault: post.sensitive)
+                                    AttachmentPreviewView(attachment: second, hiddenByDefault: post.sensitive)
+                                }
+                            } else {
+                                AttachmentPreviewView(attachment: first, hiddenByDefault: post.sensitive)
+                            }
+                        }
+                    }
+                }
             }
             
             Spacer().frame(height: 15)
@@ -85,7 +115,7 @@ struct PostView: View {
 #Preview {
     PostView(
         actor: MockData.actor,
-        post: MockData.posts[1].action.getNote()!,
+        post: MockData.posts[2].action.getNote()!,
         announcedBy: MockData.actor
     )
 }

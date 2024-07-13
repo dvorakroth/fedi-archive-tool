@@ -20,3 +20,28 @@ func formatLongDateTime(_ dateTime: Date) -> String {
     formatter.dateStyle = .long
     return formatter.string(from: dateTime)
 }
+
+func divideIntoPairs<T>(_ array: [T]) -> [(id: Int, T, T?)] {
+    var iterator = array.makeIterator()
+    var result: [(id: Int, T, T?)] = []
+    var pairNum = 0;
+    
+    while true {
+        let first = iterator.next()
+        
+        guard let first = first else {
+            break
+        }
+        
+        let second = iterator.next()
+        result.append((id: pairNum, first, second))
+        pairNum += 1
+        
+        if second == nil {
+            break
+        }
+    }
+    
+    return result
+}
+

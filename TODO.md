@@ -1,8 +1,10 @@
 #  todo list i guess!
 
 * media files
-    * save to db
-    * display
+    * DONE ~~save to db~~
+    * DONE ~~display~~
+    * make it look non shitty
+    * click images to embiggen/save
 * poll options
     * save to db
     * display
@@ -21,7 +23,6 @@
 * unified view of all posts from all actors
 * accessibility stuff??? idk
 * about page lol
-* click images to embiggen/save
 * when header/profile pics are not the correct proportion, show only part of them (until you click them and they're embiggened?)
 * post privacy levels
     * figure out how the fuck this is encoded in the json

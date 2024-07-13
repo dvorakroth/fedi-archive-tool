@@ -1,6 +1,15 @@
 {
-  "originHash" : "eed41d16073fbf66368e2b9f631bb170f25ddedab23afb834fc723bf77a8b4e8",
+  "originHash" : "35a905aa394287357922553731439366a531b672ee1bb8a7837f56520e55d0c0",
   "pins" : [
+    {
+      "identity" : "blurhash-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/patricks/blurhash-swift",
+      "state" : {
+        "branch" : "master",
+        "revision" : "ff61ebc750f1309fc61257b9427247b85df1c559"
+      }
+    },
     {
       "identity" : "datacompression",
       "kind" : "remoteSourceControl",

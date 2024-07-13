@@ -21,6 +21,7 @@ class MockData {
                     replyingToNoteId: nil,
                     cw: nil,
                     content: "<p>This is my first fake post!</p>",
+                    sensitive: false,
                     mediaAttachments: nil,
                     pollOptions: nil
                 )
@@ -52,11 +53,33 @@ class MockData {
 </ol>
 <p>End of the post</p><p>Wait actually there's more!! I lied! I actually have a lot more to say in this second example post! So so so much more! In fact I cannot contain myself with so much to say! Amazing amounts of things to say! Incredible, unbelieveable, scarcely reasonable amounts of things to say!</p><p>...</p><p>ok bye</p>
 """,
+                    sensitive: false,
                     mediaAttachments: nil,
                     pollOptions: nil
                 )
             )
-        )
+        ),
+        APubActionEntry(
+            id: "https://social.example.net/posts/125",
+            actorId: "https://social.example.net/users/mx123",
+            published: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 72 * 3600)),
+            action: .create(
+                APubNote(
+                    id: "https://social.example.net/posts/125",
+                    published: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 72 * 3600)),
+                    url: "https://social.example.net/posts/125",
+                    replyingToNoteId: nil,
+                    cw: "broken images",
+                    content: "<p>Post whomst contains three images, two broken</p>",
+                    sensitive: true,
+                    mediaAttachments: [
+                        APubDocument(mediaType: "image/png", data: actor.icon!.0, altText: "a blurry photo of a dog", blurhash: nil, focalPoint: nil, size: nil),
+                        APubDocument(mediaType: "image/png", data: nil, altText: "a broken image that doesn't work", blurhash: nil, focalPoint: nil, size: nil),
+                        APubDocument(mediaType: "image/png", data: nil, altText: "a broken image that doesn't work", blurhash: nil, focalPoint: nil, size: nil)
+                    ],
+                    pollOptions: nil
+                )
+            ))
     ]
     
     public static let actor = APubActor(
