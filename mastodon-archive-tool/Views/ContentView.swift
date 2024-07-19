@@ -17,6 +17,7 @@ struct ContentView: View {
                     ForEach($actors) { actor in
                         NavigationLink {
                             ActorView(actor: actor.wrappedValue)
+                                .navigationTitle(actor.wrappedValue.name)
                         } label: {
                             HStack(content: {
                                 if let icon = actor.wrappedValue.icon {
@@ -30,6 +31,7 @@ struct ContentView: View {
                     #if DEBUG
                     NavigationLink {
                         ActorView(actor: MockData.actor, overridePostList: MockData.posts)
+                            .navigationTitle(MockData.actor.name)
                     } label: {
                         Label("test actor", systemImage: "ant.circle")
                     }
