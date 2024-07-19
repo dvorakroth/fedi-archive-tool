@@ -13,6 +13,7 @@
 		392D46EB2C273CCA00561231 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 392D46EA2C273CCA00561231 /* Preview Assets.xcassets */; };
 		393F12532C42A1410083FB03 /* AttachmentPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393F12522C42A1410083FB03 /* AttachmentPreviewView.swift */; };
 		393F12562C42C30A0083FB03 /* BlurHash in Frameworks */ = {isa = PBXBuildFile; productRef = 393F12552C42C30A0083FB03 /* BlurHash */; };
+		393F12582C4B00080083FB03 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393F12572C4B00080083FB03 /* SearchView.swift */; };
 		39816CE82C2B3EEC0074740C /* ImageOrRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39816CE72C2B3EEC0074740C /* ImageOrRectangle.swift */; };
 		39816CEA2C2B4B290074740C /* Junkyard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39816CE92C2B4B290074740C /* Junkyard.swift */; };
 		39816CEC2C2B4BBB0074740C /* ActorTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39816CEB2C2B4BBB0074740C /* ActorTable.swift */; };
@@ -57,6 +58,7 @@
 		392D46E72C273CCA00561231 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		392D46EA2C273CCA00561231 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		393F12522C42A1410083FB03 /* AttachmentPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPreviewView.swift; sourceTree = "<group>"; };
+		393F12572C4B00080083FB03 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		39816CE72C2B3EEC0074740C /* ImageOrRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOrRectangle.swift; sourceTree = "<group>"; };
 		39816CE92C2B4B290074740C /* Junkyard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Junkyard.swift; sourceTree = "<group>"; };
 		39816CEB2C2B4BBB0074740C /* ActorTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActorTable.swift; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 				39A192322C283D2F000C3FE6 /* AboutView.swift */,
 				39A192342C285B8A000C3FE6 /* AddArchiveView.swift */,
 				39816CF52C2C79760074740C /* MockData.swift */,
+				393F12572C4B00080083FB03 /* SearchView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -269,6 +272,7 @@
 				39A1923B2C2867D1000C3FE6 /* TempDir.swift in Sources */,
 				39A1922E2C280A74000C3FE6 /* DbInterface.swift in Sources */,
 				39A192352C285B8A000C3FE6 /* AddArchiveView.swift in Sources */,
+				393F12582C4B00080083FB03 /* SearchView.swift in Sources */,
 				39A192332C283D2F000C3FE6 /* AboutView.swift in Sources */,
 				39816CF42C2C79190074740C /* PostView.swift in Sources */,
 				39A1921F2C2746F2000C3FE6 /* APubActor.swift in Sources */,

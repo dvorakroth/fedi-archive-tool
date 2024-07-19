@@ -57,9 +57,17 @@ struct PostView: View {
                     let _ = hasAttachments = false
                 }
                 
-                Button(self.isExpanded ? "Show less" : "Show more", systemImage: hasAttachments ? "paperclip" : "") {
+                Button(action: {
                     withAnimation {
                         isExpanded.toggle()
+                    }
+                }) {
+                    let text = self.isExpanded ? "Show less" : "Show more"
+                    
+                    if hasAttachments {
+                        Label(text, systemImage: "paperclip")
+                    } else {
+                        Text(text)
                     }
                 }
                 .buttonStyle(.bordered)

@@ -7,7 +7,7 @@ basic functionality
 * media files
     * DONE ~~save to db~~
     * DONE ~~display~~
-    * make it look non shitty
+    * DONE? ~~make it look non shitty~~
     * click images to embiggen/save
 * poll options
     * save to db
@@ -19,7 +19,7 @@ basic functionality
 * ability to delete an actor + their posts
 * DONE ~~convert the HTML into an `AttributedString` or sth idk~~
 * DONE? ~~placeholder images for when media/avatar/header *was* specified, but just wasn't found in the archive?~~
-* maybe the permalink should be an actual copyable link?
+* instead of "Go to Profile" and "Permalink" buttons, use the built-in share sheet
 * divide actor's posts into Posts, Posts+Replies, Media, DMs
 * DONE ~~title in navigation view when looking at a profile~~
 * show little icon when post is a reply to something

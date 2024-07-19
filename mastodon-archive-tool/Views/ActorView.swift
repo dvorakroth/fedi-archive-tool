@@ -103,16 +103,7 @@ struct ActorView: View {
                         ForEach(overridePostList ?? dataSource.posts) { post in
                             ActionView(actor: actor, action: post)
                                 .onAppear {
-                                    guard overridePostList == nil else {
-                                        return
-                                    }
-    
-                                    do {
-                                        try dataSource.loadMorePostsIfNeeded(forActorId: actor.id, currentEarliestPost: post)
-                                    } catch {
-                                        // TODO some kind of error state?
-                                        print("Error fetching posts: \(error)")
-                                    }
+                                    loadMorePostsIfNeeded(currentEarliest: post)
                                 }
                             Divider()
                         }
@@ -123,22 +114,37 @@ struct ActorView: View {
                         }
                     }
                     .onAppear {
-                        guard overridePostList == nil else {
-                            return
-                        }
-    
-                        do {
-                            try dataSource.loadMorePostsIfNeeded(forActorId: actor.id, currentEarliestPost: nil)
-                        } catch {
-                            // TODO some kind of error state?
-                            print("Error fetching posts: \(error)")
-                        }
+                        loadMorePostsIfNeeded()
                     }
                     
                     
                     Spacer()
                 }
-            }.navigationBarTitleDisplayMode(.inline)
+            }
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        NavigationLink(destination: SearchView(actor: actor)) {
+                            Image(systemName: "magnifyingglass")
+                        }
+                    }
+                }
+        }
+    }
+    
+    func loadMorePostsIfNeeded(currentEarliest: APubActionEntry? = nil) {
+        guard overridePostList == nil else {
+            return
+        }
+
+        do {
+            try dataSource.loadMorePostsIfNeeded(
+                forActorId: actor.id,
+                currentEarliestPost: currentEarliest
+            )
+        } catch {
+            // TODO some kind of error state?
+            print("Error fetching posts: \(error)")
         }
     }
 }
