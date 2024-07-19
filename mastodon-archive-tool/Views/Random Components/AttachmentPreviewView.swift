@@ -20,6 +20,8 @@ struct AttachmentPreviewView: View {
     let attachment: APubDocument;
     let attachmentType: AttachmentType;
     
+    private let blurhashImage: UIImage?;
+    
     @State var isHidden: Bool
     
     init(attachment: APubDocument, hiddenByDefault: Bool) {
@@ -35,78 +37,87 @@ struct AttachmentPreviewView: View {
             self.attachmentType = .unknown
         }
         
+        if let blurhash = attachment.blurhash {
+            blurhashImage = UIImage(blurHash: blurhash, size: CGSize(width: 500, height: 250))
+        } else {
+            blurhashImage = nil
+        }
+        
         self.isHidden = hiddenByDefault
     }
     
     var body: some View {
-        ZStack {
-            if isHidden {
-                let image: UIImage?
-                if let blurhash = attachment.blurhash {
-                    let _ = image = UIImage(blurHash: blurhash, size: CGSize(width: 500, height: 250))
-                } else {
-                    let _ = image = nil
-                }
-                
-                ImageOrRectangle(image: .image(image), fallbackColor: .secondary, fallbackIcon: nil, width: .infinity, height: 150).cornerRadius(5)
-                Button("Show media") {
-                    withAnimation {
-                        isHidden.toggle()
+        GeometryReader { geo in
+            ZStack {
+                if isHidden {
+                    ImageOrRectangle(
+                        image: .image(blurhashImage),
+                        fallbackColor: .secondary,
+                        fallbackIcon: nil,
+                        width: geo.size.width,
+                        height: 150
+                    ).cornerRadius(5)
+                    
+                    Button("Show media") {
+                        withAnimation {
+                            isHidden.toggle()
+                        }
                     }
-                }
-                .buttonStyle(.borderedProminent)
-            } else {
-                let image: Data?
-                let fallbackIconName: String
-                
-                switch (attachmentType) {
-                case .image:
-                    let _ = image = attachment.data
-                    let _ = fallbackIconName = "questionmark.square.dashed"
-                case .video:
-                    let _ = image = nil
-                    let _ = fallbackIconName = "video.square"
-                case .audio:
-                    let _ = image = nil
-                    let _ = fallbackIconName = "headphones.circle"
-                case .unknown:
-                    let _ = image = nil
-                    let _ = fallbackIconName = "questionmark.square.dashed"
-                }
-                
-                ImageOrRectangle(
-                    image: .data(image),
-                    fallbackColor: .secondary,
-                    fallbackIcon: (
-                        name: fallbackIconName,
-                        color: .secondaryLabel,
-                        size: 45
-                    ),
-                    width: .infinity,
-                    height: 150
-                ).cornerRadius(5)
-                
-                VStack {
-                    HStack {
-                        Button(
-                            action: {
-                                withAnimation {
-                                    isHidden.toggle()
+                    .buttonStyle(.borderedProminent)
+                } else {
+                    let image: Data?
+                    let fallbackIconName: String
+                    
+                    switch (attachmentType) {
+                    case .image:
+                        let _ = image = attachment.data
+                        let _ = fallbackIconName = "questionmark.square.dashed"
+                    case .video:
+                        let _ = image = nil
+                        let _ = fallbackIconName = "video.square"
+                    case .audio:
+                        let _ = image = nil
+                        let _ = fallbackIconName = "headphones.circle"
+                    case .unknown:
+                        let _ = image = nil
+                        let _ = fallbackIconName = "questionmark.square.dashed"
+                    }
+                    
+                    ImageOrRectangle(
+                        image: .data(image),
+                        fallbackColor: .secondary,
+                        fallbackIcon: (
+                            name: fallbackIconName,
+                            color: .secondaryLabel,
+                            size: 45
+                        ),
+                        width: geo.size.width,
+                        height: 150,
+                        contentMode: .fit
+                    ).cornerRadius(5)
+                    
+                    VStack {
+                        HStack {
+                            Button(
+                                action: {
+                                    withAnimation {
+                                        isHidden.toggle()
+                                    }
+                                },
+                                label: {
+                                    Image(systemName: "eye.slash")
                                 }
-                            },
-                            label: {
-                                Image(systemName: "eye.slash")
-                            }
-                        )
-                        .buttonStyle(.borderedProminent)
-                        .padding(.leading)
-                        .padding(.top)
+                            )
+                            .buttonStyle(.borderedProminent)
+                            .padding(.leading)
+                            .padding(.top)
+                            Spacer()
+                        }
                         Spacer()
                     }
-                    Spacer()
                 }
             }
-        }.frame(width: .infinity, height: 150)
+        }.frame(height: 150)
     }
 }
 

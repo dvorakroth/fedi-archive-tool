@@ -29,14 +29,31 @@ struct ImageOrRectangle: View {
     let image: ImageOrData?
     let fallbackColor: Color
     let fallbackIcon: (name: String, color: UIColor, size: CGFloat)?
-    let width: CGFloat
-    let height: CGFloat
+    let width: CGFloat?
+    let height: CGFloat?
+    let contentMode: ContentMode?
+    
+    init(
+        image: ImageOrData?,
+        fallbackColor: Color,
+        fallbackIcon: (name: String, color: UIColor, size: CGFloat)? = nil,
+        width: CGFloat? = nil,
+        height: CGFloat? = nil,
+        contentMode: ContentMode? = nil
+    ) {
+        self.image = image
+        self.fallbackColor = fallbackColor
+        self.fallbackIcon = fallbackIcon
+        self.width = width
+        self.height = height
+        self.contentMode = contentMode
+    }
     
     var body: some View {
         if let uiImage = image?.getUiImage() {
             Image(uiImage: uiImage)
                 .resizable()
-                .aspectRatio(contentMode: .fill)
+                .aspectRatio(contentMode: contentMode ?? .fill)
                 .frame(width: width, height: height)
         } else {
             ZStack {
@@ -50,6 +67,7 @@ struct ImageOrRectangle: View {
                     }
                 }
             }
+            .frame(width: width, height: height)
         }
     }
     
