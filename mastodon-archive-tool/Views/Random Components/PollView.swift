@@ -35,7 +35,7 @@ struct PollView: View {
                     GeometryReader { geo in
                         let width = geo.size.width * CGFloat(pollOption.proportion)
                         Rectangle()
-                            .frame(width: width, height: 30)
+                            .frame(width: width)
                             .foregroundStyle(.tertiary)
                     }
                 })
