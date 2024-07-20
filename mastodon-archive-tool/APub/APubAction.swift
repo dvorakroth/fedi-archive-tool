@@ -239,7 +239,7 @@ public extension APubDocument {
 
 public struct APubPollOption {
     let name: String;
-    let numVotes: UInt;
+    let numVotes: Int;
 }
 
 public extension APubPollOption {
@@ -257,6 +257,6 @@ public extension APubPollOption {
             throw APubParseError.wrongValueForField("type", onObject: repliesNameForErrors, expected: "Collection")
         }
         
-        self.numVotes = (try tryGet(field: "totalItems", ofType: .number, fromObject: replies, called: repliesNameForErrors) as! NSNumber).uintValue
+        self.numVotes = (try tryGet(field: "totalItems", ofType: .number, fromObject: replies, called: repliesNameForErrors) as! NSNumber).intValue
     }
 }

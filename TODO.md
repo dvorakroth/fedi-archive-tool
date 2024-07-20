@@ -9,8 +9,9 @@ basic functionality
     * DONE ~~display~~
     * DONE? ~~make it look non shitty~~
 * poll options
-    * save to db
+    * ~~save to db~~
     * display
+    * import, save & display poll end time
 * display announces
 * search!!!
     * through all posts
@@ -18,6 +19,8 @@ basic functionality
     * don't search through raw HTML! on import, create some kind of html-stripped field to actually search through
     * also search through alt text of attachments
     * eventually also search through poll options
+    * make it look non shitty
+    * don't include announces
 * ability to delete an actor + their posts
 * DONE ~~convert the HTML into an `AttributedString` or sth idk~~
 * DONE? ~~placeholder images for when media/avatar/header *was* specified, but just wasn't found in the archive?~~
@@ -46,6 +49,8 @@ slightly advanced functionality
 * click on images to embiggen
     * option to zoom
     * option to save?
+    * show alt text!
+* when searching, highlight the places where the text matches
 
 performance optimizations
 -------------------------
@@ -53,6 +58,7 @@ performance optimizations
 * scrolling through an actor's posts is kinda choppy?
     * could it be that this would be fixed by precomputing blurhashes on import???
     * or maybe by making the post-loading thing async/in a different thread?
+* when reading `actions INNER JOIN notes` from the DB, don't dump out the `notes.*` -- use it to create the APubNote
 
 have to do before publishing lol
 --------------------------------

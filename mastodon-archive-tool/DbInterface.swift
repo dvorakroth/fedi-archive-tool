@@ -11,7 +11,8 @@ import SQLite
 fileprivate class DbInterface {
     private static let DB_FILENAME = "app_db.sqlite"
     private static let CURRENT_DB_VERSION = 1
-    fileprivate let db: Connection
+    
+    private let db: Connection
     
     private init() throws {
         let containingDir = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
@@ -59,117 +60,131 @@ fileprivate class DbInterface {
     private func createNewDb() throws {
         try db.run("PRAGMA user_version = \(DbInterface.CURRENT_DB_VERSION);")
         
-        try db.run(DbInterface.actors.create { t in
-            t.column(DbInterface.actor_id, primaryKey: true)
-            t.column(DbInterface.actor_username)
-            t.column(DbInterface.actor_name)
-            t.column(DbInterface.actor_bio)
-            t.column(DbInterface.actor_url)
-            t.column(DbInterface.actor_created)
-            t.column(DbInterface.actor_table_json)
-            t.column(DbInterface.actor_icon)
-            t.column(DbInterface.actor_icon_type)
-            t.column(DbInterface.actor_headerimage)
-            t.column(DbInterface.actor_headerimage_type)
+        try db.run(actors.create { t in
+            t.column(actor_id, primaryKey: true)
+            t.column(actor_username)
+            t.column(actor_name)
+            t.column(actor_bio)
+            t.column(actor_url)
+            t.column(actor_created)
+            t.column(actor_table_json)
+            t.column(actor_icon)
+            t.column(actor_icon_type)
+            t.column(actor_headerimage)
+            t.column(actor_headerimage_type)
         })
         
-        try db.run(DbInterface.notes.create { t in
-            t.column(DbInterface.note_id, primaryKey: true)
-            t.column(DbInterface.note_published)
-            t.column(DbInterface.note_url)
-            t.column(DbInterface.note_replying_to_note_id)
-            t.column(DbInterface.note_cw)
-            t.column(DbInterface.note_content)
-            t.column(DbInterface.note_sensitive)
+        try db.run(notes.create { t in
+            t.column(note_id, primaryKey: true)
+            t.column(note_published)
+            t.column(note_url)
+            t.column(note_replying_to_note_id)
+            t.column(note_cw)
+            t.column(note_content)
+            t.column(note_sensitive)
         })
         
-        try db.run(DbInterface.actions.create { t in
-            t.column(DbInterface.action_id, primaryKey: true)
-            t.column(DbInterface.action_actor_id)
-            t.column(DbInterface.action_published)
-            t.column(DbInterface.action_action_type)
-            t.column(DbInterface.action_same_user_note_id)
-            t.column(DbInterface.action_other_user_note_id)
+        try db.run(actions.create { t in
+            t.column(action_id, primaryKey: true)
+            t.column(action_actor_id)
+            t.column(action_published)
+            t.column(action_action_type)
+            t.column(action_same_user_note_id)
+            t.column(action_other_user_note_id)
             
-            t.foreignKey(DbInterface.action_actor_id, references: DbInterface.actors, DbInterface.actor_id)
-            t.foreignKey(DbInterface.action_same_user_note_id, references: DbInterface.notes, DbInterface.note_id)
+            t.foreignKey(action_actor_id, references: actors, actor_id)
+            t.foreignKey(action_same_user_note_id, references: notes, note_id)
         })
         
-        try db.run(DbInterface.attachments.create { t in
-            t.column(DbInterface.attachments_note_id)
-            t.column(DbInterface.attachments_order_num)
-            t.column(DbInterface.attachments_media_type)
-            t.column(DbInterface.attachments_data)
-            t.column(DbInterface.attachments_alt_text)
-            t.column(DbInterface.attachments_blurhash)
-            t.column(DbInterface.attachments_focal_point_x)
-            t.column(DbInterface.attachments_focal_point_y)
-            t.column(DbInterface.attachments_width)
-            t.column(DbInterface.attachments_height)
+        try db.run(attachments.create { t in
+            t.column(attachments_note_id)
+            t.column(attachments_order_num)
+            t.column(attachments_media_type)
+            t.column(attachments_data)
+            t.column(attachments_alt_text)
+            t.column(attachments_blurhash)
+            t.column(attachments_focal_point_x)
+            t.column(attachments_focal_point_y)
+            t.column(attachments_width)
+            t.column(attachments_height)
             
-            t.primaryKey(DbInterface.attachments_note_id, DbInterface.attachments_order_num)
+            t.primaryKey(attachments_note_id, attachments_order_num)
+        })
+        
+        try db.run(pollOptions.create { t in
+            t.column(pollOptions_note_id)
+            t.column(pollOptions_order_num)
+            t.column(pollOptions_name)
+            t.column(pollOptions_num_votes)
+            
+            t.primaryKey(pollOptions_note_id, pollOptions_order_num)
         })
     }
-    
-    fileprivate static let actors = Table("actors")
-    fileprivate static let actor_id = Expression<String>("id")
-    fileprivate static let actor_username = Expression<String>("username")
-    fileprivate static let actor_name = Expression<String>("name")
-    fileprivate static let actor_bio = Expression<String>("bio")
-    fileprivate static let actor_url = Expression<String>("url")
-    fileprivate static let actor_created = Expression<Date>("created")
-    fileprivate static let actor_table_json = Expression<String>("table_json")
-    fileprivate static let actor_icon = Expression<SQLite.Blob?>("icon")
-    fileprivate static let actor_icon_type = Expression<String?>("icon_type")
-    fileprivate static let actor_headerimage = Expression<SQLite.Blob?>("headerimage")
-    fileprivate static let actor_headerimage_type = Expression<String?>("headerimage_type")
-    
-    fileprivate static let actions = Table("actions")
-    fileprivate static let action_id = Expression<String>("id")
-    fileprivate static let action_actor_id = Expression<String>("actor_id")
-    fileprivate static let action_published = Expression<Date>("published")
-    fileprivate static let action_action_type = Expression<Int>("action_type")
-    fileprivate static let action_same_user_note_id = Expression<String?>("same_user_note_id")
-    fileprivate static let action_other_user_note_id = Expression<String?>("other_user_note_id")
-    
-    fileprivate static let notes = Table("notes")
-    fileprivate static let note_id = Expression<String>("id")
-    fileprivate static let note_published = Expression<Date>("published")
-    fileprivate static let note_url = Expression<String>("url")
-    fileprivate static let note_replying_to_note_id = Expression<String?>("replying_to_note_id")
-    fileprivate static let note_cw = Expression<String?>("cw")
-    fileprivate static let note_content = Expression<String>("content")
-    fileprivate static let note_sensitive = Expression<Bool>("sensitive")
-    
-    fileprivate static let attachments = Table("attachments")
-    fileprivate static let attachments_note_id = Expression<String>("note_id")
-    fileprivate static let attachments_order_num = Expression<Int>("order_num")
-    fileprivate static let attachments_media_type = Expression<String>("media_type")
-    fileprivate static let attachments_data = Expression<SQLite.Blob?>("data")
-    fileprivate static let attachments_alt_text = Expression<String?>("alt_text")
-    fileprivate static let attachments_blurhash = Expression<String?>("blurhash")
-    fileprivate static let attachments_focal_point_x = Expression<Double?>("focal_point_x")
-    fileprivate static let attachments_focal_point_y = Expression<Double?>("focal_point_y")
-    fileprivate static let attachments_width = Expression<Int?>("width")
-    fileprivate static let attachments_height = Expression<Int?>("height")
-    
-    // TODO poll options
 }
+
+fileprivate let actors = Table("actors")
+fileprivate let actor_id = Expression<String>("id")
+fileprivate let actor_username = Expression<String>("username")
+fileprivate let actor_name = Expression<String>("name")
+fileprivate let actor_bio = Expression<String>("bio")
+fileprivate let actor_url = Expression<String>("url")
+fileprivate let actor_created = Expression<Date>("created")
+fileprivate let actor_table_json = Expression<String>("table_json")
+fileprivate let actor_icon = Expression<SQLite.Blob?>("icon")
+fileprivate let actor_icon_type = Expression<String?>("icon_type")
+fileprivate let actor_headerimage = Expression<SQLite.Blob?>("headerimage")
+fileprivate let actor_headerimage_type = Expression<String?>("headerimage_type")
+
+fileprivate let actions = Table("actions")
+fileprivate let action_id = Expression<String>("id")
+fileprivate let action_actor_id = Expression<String>("actor_id")
+fileprivate let action_published = Expression<Date>("published")
+fileprivate let action_action_type = Expression<Int>("action_type")
+fileprivate let action_same_user_note_id = Expression<String?>("same_user_note_id")
+fileprivate let action_other_user_note_id = Expression<String?>("other_user_note_id")
+
+fileprivate let notes = Table("notes")
+fileprivate let note_id = Expression<String>("id")
+fileprivate let note_published = Expression<Date>("published")
+fileprivate let note_url = Expression<String>("url")
+fileprivate let note_replying_to_note_id = Expression<String?>("replying_to_note_id")
+fileprivate let note_cw = Expression<String?>("cw")
+fileprivate let note_content = Expression<String>("content")
+fileprivate let note_sensitive = Expression<Bool>("sensitive")
+
+fileprivate let attachments = Table("attachments")
+fileprivate let attachments_note_id = Expression<String>("note_id")
+fileprivate let attachments_order_num = Expression<Int>("order_num")
+fileprivate let attachments_media_type = Expression<String>("media_type")
+fileprivate let attachments_data = Expression<SQLite.Blob?>("data")
+fileprivate let attachments_alt_text = Expression<String?>("alt_text")
+fileprivate let attachments_blurhash = Expression<String?>("blurhash")
+fileprivate let attachments_focal_point_x = Expression<Double?>("focal_point_x")
+fileprivate let attachments_focal_point_y = Expression<Double?>("focal_point_y")
+fileprivate let attachments_width = Expression<Int?>("width")
+fileprivate let attachments_height = Expression<Int?>("height")
+
+fileprivate let pollOptions = Table("pollOptions")
+fileprivate let pollOptions_note_id = Expression<String>("note_id")
+fileprivate let pollOptions_order_num = Expression<Int>("order_num")
+fileprivate let pollOptions_name = Expression<String>("name")
+fileprivate let pollOptions_num_votes = Expression<Int>("num_votes")
+
 
 extension APubActor {
     static func fetchActor(byId id: String) throws -> APubActor? {
-        let actorRow = try DbInterface.getDb().pluck(DbInterface.actors.where(DbInterface.actor_id == id))
+        let actorRow = try DbInterface.getDb().pluck(actors.where(actor_id == id))
         guard let actorRow = actorRow else {
             // nothing found
             return nil
         }
         
-        return try actorRowToActor(actorRow)
+        return try APubActor(fromRow: actorRow)
     }
     
     static func fetchAllActors() throws -> [APubActor] {
-        let actorsArr = try Array(try DbInterface.getDb().prepareRowIterator(DbInterface.actors))
-        return try actorsArr.map(self.actorRowToActor)
+        let actorsArr = try Array(try DbInterface.getDb().prepareRowIterator(actors))
+        return try actorsArr.map(APubActor.init(fromRow:))
     }
     
     func save() throws {
@@ -180,30 +195,30 @@ extension APubActor {
             encoding: .utf8
         )!
         
-        try DbInterface.getDb().run(DbInterface.actors.insert(
+        try DbInterface.getDb().run(actors.insert(
             or: .replace,
-            DbInterface.actor_id <- id,
-            DbInterface.actor_username <- username,
-            DbInterface.actor_name <- name,
-            DbInterface.actor_bio <- bio,
-            DbInterface.actor_url <- url,
-            DbInterface.actor_created <- created,
-            DbInterface.actor_table_json <- tableJson,
-            DbInterface.actor_icon <- icon?.0.datatypeValue,
-            DbInterface.actor_icon_type <- icon?.1,
-            DbInterface.actor_headerimage <- headerImage?.0.datatypeValue,
-            DbInterface.actor_headerimage_type <- headerImage?.1
+            actor_id <- id,
+            actor_username <- username,
+            actor_name <- name,
+            actor_bio <- bio,
+            actor_url <- url,
+            actor_created <- created,
+            actor_table_json <- tableJson,
+            actor_icon <- icon?.0.datatypeValue,
+            actor_icon_type <- icon?.1,
+            actor_headerimage <- headerImage?.0.datatypeValue,
+            actor_headerimage_type <- headerImage?.1
         ))
     }
     
-    private static func actorRowToActor(_ actorRow: Row) throws -> APubActor {
+    private convenience init(fromRow actorRow: Row) throws {
         var table: [(String, String)] = []
-        for row in try JSONSerialization.jsonObject(with: actorRow[DbInterface.actor_table_json].data(using: .utf8)!) as! [[String]] {
+        for row in try JSONSerialization.jsonObject(with: actorRow[actor_table_json].data(using: .utf8)!) as! [[String]] {
             table.append((row[0], row[1]))
         }
         
-        let iconData = actorRow[DbInterface.actor_icon]
-        let iconType = actorRow[DbInterface.actor_icon_type]
+        let iconData = actorRow[actor_icon]
+        let iconType = actorRow[actor_icon_type]
         let icon: (Data, String)?
         if let iconData = iconData, let iconType = iconType {
             icon = (Data.fromDatatypeValue(iconData), iconType)
@@ -211,8 +226,8 @@ extension APubActor {
             icon = nil
         }
         
-        let headerData = actorRow[DbInterface.actor_headerimage]
-        let headerType = actorRow[DbInterface.actor_headerimage_type]
+        let headerData = actorRow[actor_headerimage]
+        let headerType = actorRow[actor_headerimage_type]
         let header: (Data, String)?
         if let headerData = headerData, let headerType = headerType {
             header = (Data.fromDatatypeValue(headerData), headerType)
@@ -220,13 +235,13 @@ extension APubActor {
             header = nil
         }
         
-        return APubActor(
-            id: actorRow[DbInterface.actor_id],
-            username: actorRow[DbInterface.actor_username],
-            name: actorRow[DbInterface.actor_name],
-            bio: actorRow[DbInterface.actor_bio],
-            url: actorRow[DbInterface.actor_url],
-            created: actorRow[DbInterface.actor_created],
+        self.init(
+            id: actorRow[actor_id],
+            username: actorRow[actor_username],
+            name: actorRow[actor_name],
+            bio: actorRow[actor_bio],
+            url: actorRow[actor_url],
+            created: actorRow[actor_created],
             table: table,
             icon: icon,
             headerImage: header
@@ -243,7 +258,7 @@ extension APubActionEntry {
     ) throws -> [APubActionEntry] {
         let stringMatchCondition: Expression<Bool>
         if let matchingSearchString = matchingSearchString {
-            stringMatchCondition = DbInterface.notes[DbInterface.note_content].like(
+            stringMatchCondition = notes[note_content].like(
                 "%"
                 + escapeExpressionForSqlLike(
                     matchingSearchString,
@@ -257,23 +272,23 @@ extension APubActionEntry {
         
         let maxDateCondition: Expression<Bool>
         if let toDateTimeExclusive = toDateTimeExclusive {
-            maxDateCondition = DbInterface.actions[DbInterface.action_published] < toDateTimeExclusive
+            maxDateCondition = actions[action_published] < toDateTimeExclusive
         } else {
             maxDateCondition = Expression(value: true)
         }
         
         let entryRowsArr = try Array(try DbInterface.getDb().prepareRowIterator(
-            DbInterface.actions
-                .join(.leftOuter, DbInterface.notes, on: DbInterface.notes[DbInterface.note_id] == DbInterface.actions[DbInterface.action_same_user_note_id])
-                .select(DbInterface.actions[*])
+            actions
+                .join(.leftOuter, notes, on: notes[note_id] == actions[action_same_user_note_id])
+                .select(actions[*])
                 .where(
-                    stringMatchCondition && maxDateCondition && DbInterface.actions[DbInterface.action_actor_id] == actorId
+                    stringMatchCondition && maxDateCondition && actions[action_actor_id] == actorId
                 )
-                .order(DbInterface.actions[DbInterface.action_published].desc)
+                .order(actions[action_published].desc)
                 .limit(maxNumberOfPosts)
         ))
         
-        return try entryRowsArr.map(self.actionEntryRowToActionEntry)
+        return try entryRowsArr.map(APubActionEntry.init(fromRow:))
     }
     
     func save() throws {
@@ -306,24 +321,24 @@ extension APubActionEntry {
             foreignNoteId = nil
         }
         
-        try DbInterface.getDb().run(DbInterface.actions.insert(
+        try DbInterface.getDb().run(actions.insert(
             or: .replace,
-            DbInterface.action_id <- self.id,
-            DbInterface.action_actor_id <- self.actorId,
-            DbInterface.action_published <- self.published,
-            DbInterface.action_action_type <- actionType,
-            DbInterface.action_same_user_note_id <- ownNoteId,
-            DbInterface.action_other_user_note_id <- foreignNoteId
+            action_id <- self.id,
+            action_actor_id <- self.actorId,
+            action_published <- self.published,
+            action_action_type <- actionType,
+            action_same_user_note_id <- ownNoteId,
+            action_other_user_note_id <- foreignNoteId
         ))
     }
     
-    private static func actionEntryRowToActionEntry(_ actionEntryRow: Row) throws -> APubActionEntry {
-        let id = actionEntryRow[DbInterface.action_id]
-        let actorId = actionEntryRow[DbInterface.action_actor_id]
-        let published = actionEntryRow[DbInterface.action_published]
-        let actionType = actionEntryRow[DbInterface.action_action_type]
-        let ownNoteId = actionEntryRow[DbInterface.action_same_user_note_id]
-        let foreignNoteId = actionEntryRow[DbInterface.action_other_user_note_id]
+    private convenience init(fromRow actionEntryRow: Row) throws {
+        let id = actionEntryRow[action_id]
+        let actorId = actionEntryRow[action_actor_id]
+        let published = actionEntryRow[action_published]
+        let actionType = actionEntryRow[action_action_type]
+        let ownNoteId = actionEntryRow[action_same_user_note_id]
+        let foreignNoteId = actionEntryRow[action_other_user_note_id]
         
         let action: APubAction
         switch actionType {
@@ -339,35 +354,34 @@ extension APubActionEntry {
             throw DbInterfaceError.unexpected("APubActionEntry \(id) has unrecognized action type: \(actionType)")
         }
         
-        return APubActionEntry(id: id, actorId: actorId, published: published, action: action)
+        self.init(id: id, actorId: actorId, published: published, action: action)
     }
 }
 
 extension APubNote {
     static func fetchNote(byId id: String) throws -> APubNote? {
-        let noteRow = try DbInterface.getDb().pluck(DbInterface.notes.where(DbInterface.note_id == id))
+        let noteRow = try DbInterface.getDb().pluck(notes.where(note_id == id))
         guard let noteRow = noteRow else {
             return nil
         }
         
-        return try noteRowToNote(
-            noteRow,
-            withMediaAttachments: try APubDocument.fetchDocuments(forNote: id)
+        return try APubNote(
+            fromRow: noteRow,
+            withMediaAttachments: try APubDocument.fetchDocuments(forNote: id),
+            pollOptions: try APubPollOption.fetchPollOptions(forNote: id)
         )
     }
     
     func save() throws {
-        // TODO delete and recreate poll options
-        
-        try DbInterface.getDb().run(DbInterface.notes.insert(
+        try DbInterface.getDb().run(notes.insert(
             or: .replace,
-            DbInterface.note_id <- self.id,
-            DbInterface.note_published <- self.published,
-            DbInterface.note_url <- self.url,
-            DbInterface.note_replying_to_note_id <- self.replyingToNoteId,
-            DbInterface.note_cw <- self.cw,
-            DbInterface.note_content <- self.content,
-            DbInterface.note_sensitive <- self.sensitive
+            note_id <- self.id,
+            note_published <- self.published,
+            note_url <- self.url,
+            note_replying_to_note_id <- self.replyingToNoteId,
+            note_cw <- self.cw,
+            note_content <- self.content,
+            note_sensitive <- self.sensitive
         ))
         
         try APubDocument.deleteDocuments(forNote: self.id)
@@ -376,24 +390,30 @@ extension APubNote {
                 try attachment.save(withNoteId: id, orderNum: idx)
             }
         }
+        
+        try APubPollOption.deletePollOptions(forNote: self.id)
+        if let pollOptions = self.pollOptions {
+            for (idx, pollOption) in pollOptions.enumerated() {
+                try pollOption.save(withNoteId: id, orderNum: idx)
+            }
+        }
     }
     
-    private static func noteRowToNote(
-        _ noteRow: Row,
-        withMediaAttachments mediaAttachments: [APubDocument]
-    ) throws -> APubNote {
-        // TODO poll options
-        
-        return APubNote(
-            id: noteRow[DbInterface.note_id],
-            published: noteRow[DbInterface.note_published],
-            url: noteRow[DbInterface.note_url],
-            replyingToNoteId: noteRow[DbInterface.note_replying_to_note_id],
-            cw: noteRow[DbInterface.note_cw],
-            content: noteRow[DbInterface.note_content],
-            sensitive: noteRow[DbInterface.note_sensitive],
+    private convenience init(
+        fromRow noteRow: Row,
+        withMediaAttachments mediaAttachments: [APubDocument],
+        pollOptions: [APubPollOption]
+    ) throws {
+        self.init(
+            id: noteRow[note_id],
+            published: noteRow[note_published],
+            url: noteRow[note_url],
+            replyingToNoteId: noteRow[note_replying_to_note_id],
+            cw: noteRow[note_cw],
+            content: noteRow[note_content],
+            sensitive: noteRow[note_sensitive],
             mediaAttachments: mediaAttachments,
-            pollOptions: nil
+            pollOptions: pollOptions
         )
     }
 }
@@ -401,39 +421,39 @@ extension APubNote {
 extension APubDocument {
     static func fetchDocuments(forNote noteId: String) throws -> [APubDocument] {
         let attachmentRows = try Array(try DbInterface.getDb().prepareRowIterator(
-            DbInterface.attachments
-                .where(DbInterface.attachments_note_id == noteId)
-                .order(DbInterface.attachments_order_num)
+            attachments
+                .where(attachments_note_id == noteId)
+                .order(attachments_order_num)
         ))
         
-        return try attachmentRows.map(self.attachmentRowToDocument)
+        return try attachmentRows.map(APubDocument.init(withRow:))
     }
     
     static func deleteDocuments(forNote noteId: String) throws -> Void {
-        let attachmentsForNote = DbInterface.attachments.filter(
-            DbInterface.attachments_note_id == noteId
+        let attachmentsForNote = attachments.filter(
+            attachments_note_id == noteId
         )
         try DbInterface.getDb().run(attachmentsForNote.delete())
     }
     
     func save(withNoteId noteId: String, orderNum: Int) throws {
-        try DbInterface.getDb().run(DbInterface.attachments.insert(
+        try DbInterface.getDb().run(attachments.insert(
             or: .replace,
-            DbInterface.attachments_note_id <- noteId,
-            DbInterface.attachments_order_num <- orderNum,
-            DbInterface.attachments_media_type <- self.mediaType,
-            DbInterface.attachments_data <- self.data?.datatypeValue,
-            DbInterface.attachments_alt_text <- self.altText,
-            DbInterface.attachments_blurhash <- self.blurhash,
-            DbInterface.attachments_focal_point_x <- self.focalPoint?.0,
-            DbInterface.attachments_focal_point_y <- self.focalPoint?.1,
-            DbInterface.attachments_width <- self.size?.0,
-            DbInterface.attachments_height <- self.size?.1
+            attachments_note_id <- noteId,
+            attachments_order_num <- orderNum,
+            attachments_media_type <- self.mediaType,
+            attachments_data <- self.data?.datatypeValue,
+            attachments_alt_text <- self.altText,
+            attachments_blurhash <- self.blurhash,
+            attachments_focal_point_x <- self.focalPoint?.0,
+            attachments_focal_point_y <- self.focalPoint?.1,
+            attachments_width <- self.size?.0,
+            attachments_height <- self.size?.1
         ))
     }
     
-    private static func attachmentRowToDocument(_ attachmentRow: Row) throws -> APubDocument {
-        let blob = attachmentRow[DbInterface.attachments_data]
+    private convenience init(withRow attachmentRow: Row) throws {
+        let blob = attachmentRow[attachments_data]
         let data: Data?
         if let blob = blob {
             data = Data.fromDatatypeValue(blob)
@@ -442,8 +462,8 @@ extension APubDocument {
         }
         
         
-        let focalPointX = attachmentRow[DbInterface.attachments_focal_point_x]
-        let focalPointY = attachmentRow[DbInterface.attachments_focal_point_y]
+        let focalPointX = attachmentRow[attachments_focal_point_x]
+        let focalPointY = attachmentRow[attachments_focal_point_y]
         let focalPoint: (Double, Double)?
         if let focalPointX = focalPointX, let focalPointY = focalPointY {
             focalPoint = (focalPointX, focalPointY)
@@ -451,8 +471,8 @@ extension APubDocument {
             focalPoint = nil
         }
         
-        let width = attachmentRow[DbInterface.attachments_width]
-        let height = attachmentRow[DbInterface.attachments_height]
+        let width = attachmentRow[attachments_width]
+        let height = attachmentRow[attachments_height]
         let size: (Int, Int)?
         if let width = width, let height = height {
             size = (width, height)
@@ -460,13 +480,49 @@ extension APubDocument {
             size = nil
         }
         
-        return APubDocument(
-            mediaType: attachmentRow[DbInterface.attachments_media_type],
+        self.init(
+            mediaType: attachmentRow[attachments_media_type],
             data: data,
-            altText: attachmentRow[DbInterface.attachments_alt_text],
-            blurhash: attachmentRow[DbInterface.attachments_blurhash],
+            altText: attachmentRow[attachments_alt_text],
+            blurhash: attachmentRow[attachments_blurhash],
             focalPoint: focalPoint,
             size: size
+        )
+    }
+}
+
+extension APubPollOption {
+    static func fetchPollOptions(forNote noteId: String) throws -> [APubPollOption] {
+        let pollOptionRows = try Array(try DbInterface.getDb().prepareRowIterator(
+            pollOptions
+                .where(pollOptions_note_id == noteId)
+                .order(pollOptions_order_num)
+        ))
+        
+        return try pollOptionRows.map(Self.init(fromRow:))
+    }
+    
+    static func deletePollOptions(forNote noteId: String) throws -> Void {
+        let pollOptionsForNote = pollOptions.filter(
+            pollOptions_note_id == noteId
+        )
+        try DbInterface.getDb().run(pollOptionsForNote.delete())
+    }
+    
+    func save(withNoteId noteId: String, orderNum: Int) throws {
+        try DbInterface.getDb().run(pollOptions.insert(
+            or: .replace,
+            pollOptions_note_id <- noteId,
+            pollOptions_order_num <- orderNum,
+            pollOptions_name <- self.name,
+            pollOptions_num_votes <- self.numVotes
+        ))
+    }
+    
+    private init(fromRow pollOptionRow: Row) throws {
+        self.init(
+            name: pollOptionRow[pollOptions_name],
+            numVotes: pollOptionRow[pollOptions_num_votes]
         )
     }
 }
