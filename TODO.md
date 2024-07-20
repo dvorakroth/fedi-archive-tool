@@ -8,7 +8,6 @@ basic functionality
     * DONE ~~save to db~~
     * DONE ~~display~~
     * DONE? ~~make it look non shitty~~
-    * click images to embiggen/save
 * poll options
     * save to db
     * display
@@ -16,7 +15,7 @@ basic functionality
 * search!!!
     * through all posts
     * DONE ~~through a specific actor's posts~~
-    * don't search through raw HTML! on load, create some kind of html-stripped field to actually search through
+    * don't search through raw HTML! on import, create some kind of html-stripped field to actually search through
     * also search through alt text of attachments
     * eventually also search through poll options
 * ability to delete an actor + their posts
@@ -34,7 +33,7 @@ basic functionality
 slightly advanced functionality
 -------------------------------
 
-* load new/updated archives in the background
+* import new/updated archives in the background
     * with some sort of queue
     * whose progress is shown in the "add archive" view
     * basically the add archive view should not suck
@@ -52,9 +51,23 @@ performance optimizations
 -------------------------
 
 * scrolling through an actor's posts is kinda choppy?
-    * could it be that this would be fixed by precomputing blurhashes on load???
+    * could it be that this would be fixed by precomputing blurhashes on import???
+    * or maybe by making the post-loading thing async/in a different thread?
 
 have to do before publishing lol
 --------------------------------
 
 * about page lol
+
+bugs and workarounds
+--------------------
+
+* it seems like my mastodon server is actually exporting malformed `outbox.json` files right now!!! they contain two `orderedItems` properties, and Swift's JSON parser seems to just ignore the second one, so we always get an empty array for it
+    ```json
+    "type": "OrderedCollection",
+    "totalItems": 15687,
+    "orderedItems": [],
+    "orderedItems": [
+        {
+            "id":
+    ```
