@@ -45,3 +45,10 @@ func divideIntoPairs<T>(_ array: [T]) -> [(id: Int, T, T?)] {
     return result
 }
 
+func escapeExpressionForSqlLike(_ str: String, usingEscapeChar escapeChar: Character) -> String {
+    
+    return str
+        .replacingOccurrences(of: "\(escapeChar)", with: "\(escapeChar)\(escapeChar)")
+        .replacingOccurrences(of: "_", with: "\(escapeChar)_")
+        .replacingOccurrences(of: "%", with: "\(escapeChar)%")
+}

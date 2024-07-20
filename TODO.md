@@ -15,7 +15,10 @@ basic functionality
 * display announces
 * search!!!
     * through all posts
-    * through a specific actor's posts
+    * DONE ~~through a specific actor's posts~~
+    * don't search through raw HTML! on load, create some kind of html-stripped field to actually search through
+    * also search through alt text of attachments
+    * eventually also search through poll options
 * ability to delete an actor + their posts
 * DONE ~~convert the HTML into an `AttributedString` or sth idk~~
 * DONE? ~~placeholder images for when media/avatar/header *was* specified, but just wasn't found in the archive?~~

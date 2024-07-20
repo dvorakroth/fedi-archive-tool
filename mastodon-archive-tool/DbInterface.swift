@@ -235,21 +235,41 @@ extension APubActor {
 }
 
 extension APubActionEntry {
-    static func fetchActionEntries(fromActorId actorId: String, toDateTimeExclusive: Date? = nil, maxNumberOfPosts: Int?) throws -> [APubActionEntry] {
+    static func fetchActionEntries(
+        fromActorId actorId: String,
+        matchingSearchString: String? = nil,
+        toDateTimeExclusive: Date? = nil,
+        maxNumberOfPosts: Int?
+    ) throws -> [APubActionEntry] {
+        let stringMatchCondition: Expression<Bool>
+        if let matchingSearchString = matchingSearchString {
+            stringMatchCondition = DbInterface.notes[DbInterface.note_content].like(
+                "%"
+                + escapeExpressionForSqlLike(
+                    matchingSearchString,
+                    usingEscapeChar: "\\"
+                )
+                + "%"
+            )
+        } else {
+            stringMatchCondition = Expression(value: true)
+        }
+        
         let maxDateCondition: Expression<Bool>
         if let toDateTimeExclusive = toDateTimeExclusive {
-            maxDateCondition = DbInterface.action_published < toDateTimeExclusive
+            maxDateCondition = DbInterface.actions[DbInterface.action_published] < toDateTimeExclusive
         } else {
             maxDateCondition = Expression(value: true)
         }
         
         let entryRowsArr = try Array(try DbInterface.getDb().prepareRowIterator(
             DbInterface.actions
+                .join(.leftOuter, DbInterface.notes, on: DbInterface.notes[DbInterface.note_id] == DbInterface.actions[DbInterface.action_same_user_note_id])
+                .select(DbInterface.actions[*])
                 .where(
-                    maxDateCondition && DbInterface.action_actor_id == actorId
+                    stringMatchCondition && maxDateCondition && DbInterface.actions[DbInterface.action_actor_id] == actorId
                 )
-//                .join(.leftOuter, DbInterface.notes, on: DbInterface.notes[DbInterface.note_id] == DbInterface.actions[DbInterface.action_same_user_note_id])
-                .order(DbInterface.action_published.desc)
+                .order(DbInterface.actions[DbInterface.action_published].desc)
                 .limit(maxNumberOfPosts)
         ))
         

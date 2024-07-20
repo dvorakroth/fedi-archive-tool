@@ -11,7 +11,7 @@ struct ActorView: View {
     let actor: APubActor
     let overridePostList: [APubActionEntry]?
     
-    @StateObject var dataSource = PostDataSource()
+    @StateObject private var dataSource = PostDataSource()
     
     init(actor: APubActor, overridePostList: [APubActionEntry]? = nil) {
         self.actor = actor
@@ -149,7 +149,7 @@ struct ActorView: View {
     }
 }
 
-class PostDataSource: ObservableObject {
+fileprivate class PostDataSource: ObservableObject {
     @Published var posts = [APubActionEntry]()
     @Published var isLoading = false
     
