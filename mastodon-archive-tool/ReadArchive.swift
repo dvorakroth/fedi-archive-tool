@@ -14,6 +14,13 @@ func readArchive(_ url: URL) async throws -> APubActor {
     let getFileFromArchive: (String) async throws -> Data
     var tmpDir: TempDir? = nil
     
+    guard url.startAccessingSecurityScopedResource() else {
+        throw ArchiveReadingError.error("Can't get security scoped access")
+    }
+    defer {
+        url.stopAccessingSecurityScopedResource()
+    }
+    
     if url.pathExtension == "zip" {
         let archive = try Archive(url: url, accessMode: .read)
         
