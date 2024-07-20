@@ -53,28 +53,40 @@ func escapeExpressionForSqlLike(_ str: String, usingEscapeChar escapeChar: Chara
         .replacingOccurrences(of: "%", with: "\(escapeChar)%")
 }
 
-func pollOptionsWithNicePercentages(_ pollOptions: [APubPollOption]) -> [
+extension Double {
+    func toFixedString(digitsAfterDecimalPoint: UInt = 0) -> String {
+        return String(format: "%.\(digitsAfterDecimalPoint)f", self)
+    }
+}
+
+func pollOptionsWithNicePercentages(_ pollOptions: [APubPollOption], digitsAfterDecimalPoint: UInt = 0) -> [
     (
         pollOption: APubPollOption,
         proportion: Double,
-        percentage: Double
+        percentage: String
     )
 ] {
-    if pollOptions.count == 0 {
+    guard pollOptions.count > 0 else {
         return []
     }
     
     let totalVotes = pollOptions.map(\.numVotes).reduce(0, +)
     
     guard totalVotes != 0 else {
-        return pollOptions.enumerated().map { (idx, pollOption) in
-            (pollOption: pollOption, proportion: 0, percentage: 0)
+        return pollOptions.map { pollOption in
+            (
+                pollOption: pollOption,
+                proportion: 0,
+                percentage: 0.0.toFixedString(digitsAfterDecimalPoint: digitsAfterDecimalPoint) + "%"
+            )
         }
     }
     
+    let tenPowDigits = pow(10.0, Double(digitsAfterDecimalPoint))
+    
     var result = pollOptions.enumerated().map { (idx, pollOption) in
         let proportion = Double(pollOption.numVotes) / Double(totalVotes)
-        let percentage = (proportion * 1000.0).rounded() / 10.0
+        let percentage = (proportion * 100.0 * tenPowDigits).rounded() / tenPowDigits
         return (pollOption: pollOption, proportion: proportion, percentage: percentage)
     }
     
@@ -84,7 +96,7 @@ func pollOptionsWithNicePercentages(_ pollOptions: [APubPollOption]) -> [
             a.element.percentage < b.element.percentage
         }!
         
-        result[biggestIndex].percentage += 0.1
+        result[biggestIndex].percentage += 1.0 / tenPowDigits
     }
     
     while result.map(\.percentage).reduce(0, +) < 100.0 {
@@ -92,8 +104,14 @@ func pollOptionsWithNicePercentages(_ pollOptions: [APubPollOption]) -> [
             a.element.percentage < b.element.percentage
         }!
         
-        result[smallestIndex].percentage -= 0.1
+        result[smallestIndex].percentage -= 1.0 / tenPowDigits
     }
     
-    return result
+    return result.map { (pollOption, proportion, percentage) in
+        (
+            pollOption: pollOption,
+            proportion: proportion,
+            percentage: percentage.toFixedString(digitsAfterDecimalPoint: digitsAfterDecimalPoint) + "%"
+        )
+    }
 }

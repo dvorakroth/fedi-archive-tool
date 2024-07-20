@@ -27,7 +27,7 @@ struct PollView: View {
                         .padding(.horizontal, 8)
                         .padding(.vertical, 5)
                     Spacer()
-                    Text(String(format: "%.1f%%", pollOption.percentage))
+                    Text(pollOption.percentage)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 5)
                 }
