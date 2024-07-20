@@ -9,8 +9,8 @@ basic functionality
     * DONE ~~display~~
     * DONE? ~~make it look non shitty~~
 * poll options
-    * ~~save to db~~
-    * display
+    * DONE ~~save to db~~
+    * DONE ~~display~~
     * import, save & display poll end time
 * display announces
 * search!!!

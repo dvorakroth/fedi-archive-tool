@@ -57,6 +57,17 @@ struct PostView: View {
                     let _ = hasAttachments = false
                 }
                 
+                let hasPollOptions: Bool
+                if let pollOptions = post.pollOptions {
+                    if pollOptions.count > 0 {
+                        let _ = hasPollOptions = true
+                    } else {
+                        let _ = hasPollOptions = false
+                    }
+                } else {
+                    let _ = hasPollOptions = false
+                }
+                
                 Button(action: {
                     withAnimation {
                         isExpanded.toggle()
@@ -66,6 +77,8 @@ struct PostView: View {
                     
                     if hasAttachments {
                         Label(text, systemImage: "paperclip")
+                    } else if hasPollOptions {
+                        Label(text, systemImage: "chart.bar.xaxis")
                     } else {
                         Text(text)
                     }
@@ -80,6 +93,14 @@ struct PostView: View {
                     Spacer().frame(height: 10)
                 }
                 Text(convertHTML(post.content))
+            }
+            
+            if let pollOptions = post.pollOptions {
+                if pollOptions.count > 0 && (self.isExpanded || post.cw == nil) {
+                    
+                    Spacer().frame(height: 8)
+                    PollView(pollOptions: pollOptions)
+                }
             }
             
             if let mediaAttachments = post.mediaAttachments {
@@ -123,7 +144,7 @@ struct PostView: View {
 #Preview {
     PostView(
         actor: MockData.actor,
-        post: MockData.posts[2].action.getNote()!,
+        post: MockData.posts[0].action.getNote()!,
         announcedBy: MockData.actor
     )
 }

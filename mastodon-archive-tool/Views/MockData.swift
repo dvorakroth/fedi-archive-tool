@@ -8,7 +8,7 @@
 import Foundation
 
 class MockData {
-    public static let posts = [
+    public static let posts = Array([
         APubActionEntry(
             id: "https://social.example.net/posts/123",
             actorId: "https://social.example.net/users/mx123",
@@ -79,7 +79,32 @@ class MockData {
                     ],
                     pollOptions: nil
                 )
-            ))
+            )),
+        APubActionEntry(
+            id: "https://social.example.net/posts/126",
+            actorId: "https://social.example.net/users/mx123",
+            published: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 96 * 3600)),
+            action: .create(
+                APubNote(
+                    id: "https://social.example.net/posts/126",
+                    published: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 96 * 3600)),
+                    url: "https://social.example.net/posts/126",
+                    replyingToNoteId: "https://social.example.net/posts/125",
+                    cw: "a poll about the images",
+                    content: "<p>Which image is the best?</p>",
+                    sensitive: false,
+                    mediaAttachments: nil,
+                    pollOptions: MockData.poll
+                )
+            )
+        )
+    ].reversed())
+    
+    public static let poll = [
+        APubPollOption(name: "The first", numVotes: 10),
+        APubPollOption(name: "The second", numVotes: 2),
+        APubPollOption(name: "The third", numVotes: 3),
+        APubPollOption(name: "Secret fourth option", numVotes: 53)
     ]
     
     public static let actor = APubActor(

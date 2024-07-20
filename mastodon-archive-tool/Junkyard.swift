@@ -52,3 +52,48 @@ func escapeExpressionForSqlLike(_ str: String, usingEscapeChar escapeChar: Chara
         .replacingOccurrences(of: "_", with: "\(escapeChar)_")
         .replacingOccurrences(of: "%", with: "\(escapeChar)%")
 }
+
+func pollOptionsWithNicePercentages(_ pollOptions: [APubPollOption]) -> [
+    (
+        pollOption: APubPollOption,
+        proportion: Double,
+        percentage: Double
+    )
+] {
+    if pollOptions.count == 0 {
+        return []
+    }
+    
+    let totalVotes = pollOptions.map(\.numVotes).reduce(0, +)
+    
+    guard totalVotes != 0 else {
+        return pollOptions.enumerated().map { (idx, pollOption) in
+            (pollOption: pollOption, proportion: 0, percentage: 0)
+        }
+    }
+    
+    var result = pollOptions.enumerated().map { (idx, pollOption) in
+        let proportion = Double(pollOption.numVotes) / Double(totalVotes)
+        let percentage = (proportion * 1000.0).rounded() / 10.0
+        return (pollOption: pollOption, proportion: proportion, percentage: percentage)
+    }
+    
+    
+    while result.map(\.percentage).reduce(0, +) < 100.0 {
+        let (biggestIndex, _) = result.enumerated().max { a, b in
+            a.element.percentage < b.element.percentage
+        }!
+        
+        result[biggestIndex].percentage += 0.1
+    }
+    
+    while result.map(\.percentage).reduce(0, +) < 100.0 {
+        let (smallestIndex, _) = result.enumerated().min { a, b in
+            a.element.percentage < b.element.percentage
+        }!
+        
+        result[smallestIndex].percentage -= 0.1
+    }
+    
+    return result
+}
