@@ -94,6 +94,7 @@ public enum APubAction {
 /// this is a post
 public class APubNote {
     let id: String;
+    let actorId: String;
     let published: Date;
     let url: String;
     let replyingToNoteId: String?;
@@ -104,8 +105,9 @@ public class APubNote {
     let pollOptions: [APubPollOption]?;
     // TODO language tag?
     
-    init(id: String, published: Date, url: String, replyingToNoteId: String?, cw: String?, content: String, sensitive: Bool, mediaAttachments: [APubDocument]?, pollOptions: [APubPollOption]?) {
+    init(id: String, actorId: String, published: Date, url: String, replyingToNoteId: String?, cw: String?, content: String, sensitive: Bool, mediaAttachments: [APubDocument]?, pollOptions: [APubPollOption]?) {
         self.id = id
+        self.actorId = actorId
         self.published = published
         self.url = url
         self.replyingToNoteId = replyingToNoteId
@@ -122,6 +124,8 @@ public extension APubNote {
         let id = try tryGet(field: "id", ofType: .string, fromObject: json, called: "Note") as! String
         
         let noteNameForErrors = "Note \(id)"
+        
+        let actorId = try tryGet(field: "attributedTo", ofType: .string, fromObject: json, called: noteNameForErrors) as! String
         
         let type = try tryGet(field: "type", ofType: .string, fromObject: json, called: noteNameForErrors) as! String
         if type != "Note" && type != "Question" {
@@ -167,7 +171,7 @@ public extension APubNote {
             pollOptions = nil
         }
         
-        self.init(id: id, published: published, url: url, replyingToNoteId: replyingToNoteId, cw: cw, content: content, sensitive: sensitive, mediaAttachments: mediaAttachments, pollOptions: pollOptions)
+        self.init(id: id, actorId: actorId, published: published, url: url, replyingToNoteId: replyingToNoteId, cw: cw, content: content, sensitive: sensitive, mediaAttachments: mediaAttachments, pollOptions: pollOptions)
     }
 }
 

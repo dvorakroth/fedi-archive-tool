@@ -17,11 +17,11 @@ basic functionality
     * through all posts
     * DONE ~~through a specific actor's posts~~
     * don't search through raw HTML! on import, create some kind of html-stripped field to actually search through
-    * also search through alt text of attachments
+    * also search through cw, poll options, and alt text of attachments
     * eventually also search through poll options
     * make it look non shitty
     * don't include announces
-* ability to delete an actor + their posts
+* DONE ~~ability to delete an actor + their posts~~
 * DONE ~~convert the HTML into an `AttributedString` or sth idk~~
 * DONE? ~~placeholder images for when media/avatar/header *was* specified, but just wasn't found in the archive?~~
 * instead of "Go to Profile" and "Permalink" buttons, use the built-in share sheet
@@ -68,6 +68,7 @@ have to do before publishing lol
 bugs and workarounds
 --------------------
 
+* on iPad/Mac, when deleting an actor, navigate away from its ActorView if open
 * it seems like my mastodon server is actually exporting malformed `outbox.json` files right now!!! they contain two `orderedItems` properties, and Swift's JSON parser seems to just ignore the second one, so we always get an empty array for it
     ```json
     "type": "OrderedCollection",

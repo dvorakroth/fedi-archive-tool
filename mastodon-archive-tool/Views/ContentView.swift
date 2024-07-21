@@ -27,6 +27,16 @@ struct ContentView: View {
                             })
                         }
                     }
+                    .onDelete { indexSet in
+                        do {
+                            try APubActor.deleteActors(withIds: actors.get(indexSet: indexSet).map(\.id))
+                            actors.remove(atOffsets: indexSet)
+                        } catch {
+                            // TODO handle error gracefully
+                            print(error.localizedDescription)
+                        }
+                    }
+                    .toolbar { EditButton() }
                     
                     #if DEBUG
                     NavigationLink {
@@ -62,12 +72,16 @@ struct ContentView: View {
             .listStyle(SidebarListStyle())
             .navigationTitle("Archives")
         }.task {
-            do {
-                actors = try APubActor.fetchAllActors()
-            } catch {
-                // TODO handle error gracefully
-                print(error.localizedDescription)
-            }
+            updateActorsList()
+        }
+    }
+    
+    func updateActorsList() {
+        do {
+            actors = try APubActor.fetchAllActors()
+        } catch {
+            // TODO handle error gracefully
+            print(error.localizedDescription)
         }
     }
 }

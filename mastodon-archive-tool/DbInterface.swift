@@ -28,6 +28,13 @@ fileprivate class DbInterface {
         
         self.db = try Connection(dbFile)
         
+        /// > Assuming the library is compiled with foreign key constraints enabled, it must still be enabled by the application at runtime, using the PRAGMA foreign_keys command. For example:
+        /// > `sqlite> PRAGMA foreign_keys = ON;`
+        /// > Foreign key constraints are disabled by default (for backwards compatibility), so must be enabled separately **for each database connection.**
+        ///
+        /// — Excerpt from [SQLite Docs, Foreign Keys, Section 2](https://www.sqlite.org/foreignkeys.html#fk_enable) (emphasis added)
+        try db.run("PRAGMA foreign_keys = ON;")
+        
         if (dbAlreadyExists) {
             try self.checkVersionAndHandleMigrations()
         } else {
@@ -76,12 +83,15 @@ fileprivate class DbInterface {
         
         try db.run(notes.create { t in
             t.column(note_id, primaryKey: true)
+            t.column(note_actor_id)
             t.column(note_published)
             t.column(note_url)
             t.column(note_replying_to_note_id)
             t.column(note_cw)
             t.column(note_content)
             t.column(note_sensitive)
+            
+            t.foreignKey(note_actor_id, references: actors, actor_id, delete: .cascade)
         })
         
         try db.run(actions.create { t in
@@ -92,8 +102,8 @@ fileprivate class DbInterface {
             t.column(action_same_user_note_id)
             t.column(action_other_user_note_id)
             
-            t.foreignKey(action_actor_id, references: actors, actor_id)
-            t.foreignKey(action_same_user_note_id, references: notes, note_id)
+            t.foreignKey(action_actor_id, references: actors, actor_id, delete: .cascade)
+            t.foreignKey(action_same_user_note_id, references: notes, note_id, delete: .cascade)
         })
         
         try db.run(attachments.create { t in
@@ -109,6 +119,7 @@ fileprivate class DbInterface {
             t.column(attachments_height)
             
             t.primaryKey(attachments_note_id, attachments_order_num)
+            t.foreignKey(attachments_note_id, references: notes, note_id, delete: .cascade)
         })
         
         try db.run(pollOptions.create { t in
@@ -118,6 +129,7 @@ fileprivate class DbInterface {
             t.column(pollOptions_num_votes)
             
             t.primaryKey(pollOptions_note_id, pollOptions_order_num)
+            t.foreignKey(pollOptions_note_id, references: notes, note_id, delete: .cascade)
         })
     }
 }
@@ -145,6 +157,7 @@ fileprivate let action_other_user_note_id = Expression<String?>("other_user_note
 
 fileprivate let notes = Table("notes")
 fileprivate let note_id = Expression<String>("id")
+fileprivate let note_actor_id = Expression<String>("actor_id")
 fileprivate let note_published = Expression<Date>("published")
 fileprivate let note_url = Expression<String>("url")
 fileprivate let note_replying_to_note_id = Expression<String?>("replying_to_note_id")
@@ -183,7 +196,10 @@ extension APubActor {
     }
     
     static func fetchAllActors() throws -> [APubActor] {
-        let actorsArr = try Array(try DbInterface.getDb().prepareRowIterator(actors))
+        let actorsArr = try Array(try DbInterface.getDb().prepareRowIterator(
+            actors
+                .order(actor_username)
+        ))
         return try actorsArr.map(APubActor.init(fromRow:))
     }
     
@@ -209,6 +225,15 @@ extension APubActor {
             actor_headerimage <- headerImage?.0.datatypeValue,
             actor_headerimage_type <- headerImage?.1
         ))
+    }
+    
+    static func deleteActors(withIds actorIds: [String]) throws {
+        try DbInterface.getDb().transaction {
+            try DbInterface.getDb().run(
+                // all of the other related objects (actions, notes, etc) all have FOREIGN KEYs with ON DELETE CASCADE so it should be fine?
+                actors.filter(actorIds.contains(actor_id)).delete()
+            )
+        }
     }
     
     private convenience init(fromRow actorRow: Row) throws {
@@ -376,6 +401,7 @@ extension APubNote {
         try DbInterface.getDb().run(notes.insert(
             or: .replace,
             note_id <- self.id,
+            note_actor_id <- self.actorId,
             note_published <- self.published,
             note_url <- self.url,
             note_replying_to_note_id <- self.replyingToNoteId,
@@ -406,6 +432,7 @@ extension APubNote {
     ) throws {
         self.init(
             id: noteRow[note_id],
+            actorId: noteRow[note_actor_id],
             published: noteRow[note_published],
             url: noteRow[note_url],
             replyingToNoteId: noteRow[note_replying_to_note_id],

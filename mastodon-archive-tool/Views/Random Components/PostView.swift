@@ -68,6 +68,7 @@ struct PostView: View {
                     let _ = hasPollOptions = false
                 }
                 
+                Spacer().frame(height: 10)
                 Button(action: {
                     withAnimation {
                         isExpanded.toggle()
@@ -76,12 +77,14 @@ struct PostView: View {
                     let text = self.isExpanded ? "Show less" : "Show more"
                     
                     if hasAttachments {
-                        Label(text, systemImage: "paperclip")
-                    } else if hasPollOptions {
-                        Label(text, systemImage: "chart.bar.xaxis")
-                    } else {
-                        Text(text)
+                        Image(systemName: "paperclip")
                     }
+                    
+                    if hasPollOptions {
+                        Image(systemName: "chart.bar.xaxis")
+                    }
+                    
+                    Text(text)
                 }
                 .buttonStyle(.bordered)
                 .font(.caption)
@@ -142,9 +145,11 @@ struct PostView: View {
 }
 
 #Preview {
-    PostView(
-        actor: MockData.actor,
-        post: MockData.posts[0].action.getNote()!,
-        announcedBy: MockData.actor
-    )
+    ScrollView {
+        PostView(
+            actor: MockData.actor,
+            post: MockData.posts[0].action.getNote()!,
+            announcedBy: MockData.actor
+        )
+    }
 }

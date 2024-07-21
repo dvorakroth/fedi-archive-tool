@@ -115,3 +115,16 @@ func pollOptionsWithNicePercentages(_ pollOptions: [APubPollOption], digitsAfter
         )
     }
 }
+
+extension Array {
+    func get(indexSet: IndexSet) -> [Element] {
+        var result: [Element] = Array()
+        result.reserveCapacity(indexSet.count)
+        
+        for index in indexSet {
+            result.append(self[index])
+        }
+        
+        return result
+    }
+}
