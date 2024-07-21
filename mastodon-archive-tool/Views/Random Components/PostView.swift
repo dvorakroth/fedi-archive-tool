@@ -13,6 +13,7 @@ struct PostView: View {
     let announcedBy: APubActor?
     
     @State var isExpanded = false
+    @State var permalinkShareSheetIsShown = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -148,11 +149,17 @@ struct PostView: View {
                 
                 Spacer()
                 
-                Button("Permalink") {
-                    if let url = URL(string: post.url) {
-                        showShareSheet(url: url)
-                    }
-                }.font(.caption)
+                Button("Permalink", systemImage: "link"){
+                    permalinkShareSheetIsShown.toggle()
+                }
+                    .font(.caption)
+                    .popover(isPresented: $permalinkShareSheetIsShown, content: {
+                        if let url = URL(string: post.url) {
+                            ShareSheetView(url: url)
+                        } else {
+                            Text("Could not parse user URL: \(actor.url)")
+                        }
+                    })
             }
             
             Spacer().frame(height: 15)

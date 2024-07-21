@@ -171,16 +171,3 @@ class OpenInBrowserActivity: UIActivity {
         }
     }
 }
-
-func showShareSheet(url: URL) {
-    UIApplication.shared.currentWindow?.rootViewController?.present(
-        UIActivityViewController(
-            activityItems: [url],
-            applicationActivities: [
-                OpenInBrowserActivity()
-            ]
-        ),
-        animated: true,
-        completion: nil
-    )
-}

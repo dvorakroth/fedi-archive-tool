@@ -11,6 +11,7 @@ struct ActorView: View {
     let actor: APubActor
     let overridePostList: [APubActionEntry]?
     
+    @State private var profileLinkShareSheetIsShown = false
     @StateObject private var dataSource = PostDataSource()
     
     init(actor: APubActor, overridePostList: [APubActionEntry]? = nil) {
@@ -36,10 +37,17 @@ struct ActorView: View {
                             HStack(spacing: 0) {
                                 Spacer()
                                 Button("Link to profile") {
-                                    if let url = URL(string: actor.url) {
-                                        showShareSheet(url: url)
-                                    }
-                                }.buttonStyle(.borderedProminent).padding(.trailing)
+                                    profileLinkShareSheetIsShown.toggle()
+                                }
+                                    .buttonStyle(.borderedProminent)
+                                    .padding(.trailing)
+                                    .popover(isPresented: $profileLinkShareSheetIsShown, content: {
+                                        if let url = URL(string: actor.url) {
+                                            ShareSheetView(url: url)
+                                        } else {
+                                            Text("Could not parse user URL: \(actor.url)")
+                                        }
+                                    })
                             }.frame(height: 60)
                         }
                         
