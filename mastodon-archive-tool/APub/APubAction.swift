@@ -91,24 +91,53 @@ public enum APubAction {
     }
 }
 
+public enum APubNoteVisibilityLevel: String {
+    case _public = "PUBLIC"
+    case unlisted = "UNLISTED"
+    case followersOnly = "FOLLOWERS"
+    case dm = "DM"
+    case unknown = "UNKNOWN"
+    
+    private static let PUBLIC_VALUES: Set<String> = ["https://www.w3.org/ns/activitystreams#Public", "Public", "as:Public"]
+    
+    static func figureOutVisibilityLevel(fromToList toList: [String], ccList: [String], withActorId actorId: String) -> APubNoteVisibilityLevel {
+        if PUBLIC_VALUES.intersection(toList).count > 0 {
+            return ._public
+        }
+        
+        if PUBLIC_VALUES.intersection(ccList).count > 0 {
+            return .unlisted
+        }
+        
+        let followersUrl = actorId + (actorId.hasSuffix("/") ? "" : "/") + "followers"
+        if toList.firstIndex(of: followersUrl) != nil || ccList.firstIndex(of: followersUrl) != nil {
+            return .followersOnly
+        }
+        
+        return .dm
+    }
+}
+
 /// this is a post
 public class APubNote {
-    let id: String;
-    let actorId: String;
-    let published: Date;
-    let url: String;
-    let replyingToNoteId: String?;
-    let cw: String?;
-    let content: String;
-    let sensitive: Bool;
-    let mediaAttachments: [APubDocument]?;
-    let pollOptions: [APubPollOption]?;
+    let id: String
+    let actorId: String
+    let published: Date
+    let visibilityLevel: APubNoteVisibilityLevel
+    let url: String
+    let replyingToNoteId: String?
+    let cw: String?
+    let content: String
+    let sensitive: Bool
+    let mediaAttachments: [APubDocument]?
+    let pollOptions: [APubPollOption]?
     // TODO language tag?
     
-    init(id: String, actorId: String, published: Date, url: String, replyingToNoteId: String?, cw: String?, content: String, sensitive: Bool, mediaAttachments: [APubDocument]?, pollOptions: [APubPollOption]?) {
+    init(id: String, actorId: String, published: Date, visibilityLevel: APubNoteVisibilityLevel, url: String, replyingToNoteId: String?, cw: String?, content: String, sensitive: Bool, mediaAttachments: [APubDocument]?, pollOptions: [APubPollOption]?) {
         self.id = id
         self.actorId = actorId
         self.published = published
+        self.visibilityLevel = visibilityLevel
         self.url = url
         self.replyingToNoteId = replyingToNoteId
         self.cw = cw
@@ -133,6 +162,22 @@ public extension APubNote {
         }
         
         let published = try tryGetDate(inField: "published", fromObject: json, called: noteNameForErrors)
+        
+        let toList = try tryGetArray(inField: "to", fromObject: json, called: noteNameForErrors) { obj, itemNameForErrors, objNameForErrors in
+            guard let obj = obj as? String else {
+                throw APubParseError.wrongTypeForField(itemNameForErrors, onObject: objNameForErrors, expected: [.string])
+            }
+            
+            return obj
+        }
+        let ccList = try tryGetArray(inField: "cc", fromObject: json, called: noteNameForErrors) { obj, itemNameForErrors, objNameForErrors in
+            guard let obj = obj as? String else {
+                throw APubParseError.wrongTypeForField(itemNameForErrors, onObject: objNameForErrors, expected: [.string])
+            }
+            
+            return obj
+        }
+        let visibilityLevel = APubNoteVisibilityLevel.figureOutVisibilityLevel(fromToList: toList, ccList: ccList, withActorId: actorId)
         
         let url = try tryGet(field: "url", ofType: .string, fromObject: json, called: noteNameForErrors) as! String
         
@@ -171,7 +216,7 @@ public extension APubNote {
             pollOptions = nil
         }
         
-        self.init(id: id, actorId: actorId, published: published, url: url, replyingToNoteId: replyingToNoteId, cw: cw, content: content, sensitive: sensitive, mediaAttachments: mediaAttachments, pollOptions: pollOptions)
+        self.init(id: id, actorId: actorId, published: published, visibilityLevel: visibilityLevel, url: url, replyingToNoteId: replyingToNoteId, cw: cw, content: content, sensitive: sensitive, mediaAttachments: mediaAttachments, pollOptions: pollOptions)
     }
 }
 

@@ -85,6 +85,7 @@ fileprivate class DbInterface {
             t.column(note_id, primaryKey: true)
             t.column(note_actor_id)
             t.column(note_published)
+            t.column(note_visibility)
             t.column(note_url)
             t.column(note_replying_to_note_id)
             t.column(note_cw)
@@ -159,6 +160,7 @@ fileprivate let notes = Table("notes")
 fileprivate let note_id = Expression<String>("id")
 fileprivate let note_actor_id = Expression<String>("actor_id")
 fileprivate let note_published = Expression<Date>("published")
+fileprivate let note_visibility = Expression<APubNoteVisibilityLevel.RawValue>("visibility")
 fileprivate let note_url = Expression<String>("url")
 fileprivate let note_replying_to_note_id = Expression<String?>("replying_to_note_id")
 fileprivate let note_cw = Expression<String?>("cw")
@@ -403,6 +405,7 @@ extension APubNote {
             note_id <- self.id,
             note_actor_id <- self.actorId,
             note_published <- self.published,
+            note_visibility <- self.visibilityLevel.rawValue,
             note_url <- self.url,
             note_replying_to_note_id <- self.replyingToNoteId,
             note_cw <- self.cw,
@@ -434,6 +437,7 @@ extension APubNote {
             id: noteRow[note_id],
             actorId: noteRow[note_actor_id],
             published: noteRow[note_published],
+            visibilityLevel: APubNoteVisibilityLevel(rawValue: noteRow[note_visibility]) ?? .unknown,
             url: noteRow[note_url],
             replyingToNoteId: noteRow[note_replying_to_note_id],
             cw: noteRow[note_cw],

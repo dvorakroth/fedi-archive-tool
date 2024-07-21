@@ -27,11 +27,11 @@ basic functionality
 * instead of "Go to Profile" and "Permalink" buttons, use the built-in share sheet
 * divide actor's posts into Posts, Posts+Replies, Media, DMs
 * DONE ~~title in navigation view when looking at a profile~~
-* show little icon when post is a reply to something
-* post privacy levels
-    * figure out how the fuck this is encoded in the json
-    * parse and save
-    * display an icon or some shit
+* DONE ~~show little icon when post is a reply to something~~
+* DONE ~~post privacy levels~~
+    * DONE ~~figure out how the fuck this is encoded in the json~~
+    * DONE ~~parse and save~~
+    * DONE ~~display an icon or some shit~~
 
 slightly advanced functionality
 -------------------------------

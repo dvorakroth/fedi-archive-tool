@@ -34,8 +34,24 @@ struct PostView: View {
                 ImageOrRectangle(image: .data(actor.icon?.0), fallbackColor: .secondary, fallbackIcon: nil, width: 50, height: 50).cornerRadius(5)
                 
                 VStack(alignment: .leading) {
-                    Text(actor.name)
-                    Text(actor.fullUsername).font(.caption)
+                    HStack {
+                        Text(actor.name)
+                            .lineLimit(1)
+                        Spacer()
+                        HStack(spacing: 2) {
+                            if post.replyingToNoteId != nil {
+                                Image(systemName: "bubble.left.and.bubble.right")
+                            }
+                            
+                            Image(systemName: post.visibilityLevel.systemImageName)
+                        }
+                            .padding(.top, 2)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Text(actor.fullUsername)
+                        .font(.caption)
+                        .lineLimit(1)
                 }
                 
                 Spacer()
@@ -151,5 +167,24 @@ struct PostView: View {
             post: MockData.posts[0].action.getNote()!,
             announcedBy: MockData.actor
         )
+    }
+}
+
+extension APubNoteVisibilityLevel {
+    var systemImageName: String {
+        get {
+            switch self {
+            case ._public:
+                return "globe.europe.africa.fill"
+            case .unlisted:
+                return "moon"
+            case .followersOnly:
+                return "lock"
+            case .dm:
+                return "envelope"
+            case .unknown:
+                return "circle.badge.questionmark"
+            }
+        }
     }
 }

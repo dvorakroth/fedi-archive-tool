@@ -18,6 +18,7 @@ class MockData {
                     id: "https://social.example.net/posts/123",
                     actorId: MockData.actor.id,
                     published: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 24 * 3600)),
+                    visibilityLevel: .followersOnly,
                     url: "https://social.example.net/posts/123",
                     replyingToNoteId: nil,
                     cw: nil,
@@ -37,6 +38,7 @@ class MockData {
                     id: "https://social.example.net/posts/124",
                     actorId: MockData.actor.id,
                     published: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 48 * 3600)),
+                    visibilityLevel: .unlisted,
                     url: "https://social.example.net/posts/124",
                     replyingToNoteId: nil,
                     cw: "second post??",
@@ -70,6 +72,7 @@ class MockData {
                     id: "https://social.example.net/posts/125",
                     actorId: MockData.actor.id,
                     published: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 72 * 3600)),
+                    visibilityLevel: ._public,
                     url: "https://social.example.net/posts/125",
                     replyingToNoteId: nil,
                     cw: "broken images",
@@ -82,25 +85,27 @@ class MockData {
                     ],
                     pollOptions: MockData.poll
                 )
-            ))
-//        APubActionEntry(
-//            id: "https://social.example.net/posts/126",
-//            actorId: MockData.actor.id,
-//            published: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 96 * 3600)),
-//            action: .create(
-//                APubNote(
-//                    id: "https://social.example.net/posts/126",
-//                    published: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 96 * 3600)),
-//                    url: "https://social.example.net/posts/126",
-//                    replyingToNoteId: "https://social.example.net/posts/125",
-//                    cw: "a poll about the images",
-//                    content: "<p>Which image is the best?</p>",
-//                    sensitive: false,
-//                    mediaAttachments: nil,
-//                    pollOptions: MockData.poll
-//                )
-//            )
-//        )
+            )),
+        APubActionEntry(
+            id: "https://social.example.net/posts/126",
+            actorId: MockData.actor.id,
+            published: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 96 * 3600)),
+            action: .create(
+                APubNote(
+                    id: "https://social.example.net/posts/126",
+                    actorId: MockData.actor.id,
+                    published: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 96 * 3600)),
+                    visibilityLevel: .unknown,
+                    url: "https://social.example.net/posts/126",
+                    replyingToNoteId: "https://social.example.net/posts/125",
+                    cw: "a poll about the images",
+                    content: "<p>Which image is the best?</p>",
+                    sensitive: false,
+                    mediaAttachments: nil,
+                    pollOptions: MockData.poll
+                )
+            )
+        )
     ].reversed())
     
     public static let poll = [
