@@ -150,7 +150,7 @@ struct PostView: View {
                 
                 Button("Permalink") {
                     if let url = URL(string: post.url) {
-                        UIApplication.shared.open(url)
+                        showShareSheet(url: url)
                     }
                 }.font(.caption)
             }

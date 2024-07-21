@@ -34,9 +34,9 @@ struct ActorView: View {
                             
                             HStack(spacing: 0) {
                                 Spacer()
-                                Button("Go to profile") {
+                                Button("Link to profile") {
                                     if let url = URL(string: actor.url) {
-                                        UIApplication.shared.open(url)
+                                        showShareSheet(url: url)
                                     }
                                 }.buttonStyle(.borderedProminent).padding(.trailing)
                             }.frame(height: 60)

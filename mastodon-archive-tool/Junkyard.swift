@@ -5,7 +5,7 @@
 //  Created by Wolfe on 25.06.24.
 //
 
-import Foundation
+import SwiftUI
 
 func formatDateWithoutTime(_ dateTime: Date) -> String {
     let formatter = DateFormatter()
@@ -127,4 +127,60 @@ extension Array {
         
         return result
     }
+}
+
+public extension UIApplication {
+    var currentWindow: UIWindow? {
+        let foregroundScene = UIApplication.shared.connectedScenes
+            .first { scene in scene.activationState == .foregroundActive } as? UIWindowScene
+        
+        return foregroundScene?.windows.first(where: \.isKeyWindow)
+    }
+}
+
+class OpenInBrowserActivity: UIActivity {
+    var activityItem: URL? = nil
+    
+    override var activityTitle: String? {
+        "Open in Browser"
+    }
+    
+    override var activityImage: UIImage? {
+        UIImage(systemName: "safari")
+    }
+    
+    override var activityType: UIActivity.ActivityType? {
+        UIActivity.ActivityType("works.ish.mastodon-archive-tool.open-in-browser")
+    }
+    
+    override class var activityCategory: UIActivity.Category {
+        .action
+    }
+    
+    override func canPerform(withActivityItems activityItems: [Any]) -> Bool {
+        return activityItems.contains { item in item is URL }
+    }
+    
+    override func prepare(withActivityItems activityItems: [Any]) {
+        self.activityItem = (activityItems.first { item in item is URL } as! URL)
+    }
+    
+    override func perform() {
+        if let activityItem = activityItem {
+            UIApplication.shared.open(activityItem)
+        }
+    }
+}
+
+func showShareSheet(url: URL) {
+    UIApplication.shared.currentWindow?.rootViewController?.present(
+        UIActivityViewController(
+            activityItems: [url],
+            applicationActivities: [
+                OpenInBrowserActivity()
+            ]
+        ),
+        animated: true,
+        completion: nil
+    )
 }
