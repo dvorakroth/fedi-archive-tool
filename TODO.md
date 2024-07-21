@@ -56,9 +56,9 @@ slightly advanced functionality
 performance optimizations
 -------------------------
 
-* scrolling through an actor's posts is kinda choppy?
-    * could it be that this would be fixed by precomputing blurhashes on import???
-    * or maybe by making the post-loading thing async/in a different thread?
+* DONE? ~~scrolling through an actor's posts is kinda choppy?~~
+    * DONE ~~could it be that this would be fixed by precomputing blurhashes on import???~~
+    * ~~or maybe by making the post-loading thing async/in a different thread?~~
 * when reading `actions INNER JOIN notes` from the DB, don't dump out the `notes.*` -- use it to create the APubNote
 
 have to do before publishing lol
@@ -70,6 +70,7 @@ bugs and workarounds
 --------------------
 
 * DONE ~~on iPad/Mac, when deleting an actor, navigate away from its ActorView if open~~
+* perform deletions async so they don't stick the ui thread
 * it seems like my mastodon server is actually exporting malformed `outbox.json` files right now!!! they contain two `orderedItems` properties, and Swift's JSON parser seems to just ignore the second one, so we always get an empty array for it
     ```json
     "type": "OrderedCollection",

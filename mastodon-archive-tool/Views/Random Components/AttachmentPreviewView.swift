@@ -20,8 +20,7 @@ struct AttachmentPreviewView: View {
     let attachment: APubDocument;
     let attachmentType: AttachmentType;
     
-    private let blurhashImage: UIImage?;
-    
+    @State var blurhashImage: UIImage?;
     @State var isHidden: Bool
     
     init(attachment: APubDocument, hiddenByDefault: Bool) {
@@ -37,12 +36,6 @@ struct AttachmentPreviewView: View {
             self.attachmentType = .unknown
         }
         
-        if let blurhash = attachment.blurhash {
-            blurhashImage = UIImage(blurHash: blurhash, size: CGSize(width: 500, height: 250))
-        } else {
-            blurhashImage = nil
-        }
-        
         self.isHidden = hiddenByDefault
     }
     
@@ -56,7 +49,25 @@ struct AttachmentPreviewView: View {
                         fallbackIcon: nil,
                         width: geo.size.width,
                         height: 150
-                    ).cornerRadius(5)
+                    )
+                        .cornerRadius(5)
+                        .task {
+                            guard blurhashImage == nil else {
+                                return
+                            }
+                            
+                            if let blurhash = attachment.blurhash {
+                                let newImage = await withCheckedContinuation { continuation in
+                                    Task.detached(priority: .medium) {
+                                        continuation.resume(returning: UIImage(blurHash: blurhash, size: CGSize(width: 500, height: 250)))
+                                    }
+                                }
+                                
+                                withAnimation {
+                                    blurhashImage = newImage
+                                }
+                            }
+                        }
                     
                     Button("Show media") {
                         withAnimation {
