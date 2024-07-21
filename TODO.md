@@ -40,6 +40,7 @@ slightly advanced functionality
     * with some sort of queue
     * whose progress is shown in the "add archive" view
     * basically the add archive view should not suck
+    * also do the import in a transaction so if it fails we don't get partial data in the DB
 * detail view for individual posts
     * show any replies that might be in the DB
     * show what the post might be replying to
@@ -68,7 +69,7 @@ have to do before publishing lol
 bugs and workarounds
 --------------------
 
-* on iPad/Mac, when deleting an actor, navigate away from its ActorView if open
+* DONE ~~on iPad/Mac, when deleting an actor, navigate away from its ActorView if open~~
 * it seems like my mastodon server is actually exporting malformed `outbox.json` files right now!!! they contain two `orderedItems` properties, and Swift's JSON parser seems to just ignore the second one, so we always get an empty array for it
     ```json
     "type": "OrderedCollection",
