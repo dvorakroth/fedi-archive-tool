@@ -55,6 +55,7 @@ struct ImageOrRectangle: View {
                 .resizable()
                 .aspectRatio(contentMode: contentMode ?? .fill)
                 .frame(width: width, height: height)
+                .clipped()
         } else {
             ZStack {
                 Rectangle()

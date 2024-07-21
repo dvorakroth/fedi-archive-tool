@@ -29,7 +29,8 @@ struct ActorView: View {
                                 fallbackColor: .secondary,
                                 fallbackIcon: nil,
                                 width: geo.size.width,
-                                height: 200
+                                height: 200,
+                                contentMode: .fill
                             )
                             
                             HStack(spacing: 0) {
