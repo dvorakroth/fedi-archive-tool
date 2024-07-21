@@ -359,7 +359,7 @@ extension APubActionEntry {
         ))
     }
     
-    private convenience init(fromRow actionEntryRow: Row) throws {
+    fileprivate convenience init(fromRow actionEntryRow: Row) throws {
         let id = actionEntryRow[action_id]
         let actorId = actionEntryRow[action_actor_id]
         let published = actionEntryRow[action_published]
@@ -458,6 +458,38 @@ extension APubDocument {
         ))
         
         return try attachmentRows.map(APubDocument.init(withRow:))
+    }
+    
+    static func fetchDocuments(
+        forActor actorId: String,
+        toDateTimeExclusive: Date? = nil,
+        maxNumberOfPosts: Int?
+    ) throws -> [(APubDocument, APubActionEntry)] {
+        let maxDateCondition: Expression<Bool>
+        if let toDateTimeExclusive = toDateTimeExclusive {
+            maxDateCondition = actions[action_published] < toDateTimeExclusive
+        } else {
+            maxDateCondition = Expression(value: true)
+        }
+        
+        let rows = try Array(try DbInterface.getDb().prepareRowIterator(
+            attachments
+                .join(actions, on: actions[action_id] == attachments[attachments_note_id])
+                .where(
+                    actions[action_actor_id] == actorId
+                    && actions[action_action_type] == 0
+                    && maxDateCondition
+                )
+                .order(
+                    actions[action_published].desc,
+                    attachments[attachments_order_num].asc
+                )
+                .limit(maxNumberOfPosts)
+        ))
+        
+        return try rows.map { row in
+            (try APubDocument(withRow: row), try APubActionEntry(fromRow: row))
+        }
     }
     
     static func deleteDocuments(forNote noteId: String) throws -> Void {
