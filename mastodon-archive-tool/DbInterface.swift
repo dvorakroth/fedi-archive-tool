@@ -281,7 +281,8 @@ extension APubActionEntry {
         fromActorId actorId: String,
         matchingSearchString: String? = nil,
         toDateTimeExclusive: Date? = nil,
-        maxNumberOfPosts: Int?
+        maxNumberOfPosts: Int? = nil,
+        includeAnnounces: Bool = true
     ) throws -> [APubActionEntry] {
         let stringMatchCondition: Expression<Bool>
         if let matchingSearchString = matchingSearchString {
@@ -304,12 +305,22 @@ extension APubActionEntry {
             maxDateCondition = Expression(value: true)
         }
         
+        let actionTypeCondition: Expression<Bool>
+        if includeAnnounces {
+            actionTypeCondition = Expression(value: true)
+        } else {
+            actionTypeCondition = actions[action_action_type] != 1
+        }
+        
         let entryRowsArr = try Array(try DbInterface.getDb().prepareRowIterator(
             actions
                 .join(.leftOuter, notes, on: notes[note_id] == actions[action_same_user_note_id])
                 .select(actions[*])
                 .where(
-                    stringMatchCondition && maxDateCondition && actions[action_actor_id] == actorId
+                    stringMatchCondition
+                        && maxDateCondition
+                        && actionTypeCondition
+                        && actions[action_actor_id] == actorId
                 )
                 .order(actions[action_published].desc)
                 .limit(maxNumberOfPosts)

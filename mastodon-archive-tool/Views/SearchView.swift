@@ -158,7 +158,8 @@ fileprivate class PostSearchDataSource: ObservableObject {
                 fromActorId: actorId,
                 matchingSearchString: currentSearchString,
                 toDateTimeExclusive: posts.last?.published,
-                maxNumberOfPosts: POSTS_PER_PAGE
+                maxNumberOfPosts: POSTS_PER_PAGE,
+                includeAnnounces: false
             )
         } else {
             morePosts = []

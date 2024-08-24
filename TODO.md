@@ -20,7 +20,7 @@ basic functionality
     * also search through cw, poll options, and alt text of attachments
     * eventually also search through poll options
     * make it look non shitty
-    * don't include announces
+    * DONE ~~don't include announces~~
 * DONE ~~ability to delete an actor + their posts~~
 * DONE ~~convert the HTML into an `AttributedString` or sth idk~~
 * DONE? ~~placeholder images for when media/avatar/header *was* specified, but just wasn't found in the archive?~~
