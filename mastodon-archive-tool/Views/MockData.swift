@@ -23,6 +23,7 @@ class MockData {
                     replyingToNoteId: nil,
                     cw: nil,
                     content: "<p>This is my first fake post!</p>",
+                    searchableContent: "This is my first fake post!",
                     sensitive: false,
                     mediaAttachments: nil,
                     pollOptions: nil
@@ -57,6 +58,7 @@ class MockData {
 </ol>
 <p>End of the post</p><p>Wait actually there's more!! I lied! I actually have a lot more to say in this second example post! So so so much more! In fact I cannot contain myself with so much to say! Amazing amounts of things to say! Incredible, unbelieveable, scarcely reasonable amounts of things to say!</p><p>...</p><p>ok bye</p>
 """,
+                    searchableContent: "", // TODO
                     sensitive: false,
                     mediaAttachments: nil,
                     pollOptions: nil
@@ -77,6 +79,7 @@ class MockData {
                     replyingToNoteId: nil,
                     cw: "broken images",
                     content: "<p>Post whomst contains three images, two broken</p>",
+                    searchableContent: "Post whomst contains three images, two broken",
                     sensitive: true,
                     mediaAttachments: [
                         APubDocument(mediaType: "image/png", data: actor.icon!.0, altText: "a blurry photo of a dog", blurhash: nil, focalPoint: nil, size: nil),
@@ -100,6 +103,7 @@ class MockData {
                     replyingToNoteId: "https://social.example.net/posts/125",
                     cw: "a poll about the images",
                     content: "<p>Which image is the best?</p>",
+                    searchableContent: "Which image is the best?",
                     sensitive: false,
                     mediaAttachments: nil,
                     pollOptions: MockData.poll

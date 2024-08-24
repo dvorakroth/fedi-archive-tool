@@ -128,12 +128,13 @@ public class APubNote {
     let replyingToNoteId: String?
     let cw: String?
     let content: String
+    let searchableContent: String
     let sensitive: Bool
     let mediaAttachments: [APubDocument]?
     let pollOptions: [APubPollOption]?
     // TODO language tag?
     
-    init(id: String, actorId: String, published: Date, visibilityLevel: APubNoteVisibilityLevel, url: String, replyingToNoteId: String?, cw: String?, content: String, sensitive: Bool, mediaAttachments: [APubDocument]?, pollOptions: [APubPollOption]?) {
+    init(id: String, actorId: String, published: Date, visibilityLevel: APubNoteVisibilityLevel, url: String, replyingToNoteId: String?, cw: String?, content: String, searchableContent: String, sensitive: Bool, mediaAttachments: [APubDocument]?, pollOptions: [APubPollOption]?) {
         self.id = id
         self.actorId = actorId
         self.published = published
@@ -142,6 +143,7 @@ public class APubNote {
         self.replyingToNoteId = replyingToNoteId
         self.cw = cw
         self.content = content
+        self.searchableContent = searchableContent
         self.sensitive = sensitive
         self.mediaAttachments = mediaAttachments
         self.pollOptions = pollOptions
@@ -184,6 +186,7 @@ public extension APubNote {
         let replyingToNoteId = try tryGetNullable(field: "inReplyTo", ofType: .string, fromObject: json, called: noteNameForErrors) as! String?
         let cw = try tryGetNullable(field: "summary", ofType: .string, fromObject: json, called: noteNameForErrors) as! String?
         let content = try tryGet(field: "content", ofType: .string, fromObject: json, called: noteNameForErrors) as! String
+        let searchableContent = stripHTML(content)
         let sensitive: Bool
         do {
             sensitive = try tryGetNullable(field: "sensitive", ofType: .boolean, fromObject: json, called: noteNameForErrors) as! Bool? ?? false
@@ -216,7 +219,7 @@ public extension APubNote {
             pollOptions = nil
         }
         
-        self.init(id: id, actorId: actorId, published: published, visibilityLevel: visibilityLevel, url: url, replyingToNoteId: replyingToNoteId, cw: cw, content: content, sensitive: sensitive, mediaAttachments: mediaAttachments, pollOptions: pollOptions)
+        self.init(id: id, actorId: actorId, published: published, visibilityLevel: visibilityLevel, url: url, replyingToNoteId: replyingToNoteId, cw: cw, content: content, searchableContent: searchableContent, sensitive: sensitive, mediaAttachments: mediaAttachments, pollOptions: pollOptions)
     }
 }
 

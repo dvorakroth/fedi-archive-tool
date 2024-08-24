@@ -16,9 +16,8 @@ basic functionality
 * search!!!
     * through all posts
     * DONE ~~through a specific actor's posts~~
-    * don't search through raw HTML! on import, create some kind of html-stripped field to actually search through
-    * also search through cw, poll options, and alt text of attachments
-    * eventually also search through poll options
+    * DONE ~~don't search through raw HTML! on import, create some kind of html-stripped field to actually search through~~
+    * DONE ~~also search through cw, poll options, and alt text of attachments~~
     * make it look non shitty
     * DONE ~~don't include announces~~
 * DONE ~~ability to delete an actor + their posts~~
@@ -52,6 +51,7 @@ slightly advanced functionality
     * option to save?
     * show alt text!
 * when searching, highlight the places where the text matches
+* when a post's text is hidden, still show all @mention links (and only them), like in the mastodon web ui
 
 performance optimizations
 -------------------------

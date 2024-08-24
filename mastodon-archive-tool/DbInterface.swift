@@ -90,6 +90,7 @@ fileprivate class DbInterface {
             t.column(note_replying_to_note_id)
             t.column(note_cw)
             t.column(note_content)
+            t.column(note_searchable_content)
             t.column(note_sensitive)
             
             t.foreignKey(note_actor_id, references: actors, actor_id, delete: .cascade)
@@ -165,6 +166,7 @@ fileprivate let note_url = Expression<String>("url")
 fileprivate let note_replying_to_note_id = Expression<String?>("replying_to_note_id")
 fileprivate let note_cw = Expression<String?>("cw")
 fileprivate let note_content = Expression<String>("content")
+fileprivate let note_searchable_content = Expression<String>("searchable_content")
 fileprivate let note_sensitive = Expression<Bool>("sensitive")
 
 fileprivate let attachments = Table("attachments")
@@ -286,14 +288,19 @@ extension APubActionEntry {
     ) throws -> [APubActionEntry] {
         let stringMatchCondition: Expression<Bool>
         if let matchingSearchString = matchingSearchString {
-            stringMatchCondition = notes[note_content].like(
+            let substringExp =
                 "%"
                 + escapeExpressionForSqlLike(
                     matchingSearchString,
                     usingEscapeChar: "\\"
                 )
                 + "%"
-            )
+            
+            stringMatchCondition =
+                notes[note_searchable_content].like(substringExp) ||
+                (notes[note_cw] ?? Expression(value: "")).like(substringExp) ||
+                Expression("EXISTS(SELECT 1 FROM attachments WHERE attachments.note_id = notes.id AND attachments.alt_text IS NOT NULL AND attachments.alt_text LIKE ? LIMIT 1)", [substringExp]) ||
+                Expression("EXISTS(SELECT 1 FROM pollOptions WHERE pollOptions.note_id = notes.id AND pollOptions.name LIKE ? LIMIT 1)", [substringExp])
         } else {
             stringMatchCondition = Expression(value: true)
         }
@@ -421,6 +428,7 @@ extension APubNote {
             note_replying_to_note_id <- self.replyingToNoteId,
             note_cw <- self.cw,
             note_content <- self.content,
+            note_searchable_content <- self.searchableContent,
             note_sensitive <- self.sensitive
         ))
         
@@ -453,6 +461,7 @@ extension APubNote {
             replyingToNoteId: noteRow[note_replying_to_note_id],
             cw: noteRow[note_cw],
             content: noteRow[note_content],
+            searchableContent: noteRow[note_searchable_content],
             sensitive: noteRow[note_sensitive],
             mediaAttachments: mediaAttachments,
             pollOptions: pollOptions

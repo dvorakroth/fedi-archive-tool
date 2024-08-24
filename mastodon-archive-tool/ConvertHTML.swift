@@ -20,6 +20,10 @@ func convertHTML(_ htmlString: String) -> AttributedString {
     return convertHTML(element: doc.body()!)
 }
 
+func stripHTML(_ htmlString: String) -> String {
+    return String(convertHTML(htmlString).characters)
+}
+
 fileprivate enum CustomAttributes {
     case bold
     case italic
