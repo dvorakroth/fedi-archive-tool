@@ -96,10 +96,25 @@ func tryGetNullable(field: String, ofType type: JsonTypes, fromObject object: [S
 
 func tryGetDate(inField field: String, fromObject object: [String: Any], called objName: String) throws -> Date {
     let dateStr = try tryGet(field: field, ofType: .string, fromObject: object, called: objName) as! String
+    
+    return try parseIsoDate(dateStr, fieldName: field, objName: objName)
+}
+
+func tryGetDateNullable(inField field: String, fromObject object: [String: Any], called objName: String) throws -> Date? {
+    let dateStr = try tryGetNullable(field: field, ofType: .string, fromObject: object, called: objName) as! String?
+    
+    guard let dateStr = dateStr else {
+        return nil
+    }
+    
+    return try parseIsoDate(dateStr, fieldName: field, objName: objName)
+}
+
+fileprivate func parseIsoDate(_ dateStr: String, fieldName: String, objName: String) throws -> Date {
     let dateFormatter = ISO8601DateFormatter()
     // TODO timezone?
     guard let date = dateFormatter.date(from: dateStr) else {
-        throw APubParseError.wrongValueForField(field, onObject: objName, expected: "A Valid ISO 8601 date")
+        throw APubParseError.wrongValueForField(fieldName, onObject: objName, expected: "A Valid ISO 8601 date")
     }
     
     return date

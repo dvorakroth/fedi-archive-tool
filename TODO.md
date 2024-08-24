@@ -11,7 +11,8 @@ basic functionality
 * poll options
     * DONE ~~save to db~~
     * DONE ~~display~~
-    * import, save & display poll end time
+    * DONE ~~import & save poll end time~~
+    * display poll end time
 * display announces
 * search!!!
     * through all posts

@@ -26,7 +26,9 @@ class MockData {
                     searchableContent: "This is my first fake post!",
                     sensitive: false,
                     mediaAttachments: nil,
-                    pollOptions: nil
+                    pollOptions: nil,
+                    pollEndTime: nil,
+                    pollIsClosed: nil
                 )
             )
         ),
@@ -61,7 +63,9 @@ class MockData {
                     searchableContent: "", // TODO
                     sensitive: false,
                     mediaAttachments: nil,
-                    pollOptions: nil
+                    pollOptions: nil,
+                    pollEndTime: nil,
+                    pollIsClosed: nil
                 )
             )
         ),
@@ -86,7 +90,9 @@ class MockData {
                         APubDocument(mediaType: "image/png", data: nil, altText: "a broken image that doesn't work", blurhash: nil, focalPoint: nil, size: nil),
                         APubDocument(mediaType: "image/png", data: nil, altText: "a broken image that doesn't work", blurhash: nil, focalPoint: nil, size: nil)
                     ],
-                    pollOptions: MockData.poll
+                    pollOptions: MockData.poll,
+                    pollEndTime: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 96 * 3600)),
+                    pollIsClosed: false
                 )
             )),
         APubActionEntry(
@@ -106,7 +112,9 @@ class MockData {
                     searchableContent: "Which image is the best?",
                     sensitive: false,
                     mediaAttachments: nil,
-                    pollOptions: MockData.poll
+                    pollOptions: MockData.poll,
+                    pollEndTime: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 120 * 3600)),
+                    pollIsClosed: false
                 )
             )
         )

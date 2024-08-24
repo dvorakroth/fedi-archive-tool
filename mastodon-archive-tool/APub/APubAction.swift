@@ -132,9 +132,11 @@ public class APubNote {
     let sensitive: Bool
     let mediaAttachments: [APubDocument]?
     let pollOptions: [APubPollOption]?
+    let pollEndTime: Date?
+    let pollIsClosed: Bool?
     // TODO language tag?
     
-    init(id: String, actorId: String, published: Date, visibilityLevel: APubNoteVisibilityLevel, url: String, replyingToNoteId: String?, cw: String?, content: String, searchableContent: String, sensitive: Bool, mediaAttachments: [APubDocument]?, pollOptions: [APubPollOption]?) {
+    init(id: String, actorId: String, published: Date, visibilityLevel: APubNoteVisibilityLevel, url: String, replyingToNoteId: String?, cw: String?, content: String, searchableContent: String, sensitive: Bool, mediaAttachments: [APubDocument]?, pollOptions: [APubPollOption]?, pollEndTime: Date?, pollIsClosed: Bool?) {
         self.id = id
         self.actorId = actorId
         self.published = published
@@ -147,6 +149,8 @@ public class APubNote {
         self.sensitive = sensitive
         self.mediaAttachments = mediaAttachments
         self.pollOptions = pollOptions
+        self.pollEndTime = pollEndTime
+        self.pollIsClosed = pollIsClosed
     }
 }
 
@@ -205,6 +209,8 @@ public extension APubNote {
         })
         
         let pollOptions: [APubPollOption]?
+        let pollEndTime: Date?
+        let pollIsClosed: Bool?
         if json.keys.contains("oneOf") {
             pollOptions = try tryGetArray(inField: "oneOf", fromObject: json, called: noteNameForErrors, parsingObjectsUsing: {
                 (obj: Any, itemNameForErrors: String, objNameForErrors: String) throws -> APubPollOption in
@@ -215,11 +221,17 @@ public extension APubNote {
                 
                 return try APubPollOption(fromJson: obj, called: "\(itemNameForErrors) in \(objNameForErrors)")
             })
+            
+            pollEndTime = try tryGetDateNullable(inField: "endTime", fromObject: json, called: noteNameForErrors)
+            
+            pollIsClosed = json["closed"] == nil || json["closed"] is NSNull
         } else {
             pollOptions = nil
+            pollEndTime = nil
+            pollIsClosed = nil
         }
         
-        self.init(id: id, actorId: actorId, published: published, visibilityLevel: visibilityLevel, url: url, replyingToNoteId: replyingToNoteId, cw: cw, content: content, searchableContent: searchableContent, sensitive: sensitive, mediaAttachments: mediaAttachments, pollOptions: pollOptions)
+        self.init(id: id, actorId: actorId, published: published, visibilityLevel: visibilityLevel, url: url, replyingToNoteId: replyingToNoteId, cw: cw, content: content, searchableContent: searchableContent, sensitive: sensitive, mediaAttachments: mediaAttachments, pollOptions: pollOptions, pollEndTime: pollEndTime, pollIsClosed: pollIsClosed)
     }
 }
 

@@ -92,6 +92,8 @@ fileprivate class DbInterface {
             t.column(note_content)
             t.column(note_searchable_content)
             t.column(note_sensitive)
+            t.column(note_poll_end_time)
+            t.column(note_poll_is_closed)
             
             t.foreignKey(note_actor_id, references: actors, actor_id, delete: .cascade)
         })
@@ -168,6 +170,8 @@ fileprivate let note_cw = Expression<String?>("cw")
 fileprivate let note_content = Expression<String>("content")
 fileprivate let note_searchable_content = Expression<String>("searchable_content")
 fileprivate let note_sensitive = Expression<Bool>("sensitive")
+fileprivate let note_poll_end_time = Expression<Date?>("poll_end_time")
+fileprivate let note_poll_is_closed = Expression<Bool?>("poll_is_closed")
 
 fileprivate let attachments = Table("attachments")
 fileprivate let attachments_note_id = Expression<String>("note_id")
@@ -429,7 +433,9 @@ extension APubNote {
             note_cw <- self.cw,
             note_content <- self.content,
             note_searchable_content <- self.searchableContent,
-            note_sensitive <- self.sensitive
+            note_sensitive <- self.sensitive,
+            note_poll_end_time <- self.pollEndTime,
+            note_poll_is_closed <- self.pollIsClosed
         ))
         
         try APubDocument.deleteDocuments(forNote: self.id)
@@ -464,7 +470,9 @@ extension APubNote {
             searchableContent: noteRow[note_searchable_content],
             sensitive: noteRow[note_sensitive],
             mediaAttachments: mediaAttachments,
-            pollOptions: pollOptions
+            pollOptions: pollOptions,
+            pollEndTime: noteRow[note_poll_end_time],
+            pollIsClosed: noteRow[note_poll_is_closed]
         )
     }
 }
