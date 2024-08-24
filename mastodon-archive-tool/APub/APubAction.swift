@@ -224,7 +224,7 @@ public extension APubNote {
             
             pollEndTime = try tryGetDateNullable(inField: "endTime", fromObject: json, called: noteNameForErrors)
             
-            pollIsClosed = json["closed"] == nil || json["closed"] is NSNull
+            pollIsClosed = !(json["closed"] == nil || json["closed"] is NSNull)
         } else {
             pollOptions = nil
             pollEndTime = nil

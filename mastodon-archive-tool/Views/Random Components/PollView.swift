@@ -9,6 +9,8 @@ import SwiftUI
 
 struct PollView: View {
     let pollOptions: [APubPollOption]
+    let endTime: Date?
+    let isClosed: Bool
     
     var body: some View {
         let allVotes = pollOptions.reduce(0) { partialResult, pollOption in
@@ -48,10 +50,44 @@ struct PollView: View {
                     .font(.caption)
                 Spacer()
             }
+            
+            if let endTimeText = generateEndTimeText() {
+                HStack {
+                    Text(endTimeText).font(.caption)
+                    Spacer()
+                }
+            }
+        }
+    }
+    
+    func generateEndTimeText() -> String? {
+        guard let endTime = endTime else {
+            if isClosed {
+                return "Poll closed"
+            } else {
+                return nil
+            }
+        }
+        
+        let endsInTheFuture = endTime > Date.now
+        let endTimeStr = formatLongDateTime(endTime)
+        
+        if endsInTheFuture && !isClosed {
+            return "Ends \(endTimeStr)"
+        }
+        
+        if isClosed {
+            return "Ended \(endTimeStr)"
+        } else {
+            return "Will have ended \(endTimeStr)"
         }
     }
 }
 
 #Preview {
-    PollView(pollOptions: MockData.poll).padding(.all)
+    PollView(
+        pollOptions: MockData.poll,
+        endTime: Date(timeIntervalSince1970: TimeInterval(66 * 365 * 24 * 3600)),
+        isClosed: false
+    ).padding(.all)
 }

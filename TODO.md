@@ -8,11 +8,11 @@ basic functionality
     * DONE ~~save to db~~
     * DONE ~~display~~
     * DONE? ~~make it look non shitty~~
-* poll options
+* DONE ~~poll options~~
     * DONE ~~save to db~~
     * DONE ~~display~~
     * DONE ~~import & save poll end time~~
-    * display poll end time
+    * DONE ~~display poll end time~~
 * display announces
 * search!!!
     * through all posts

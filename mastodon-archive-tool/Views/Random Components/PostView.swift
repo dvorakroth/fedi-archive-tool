@@ -119,7 +119,11 @@ struct PostView: View {
                 if pollOptions.count > 0 && (self.isExpanded || post.cw == nil) {
                     
                     Spacer().frame(height: 8)
-                    PollView(pollOptions: pollOptions)
+                    PollView(
+                        pollOptions: pollOptions,
+                        endTime: post.pollEndTime,
+                        isClosed: post.pollIsClosed ?? false
+                    )
                 }
             }
             
