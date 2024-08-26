@@ -8,7 +8,7 @@
 import Foundation
 
 class ArchiveImportQueue: ObservableObject {
-    @Published var queue: [(id: Int, fileURL: URL, status: ImportStatus)] = []
+    @Published var queue: [QueueItem] = []
     
     private var importInProgress = false
     private var globalIdCounter = 0
@@ -26,7 +26,7 @@ class ArchiveImportQueue: ObservableObject {
     
     func addToQueue(_ fileURL: URL) {
         globalIdCounter += 1
-        queue.append((id: globalIdCounter, fileURL: fileURL, status: .waiting))
+        queue.append(QueueItem(id: globalIdCounter, fileURL: fileURL, status: .waiting))
         startHandlingImports()
     }
     
@@ -76,6 +76,12 @@ class ArchiveImportQueue: ObservableObject {
             self.queue[index].status = newState
         }
     }
+}
+
+struct QueueItem: Identifiable {
+    let id: Int
+    let fileURL: URL
+    var status: ImportStatus
 }
 
 enum ImportStatus {

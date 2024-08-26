@@ -18,28 +18,7 @@ struct AddArchiveView: View {
             
             List {
                 ForEach(importQueue.queue, id: \.id) { item in
-                    HStack {
-                        switch item.status {
-                        case .waiting:
-                            Image(systemName: "clock")
-                                .frame(width: 27, height: 27)
-                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
-                        case .processing:
-                            ProgressView().progressViewStyle(.circular)
-                                .frame(width: 27, height: 27)
-                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
-                        case .done:
-                            Image(systemName: "checkmark.circle.fill").renderingMode(.template).foregroundStyle(.green)
-                                .frame(width: 27, height: 27)
-                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
-                        case .error:
-                            Image(systemName: "exclamationmark.circle.fill").renderingMode(.original)
-                                .frame(width: 27, height: 27)
-                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
-                        }
-                        Text("\(item.fileURL.lastPathComponent)")
-                        Spacer()
-                    }
+                    QueueItemView(queueItem: item)
                 }
                 
                 Button(action: {
@@ -66,6 +45,47 @@ struct AddArchiveView: View {
             
         case .success(let urls):
             importQueue.addToQueue(urls[0])
+        }
+    }
+}
+
+struct QueueItemView: View {
+    let queueItem: QueueItem
+    
+    @State var showErrorPopover = false
+    
+    var body: some View {
+        HStack {
+            switch queueItem.status {
+            case .waiting:
+                Image(systemName: "clock")
+                    .frame(width: 27, height: 27)
+                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
+            case .processing:
+                ProgressView().progressViewStyle(.circular)
+                    .frame(width: 27, height: 27)
+                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
+            case .done:
+                Image(systemName: "checkmark.circle.fill").renderingMode(.template).foregroundStyle(.green)
+                    .frame(width: 27, height: 27)
+                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
+            case .error(let errorText):
+                Button {
+                    showErrorPopover = true
+                } label: {
+                    Image(systemName: "exclamationmark.circle.fill").renderingMode(.original)
+                        .frame(width: 27, height: 27)
+                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
+                }.popover(isPresented: $showErrorPopover) {
+                    VStack {
+                        Text("Error importing \(queueItem.fileURL.lastPathComponent)").font(.title)
+                        Spacer().frame(height: 15)
+                        Text(errorText)
+                    }.padding(.all)
+                }
+            }
+            Text("\(queueItem.fileURL.lastPathComponent)")
+            Spacer()
         }
     }
 }
