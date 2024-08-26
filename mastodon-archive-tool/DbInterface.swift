@@ -191,6 +191,16 @@ fileprivate let pollOptions_order_num = Expression<Int>("order_num")
 fileprivate let pollOptions_name = Expression<String>("name")
 fileprivate let pollOptions_num_votes = Expression<Int>("num_votes")
 
+extension APubOutbox {
+    func atomicSave() throws {
+        try DbInterface.getDb().transaction {
+            try self.actor.save()
+            for actionEntry in self.orderedItems {
+                try actionEntry.save()
+            }
+        }
+    }
+}
 
 extension APubActor {
     static func fetchActor(byId id: String) throws -> APubActor? {
@@ -211,7 +221,7 @@ extension APubActor {
         return try actorsArr.map(APubActor.init(fromRow:))
     }
     
-    func save() throws {
+    fileprivate func save() throws {
         let tableJson = String(
             data: try JSONSerialization.data(
                 withJSONObject: table.map { (a, b) in [a, b] }
@@ -362,7 +372,7 @@ extension APubActionEntry {
         return try entryRowsArr.map(APubActionEntry.init(fromRow:))
     }
     
-    func save() throws {
+    fileprivate func save() throws {
         let actionType: Int;
         let ownNoteId: String?;
         let foreignNoteId: String?;
@@ -442,7 +452,7 @@ extension APubNote {
         return try APubNote(fromRow: noteRow)
     }
     
-    func save() throws {
+    fileprivate func save() throws {
         try DbInterface.getDb().run(notes.insert(
             or: .replace,
             note_id <- self.id,
@@ -553,7 +563,7 @@ extension APubDocument {
         try DbInterface.getDb().run(attachmentsForNote.delete())
     }
     
-    func save(withNoteId noteId: String, orderNum: Int) throws {
+    fileprivate func save(withNoteId noteId: String, orderNum: Int) throws {
         try DbInterface.getDb().run(attachments.insert(
             or: .replace,
             attachments_note_id <- noteId,
@@ -626,7 +636,7 @@ extension APubPollOption {
         try DbInterface.getDb().run(pollOptionsForNote.delete())
     }
     
-    func save(withNoteId noteId: String, orderNum: Int) throws {
+    fileprivate func save(withNoteId noteId: String, orderNum: Int) throws {
         try DbInterface.getDb().run(pollOptions.insert(
             or: .replace,
             pollOptions_note_id <- noteId,

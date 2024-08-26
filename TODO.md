@@ -41,7 +41,7 @@ slightly advanced functionality
     * DONE ~~with some sort of queue~~
     * DONE ~~whose progress is shown in the "add archive" view~~
     * DONE ~~basically the add archive view should not suck~~
-    * also do the import in a transaction so if it fails we don't get partial data in the DB
+    * DONE ~~also do the import in a transaction so if it fails we don't get partial data in the DB~~
     * automatically refresh the main view when an import is done
     * let the user see details about import errors
 * detail view for individual posts

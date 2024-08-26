@@ -8,15 +8,17 @@
 import Foundation
 
 public class APubOutbox {
+    let actor: APubActor
     let orderedItems: [APubActionEntry]
     
-    init(orderedItems: [APubActionEntry]) {
+    init(actor: APubActor, orderedItems: [APubActionEntry]) {
+        self.actor = actor
         self.orderedItems = orderedItems
     }
 }
 
 public extension APubOutbox {
-    convenience init(fromJson json: [String: Any], withFilesystemFetcher filesystemFetcher: (String) async throws -> (Data)) async throws {
+    convenience init(withActor actor: APubActor, fromJson json: [String: Any], withFilesystemFetcher filesystemFetcher: (String) async throws -> (Data)) async throws {
         
         if try tryGet(field: "type", ofType: .string, fromObject: json, called: "Outbox") as! String != "OrderedCollection" {
             throw APubParseError.wrongValueForField("type", onObject: "Outbox", expected: "OrderedCollection");
@@ -32,6 +34,6 @@ public extension APubOutbox {
             return try await APubActionEntry(fromJson: item, withFilesystemFetcher: filesystemFetcher)
         })
         
-        self.init(orderedItems: orderedItems)
+        self.init(actor: actor, orderedItems: orderedItems)
     }
 }

@@ -66,7 +66,7 @@ struct AddArchiveView: View {
         switch(urlOrError) {
         case .failure(let error):
             // TODO ...something?
-            break
+            print(error)
             
         case .success(let urls):
             importQueue.addToQueue(urls[0])

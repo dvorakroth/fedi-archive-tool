@@ -10,7 +10,7 @@ import ZIPFoundation
 import Tarscape
 import DataCompression
 
-func readArchive(_ url: URL) async throws -> APubActor {
+func importArchive(_ url: URL) async throws -> APubActor {
     let getFileFromArchive: (String) async throws -> Data
     var tmpDir: TempDir? = nil
     
@@ -91,12 +91,8 @@ func readArchive(_ url: URL) async throws -> APubActor {
     }
     
     let actor = try await readActor(getFileFromArchive)
-    try actor.save()
-    
-    let outbox = try await readOutbox(getFileFromArchive)
-    for actionEntry in outbox.orderedItems {
-        try actionEntry.save()
-    }
+    let outbox = try await readOutbox(forActor: actor, getFileFromArchive)
+    try outbox.atomicSave()
     
     return actor
 }
@@ -108,7 +104,7 @@ enum ArchiveReadingError: Error {
     case error(_: String)
 }
 
-func readActor(_ getFileFromArchive: (String) async throws -> (Data)) async throws -> APubActor {
+fileprivate func readActor(_ getFileFromArchive: (String) async throws -> (Data)) async throws -> APubActor {
     let jsonObj = try JSONSerialization.jsonObject(
         with: try await getFileFromArchive("actor.json")
     )
@@ -120,7 +116,7 @@ func readActor(_ getFileFromArchive: (String) async throws -> (Data)) async thro
     return try await APubActor(fromJson: jsonObj, withFilesystemFetcher: getFileFromArchive)
 }
 
-func readOutbox(_ getFileFromArchive: (String) async throws -> (Data)) async throws -> APubOutbox {
+fileprivate func readOutbox(forActor actor: APubActor, _ getFileFromArchive: (String) async throws -> (Data)) async throws -> APubOutbox {
     let jsonObj = try JSONSerialization.jsonObject(
         with: try await getFileFromArchive("outbox.json")
     )
@@ -129,5 +125,5 @@ func readOutbox(_ getFileFromArchive: (String) async throws -> (Data)) async thr
         throw ArchiveReadingError.malformedFile(filename: "outbox.json", details: nil)
     }
     
-    return try await APubOutbox(fromJson: jsonObj, withFilesystemFetcher: getFileFromArchive)
+    return try await APubOutbox(withActor: actor, fromJson: jsonObj, withFilesystemFetcher: getFileFromArchive)
 }

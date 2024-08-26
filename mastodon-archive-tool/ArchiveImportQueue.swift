@@ -45,7 +45,7 @@ class ArchiveImportQueue: ObservableObject {
                 updateImportStatus(atIndex: nextImportIdx, to: .processing)
                 
                 do {
-                    let _ = try await readArchive(fileURL)
+                    let _ = try await importArchive(fileURL)
                     updateImportStatus(atIndex: nextImportIdx, to: .done)
                     // TODO signal to main view that it needs to update?
                 } catch {
