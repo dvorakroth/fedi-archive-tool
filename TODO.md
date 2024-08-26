@@ -13,7 +13,7 @@ basic functionality
     * DONE ~~display~~
     * DONE ~~import & save poll end time~~
     * DONE ~~display poll end time~~
-* display announces
+* DONE ~~display announces~~
 * search!!!
     * through all posts
     * DONE ~~through a specific actor's posts~~

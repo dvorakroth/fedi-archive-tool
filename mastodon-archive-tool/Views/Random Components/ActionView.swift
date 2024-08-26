@@ -22,12 +22,3 @@ struct ActionView: View {
         }
     }
 }
-
-struct AnnounceView: View {
-    let actor: APubActor
-    let announcedUrl: String
-    
-    var body: some View {
-        Text("TODO: AnnounceView")
-    }
-}

@@ -161,7 +161,7 @@ struct PostView: View {
                         if let url = URL(string: post.url) {
                             ShareSheetView(url: url)
                         } else {
-                            Text("Could not parse user URL: \(actor.url)")
+                            Text("Could not parse post URL: \(post.url)")
                         }
                     })
             }
