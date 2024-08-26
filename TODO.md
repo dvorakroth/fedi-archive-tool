@@ -62,7 +62,7 @@ performance optimizations
 * DONE? ~~scrolling through an actor's posts is kinda choppy?~~
     * DONE ~~could it be that this would be fixed by precomputing blurhashes on import???~~
     * ~~or maybe by making the post-loading thing async/in a different thread?~~
-* when reading `actions INNER JOIN notes` from the DB, don't dump out the `notes.*` -- use it to create the APubNote
+* DONE ~~when reading `actions INNER JOIN notes` from the DB, don't dump out the `notes.*` -- use it to create the APubNote~~
 
 have to do before publishing lol
 --------------------------------

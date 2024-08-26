@@ -329,7 +329,11 @@ extension APubActionEntry {
         if includeReplies {
             repliesCondition = Expression(value: true)
         } else {
-            repliesCondition = (notes[note_replying_to_note_id] == nil) ?? false
+            repliesCondition = (
+                actions[action_action_type] == 1 || // either this is an announce
+                notes[note_replying_to_note_id] ?? "NIL" == "NIL" // or this is not a reply
+                // using `?? "NIL"` to do the NULL comparison because SQLite.Swift is all weird about using `=== nil` and returns an `Expression<Bool?>` instead of `Expression<Bool>`
+            )
         }
         
         let mediaCondition: Expression<Bool>
@@ -341,8 +345,8 @@ extension APubActionEntry {
         
         let entryRowsArr = try Array(try DbInterface.getDb().prepareRowIterator(
             actions
-                .join(.leftOuter, notes, on: notes[note_id] == actions[action_same_user_note_id])
-                .select(actions[*])
+                .join(.leftOuter, notes, on: notes[note_id] == (actions[action_same_user_note_id] ?? actions[action_other_user_note_id]))
+                .select(actions[*], notes[*])
                 .where(
                     stringMatchCondition
                         && maxDateCondition
@@ -399,20 +403,23 @@ extension APubActionEntry {
         ))
     }
     
-    fileprivate convenience init(fromRow actionEntryRow: Row) throws {
-        let id = actionEntryRow[action_id]
-        let actorId = actionEntryRow[action_actor_id]
-        let published = actionEntryRow[action_published]
-        let actionType = actionEntryRow[action_action_type]
-        let ownNoteId = actionEntryRow[action_same_user_note_id]
-        let foreignNoteId = actionEntryRow[action_other_user_note_id]
+    fileprivate convenience init(fromRow actionEntryAndNoteRow: Row) throws {
+        let id = actionEntryAndNoteRow[actions[action_id]]
+        let actorId = actionEntryAndNoteRow[actions[action_actor_id]]
+        let published = actionEntryAndNoteRow[actions[action_published]]
+        let actionType = actionEntryAndNoteRow[actions[action_action_type]]
+        let ownNoteId = actionEntryAndNoteRow[actions[action_same_user_note_id]]
+        let foreignNoteId = actionEntryAndNoteRow[actions[action_other_user_note_id]]
         
         let action: APubAction
         switch actionType {
         case 0:
-            action = .create(try APubNote.fetchNote(byId: ownNoteId!)!)
+            action = .create(try APubNote(fromRow: actionEntryAndNoteRow))
         case 1:
-            if let ownNoteId = ownNoteId, let ownNote = try APubNote.fetchNote(byId: ownNoteId) {
+            let foundNoteId = actionEntryAndNoteRow[notes[Expression<String?>("id")]]
+            
+            if foundNoteId != nil {
+                let ownNote = try APubNote(fromRow: actionEntryAndNoteRow)
                 action = .announceOwn(ownNote)
             } else {
                 action = .announce(ownNoteId ?? foreignNoteId!)
@@ -427,16 +434,12 @@ extension APubActionEntry {
 
 extension APubNote {
     static func fetchNote(byId id: String) throws -> APubNote? {
-        let noteRow = try DbInterface.getDb().pluck(notes.where(note_id == id))
+        let noteRow = try DbInterface.getDb().pluck(notes.select(notes[*]).where(note_id == id))
         guard let noteRow = noteRow else {
             return nil
         }
         
-        return try APubNote(
-            fromRow: noteRow,
-            withMediaAttachments: try APubDocument.fetchDocuments(forNote: id),
-            pollOptions: try APubPollOption.fetchPollOptions(forNote: id)
-        )
+        return try APubNote(fromRow: noteRow)
     }
     
     func save() throws {
@@ -471,26 +474,31 @@ extension APubNote {
         }
     }
     
-    private convenience init(
+    fileprivate convenience init(
         fromRow noteRow: Row,
-        withMediaAttachments mediaAttachments: [APubDocument],
-        pollOptions: [APubPollOption]
+        withMediaAttachments mediaAttachments: [APubDocument]? = nil,
+        pollOptions: [APubPollOption]? = nil
     ) throws {
+        let id = noteRow[notes[note_id]]
+        
+        let mediaAttachments = try mediaAttachments ?? APubDocument.fetchDocuments(forNote: id)
+        let pollOptions = try pollOptions ?? APubPollOption.fetchPollOptions(forNote: id)
+        
         self.init(
-            id: noteRow[note_id],
-            actorId: noteRow[note_actor_id],
-            published: noteRow[note_published],
-            visibilityLevel: APubNoteVisibilityLevel(rawValue: noteRow[note_visibility]) ?? .unknown,
-            url: noteRow[note_url],
-            replyingToNoteId: noteRow[note_replying_to_note_id],
-            cw: noteRow[note_cw],
-            content: noteRow[note_content],
-            searchableContent: noteRow[note_searchable_content],
-            sensitive: noteRow[note_sensitive],
+            id: id,
+            actorId: noteRow[notes[note_actor_id]],
+            published: noteRow[notes[note_published]],
+            visibilityLevel: APubNoteVisibilityLevel(rawValue: noteRow[notes[note_visibility]]) ?? .unknown,
+            url: noteRow[notes[note_url]],
+            replyingToNoteId: noteRow[notes[note_replying_to_note_id]],
+            cw: noteRow[notes[note_cw]],
+            content: noteRow[notes[note_content]],
+            searchableContent: noteRow[notes[note_searchable_content]],
+            sensitive: noteRow[notes[note_sensitive]],
             mediaAttachments: mediaAttachments,
             pollOptions: pollOptions,
-            pollEndTime: noteRow[note_poll_end_time],
-            pollIsClosed: noteRow[note_poll_is_closed]
+            pollEndTime: noteRow[notes[note_poll_end_time]],
+            pollIsClosed: noteRow[notes[note_poll_is_closed]]
         )
     }
 }
@@ -506,37 +514,37 @@ extension APubDocument {
         return try attachmentRows.map(APubDocument.init(withRow:))
     }
     
-    static func fetchDocuments(
-        forActor actorId: String,
-        toDateTimeExclusive: Date? = nil,
-        maxNumberOfPosts: Int?
-    ) throws -> [(APubDocument, APubActionEntry)] {
-        let maxDateCondition: Expression<Bool>
-        if let toDateTimeExclusive = toDateTimeExclusive {
-            maxDateCondition = actions[action_published] < toDateTimeExclusive
-        } else {
-            maxDateCondition = Expression(value: true)
-        }
-        
-        let rows = try Array(try DbInterface.getDb().prepareRowIterator(
-            attachments
-                .join(actions, on: actions[action_id] == attachments[attachments_note_id])
-                .where(
-                    actions[action_actor_id] == actorId
-                    && actions[action_action_type] == 0
-                    && maxDateCondition
-                )
-                .order(
-                    actions[action_published].desc,
-                    attachments[attachments_order_num].asc
-                )
-                .limit(maxNumberOfPosts)
-        ))
-        
-        return try rows.map { row in
-            (try APubDocument(withRow: row), try APubActionEntry(fromRow: row))
-        }
-    }
+//    static func fetchDocuments(
+//        forActor actorId: String,
+//        toDateTimeExclusive: Date? = nil,
+//        maxNumberOfPosts: Int?
+//    ) throws -> [(APubDocument, APubActionEntry)] {
+//        let maxDateCondition: Expression<Bool>
+//        if let toDateTimeExclusive = toDateTimeExclusive {
+//            maxDateCondition = actions[action_published] < toDateTimeExclusive
+//        } else {
+//            maxDateCondition = Expression(value: true)
+//        }
+//        
+//        let rows = try Array(try DbInterface.getDb().prepareRowIterator(
+//            attachments
+//                .join(actions, on: actions[action_id] == attachments[attachments_note_id])
+//                .where(
+//                    actions[action_actor_id] == actorId
+//                    && actions[action_action_type] == 0
+//                    && maxDateCondition
+//                )
+//                .order(
+//                    actions[action_published].desc,
+//                    attachments[attachments_order_num].asc
+//                )
+//                .limit(maxNumberOfPosts)
+//        ))
+//        
+//        return try rows.map { row in
+//            (try APubDocument(withRow: row), try APubActionEntry(fromRow: row))
+//        }
+//    }
     
     static func deleteDocuments(forNote noteId: String) throws -> Void {
         let attachmentsForNote = attachments.filter(
