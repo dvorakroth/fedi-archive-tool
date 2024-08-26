@@ -37,14 +37,14 @@ basic functionality
 slightly advanced functionality
 -------------------------------
 
-* import new/updated archives in the background
+* DONE ~~import new/updated archives in the background~~
     * DONE ~~with some sort of queue~~
     * DONE ~~whose progress is shown in the "add archive" view~~
     * DONE ~~basically the add archive view should not suck~~
     * DONE ~~also do the import in a transaction so if it fails we don't get partial data in the DB~~
     * DONE ~~automatically refresh the main view when an import is done~~
     * DONE ~~let the user see details about import errors~~
-    * actually show vaguely readable details in the error messages instead of just "The Operation Could Not Be Completed(tm)"
+    * DONE ~~actually show vaguely readable details in the error messages instead of just "The Operation Could Not Be Completed(tm)"~~
 * detail view for individual posts
     * show any replies that might be in the DB
     * show what the post might be replying to
