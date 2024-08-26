@@ -288,7 +288,9 @@ extension APubActionEntry {
         matchingSearchString: String? = nil,
         toDateTimeExclusive: Date? = nil,
         maxNumberOfPosts: Int? = nil,
-        includeAnnounces: Bool = true
+        includeAnnounces: Bool = true,
+        includeReplies: Bool = true,
+        onlyIncludePostsWithMedia: Bool = false
     ) throws -> [APubActionEntry] {
         let stringMatchCondition: Expression<Bool>
         if let matchingSearchString = matchingSearchString {
@@ -323,6 +325,20 @@ extension APubActionEntry {
             actionTypeCondition = actions[action_action_type] != 1
         }
         
+        let repliesCondition: Expression<Bool>
+        if includeReplies {
+            repliesCondition = Expression(value: true)
+        } else {
+            repliesCondition = (notes[note_replying_to_note_id] == nil) ?? false
+        }
+        
+        let mediaCondition: Expression<Bool>
+        if onlyIncludePostsWithMedia {
+            mediaCondition = Expression("EXISTS(SELECT 1 FROM attachments WHERE attachments.note_id = notes.id LIMIT 1)", [])
+        } else {
+            mediaCondition = Expression(value: true)
+        }
+        
         let entryRowsArr = try Array(try DbInterface.getDb().prepareRowIterator(
             actions
                 .join(.leftOuter, notes, on: notes[note_id] == actions[action_same_user_note_id])
@@ -331,6 +347,8 @@ extension APubActionEntry {
                     stringMatchCondition
                         && maxDateCondition
                         && actionTypeCondition
+                        && repliesCondition
+                        && mediaCondition
                         && actions[action_actor_id] == actorId
                 )
                 .order(actions[action_published].desc)

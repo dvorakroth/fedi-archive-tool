@@ -25,7 +25,8 @@ basic functionality
 * DONE ~~convert the HTML into an `AttributedString` or sth idk~~
 * DONE? ~~placeholder images for when media/avatar/header *was* specified, but just wasn't found in the archive?~~
 * DONE? ~~instead of "Go to Profile" and "Permalink" buttons, use the built-in share sheet~~
-* divide actor's posts into Posts, Posts+Replies, Media, DMs
+* DONE ~~divide actor's posts into Posts, Posts+Replies, Media~~
+* separate view for DMs?
 * DONE ~~title in navigation view when looking at a profile~~
 * DONE ~~show little icon when post is a reply to something~~
 * DONE ~~post privacy levels~~
@@ -47,6 +48,7 @@ slightly advanced functionality
 * convert the HTML into individual SwiftUI components or something???? (that way block elements like lists and blockquotes and whatnot will be more.... believeable)
 * unified view of all posts from all actors
 * accessibility stuff??? idk 😬
+* better UI for media tab in ActorView? (grid view like in mastodon web ui?)
 * click on images to embiggen
     * option to zoom
     * option to save?
@@ -66,6 +68,7 @@ have to do before publishing lol
 --------------------------------
 
 * about page lol
+* localization??????
 
 bugs and workarounds
 --------------------

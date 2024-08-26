@@ -12,6 +12,7 @@ struct ActorView: View {
     let overridePostList: [APubActionEntry]?
     
     @State private var profileLinkShareSheetIsShown = false
+    @State private var displayFilter = DisplayFilter.Posts
     @StateObject private var dataSource = PostDataSource()
     
     init(actor: APubActor, overridePostList: [APubActionEntry]? = nil) {
@@ -104,8 +105,44 @@ struct ActorView: View {
                         ActorTable(actor.table)
                     }
                     
-                    //                Spacer().frame(height: 15)
-                    Text(" ")
+                    Spacer().frame(height: 15)
+//                    Text(" ")
+                    
+                    HStack {
+                        Spacer()
+                        
+                        Button("Posts", systemImage: "note.text") {
+                            withAnimation {
+                                displayFilter = DisplayFilter.Posts
+                                categoryChanged()
+                            }
+                        }
+                        .disabled(displayFilter == DisplayFilter.Posts)
+                        
+                        Spacer()
+                        
+                        Button("incl. Replies", systemImage: "bubble.left.and.bubble.right") {
+                            withAnimation {
+                                displayFilter = DisplayFilter.PostsAndReplies
+                                categoryChanged()
+                            }
+                        }
+                        .disabled(displayFilter == DisplayFilter.PostsAndReplies)
+                        
+                        Spacer()
+                        
+                        Button("Media", systemImage: "photo") {
+                            withAnimation {
+                                displayFilter = DisplayFilter.Media
+                                categoryChanged()
+                            }
+                        }
+                        .disabled(displayFilter == DisplayFilter.Media)
+                        
+                        Spacer()
+                    }
+                    
+                    Spacer().frame(height: 15)
                     
                     LazyVStack(spacing: 10) {
                         Divider()
@@ -141,6 +178,19 @@ struct ActorView: View {
         }
     }
     
+    func categoryChanged() {
+        guard overridePostList == nil else {
+            return
+        }
+        
+        do {
+            try dataSource.resetAndReloadPosts(ofType: displayFilter, forActorId: actor.id)
+        } catch {
+            // TODO some kind of error state?
+            print("Error fetching posts: \(error)")
+        }
+    }
+    
     func loadMorePostsIfNeeded(currentEarliest: APubActionEntry? = nil) {
         guard overridePostList == nil else {
             return
@@ -148,6 +198,7 @@ struct ActorView: View {
 
         do {
             try dataSource.loadMorePostsIfNeeded(
+                ofType: displayFilter,
                 forActorId: actor.id,
                 currentEarliestPost: currentEarliest
             )
@@ -166,28 +217,60 @@ fileprivate class PostDataSource: ObservableObject {
     
     private let POSTS_PER_PAGE = 10
     
-    func loadMorePostsIfNeeded(forActorId actorId: String, currentEarliestPost: APubActionEntry?) throws {
+    func resetAndReloadPosts(ofType postType: DisplayFilter, forActorId actorId: String) throws {
+        isLoading = false
+        canLoadMore = true
+        posts = []
+        
+        try loadMorePosts(ofType: postType, forActorId: actorId)
+    }
+    
+    func loadMorePostsIfNeeded(ofType postType: DisplayFilter, forActorId actorId: String, currentEarliestPost: APubActionEntry?) throws {
         if let currentEarliestPost = currentEarliestPost, let currentLast = posts.last {
             if currentEarliestPost.id != currentLast.id {
                 return
             }
         }
         
-        try loadMorePosts(forActorId: actorId)
+        try loadMorePosts(ofType: postType, forActorId: actorId)
     }
     
-    private func loadMorePosts(forActorId actorId: String) throws {
+    private func loadMorePosts(ofType postType: DisplayFilter, forActorId actorId: String) throws {
         guard !isLoading && canLoadMore else {
             return
         }
         
         isLoading = true
         
+        let includeAnnounces: Bool
+        let includeReplies: Bool
+        let onlyIncludePostsWithMedia: Bool
+        
+        switch postType {
+        case .Posts:
+            includeAnnounces = true
+            includeReplies = false
+            onlyIncludePostsWithMedia = false
+            
+        case .PostsAndReplies:
+            includeAnnounces = true
+            includeReplies = true
+            onlyIncludePostsWithMedia = false
+            
+        case .Media:
+            includeAnnounces = false
+            includeReplies = true
+            onlyIncludePostsWithMedia = true
+        }
+        
         // TODO maybe make this async lol
         let morePosts = try APubActionEntry.fetchActionEntries(
             fromActorId: actorId,
             toDateTimeExclusive: posts.last?.published,
-            maxNumberOfPosts: POSTS_PER_PAGE
+            maxNumberOfPosts: POSTS_PER_PAGE,
+            includeAnnounces: includeAnnounces,
+            includeReplies: includeReplies,
+            onlyIncludePostsWithMedia: onlyIncludePostsWithMedia
         )
         
         if morePosts.count < POSTS_PER_PAGE {
@@ -200,6 +283,12 @@ fileprivate class PostDataSource: ObservableObject {
         
         self.isLoading = false
     }
+}
+
+fileprivate enum DisplayFilter {
+    case Posts
+    case PostsAndReplies
+    case Media
 }
 
 #Preview {
