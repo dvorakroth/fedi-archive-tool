@@ -191,12 +191,31 @@ fileprivate let pollOptions_order_num = Expression<Int>("order_num")
 fileprivate let pollOptions_name = Expression<String>("name")
 fileprivate let pollOptions_num_votes = Expression<Int>("num_votes")
 
+class ActorList: ObservableObject {
+    @Published var actors: [APubActor] = []
+    
+    private init() {}
+    static let shared = ActorList()
+    
+    func forceRefresh() throws {
+        self.actors = try APubActor.fetchAllActors()
+    }
+}
+
 extension APubOutbox {
     func atomicSave() throws {
         try DbInterface.getDb().transaction {
             try self.actor.save()
             for actionEntry in self.orderedItems {
                 try actionEntry.save()
+            }
+        }
+        
+        DispatchQueue.main.schedule {
+            do {
+                try ActorList.shared.forceRefresh()
+            } catch {
+                print(error)
             }
         }
     }

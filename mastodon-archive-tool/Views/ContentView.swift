@@ -8,16 +8,17 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var actors: [APubActor] = []
     @State private var refreshId = UUID()
     @State private var selectedActorId: String? = nil
+    
+    @ObservedObject private var actorList = ActorList.shared
     
     var body: some View {
         NavigationView {
             List {
                 Section("My Archives") {
-                    ForEach($actors) { actor in
-                        NavigationLink(tag: actor.id, selection: $selectedActorId) {
+                    ForEach($actorList.actors) { actor in
+                        NavigationLink(tag: "ACTOR: \(actor.id)", selection: $selectedActorId) {
                             ActorView(actor: actor.wrappedValue)
                                 .navigationTitle(actor.wrappedValue.name)
                         } label: {
@@ -31,10 +32,10 @@ struct ContentView: View {
                     }
                     .onDelete { indexSet in
                         do {
-                            let actorIds = actors.get(indexSet: indexSet).map(\.id)
+                            let actorIds = actorList.actors.get(indexSet: indexSet).map(\.id)
                             
                             try APubActor.deleteActors(withIds: actorIds)
-                            actors.remove(atOffsets: indexSet)
+                            try actorList.forceRefresh()
                             
                             if let selectedActorId = selectedActorId {
                                 if actorIds.firstIndex(of: selectedActorId) != nil {
@@ -50,7 +51,7 @@ struct ContentView: View {
                     }
                     
                     #if DEBUG
-                    NavigationLink {
+                    NavigationLink(tag: "TEST ACTOR", selection: $selectedActorId) {
                         ActorView(actor: MockData.actor, overridePostList: MockData.posts)
                             .navigationTitle(MockData.actor.name)
                     } label: {
@@ -58,22 +59,15 @@ struct ContentView: View {
                     }
                     #endif
                     
-                    NavigationLink {
-                        AddArchiveView() {
-                            do {
-                                actors = try APubActor.fetchAllActors()
-                            } catch {
-                                // TODO handle this error i guess!
-                                print(error.localizedDescription)
-                            }
-                        }
+                    NavigationLink(tag: "IMPORT QUEUE", selection: $selectedActorId) {
+                        AddArchiveView()
                     } label: {
                         Label("Add new archive", systemImage: "plus")
                     }
                 }
                 
                 Section("Misc") {
-                    NavigationLink {
+                    NavigationLink(tag: "ABOUT", selection: $selectedActorId) {
                         AboutView()
                     } label: {
                         Label("About", systemImage: "info.circle")
@@ -83,7 +77,7 @@ struct ContentView: View {
             .listStyle(SidebarListStyle())
             .navigationTitle("Archives")
             .toolbar {
-                if actors.count > 0 {
+                if actorList.actors.count > 0 {
                     EditButton()
                 }
             }
@@ -96,7 +90,7 @@ struct ContentView: View {
     
     func updateActorsList() {
         do {
-            actors = try APubActor.fetchAllActors()
+            try actorList.forceRefresh()
         } catch {
             // TODO handle error gracefully
             print(error.localizedDescription)

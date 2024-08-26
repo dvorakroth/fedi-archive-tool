@@ -42,7 +42,7 @@ slightly advanced functionality
     * DONE ~~whose progress is shown in the "add archive" view~~
     * DONE ~~basically the add archive view should not suck~~
     * DONE ~~also do the import in a transaction so if it fails we don't get partial data in the DB~~
-    * automatically refresh the main view when an import is done
+    * DONE ~~automatically refresh the main view when an import is done~~
     * let the user see details about import errors
 * detail view for individual posts
     * show any replies that might be in the DB
@@ -76,7 +76,8 @@ bugs and workarounds
 --------------------
 
 * DONE ~~on iPad/Mac, when deleting an actor, navigate away from its ActorView if open~~
-* perform deletions async so they don't stick the ui thread
+* perform deletions async so they don't stick the ui thread?
+* deleting an actor while an import for it is ongoing causes a crash?
 * it seems like my mastodon server is actually exporting malformed `outbox.json` files right now!!! they contain two `orderedItems` properties, and Swift's JSON parser seems to just ignore the second one, so we always get an empty array for it
     ```json
     "type": "OrderedCollection",

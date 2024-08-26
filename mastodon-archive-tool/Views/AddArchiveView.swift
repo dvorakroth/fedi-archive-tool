@@ -12,10 +12,6 @@ struct AddArchiveView: View {
     
     @State private var showDocumentPicker = false
     
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    
-    let onSuccessfulLoad: () -> ()
-    
     var body: some View {
         VStack {
             Spacer().frame(height: 15)
@@ -75,5 +71,5 @@ struct AddArchiveView: View {
 }
 
 #Preview {
-    AddArchiveView() {}
+    AddArchiveView()
 }
