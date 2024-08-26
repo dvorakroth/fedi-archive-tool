@@ -93,7 +93,7 @@ public extension APubActor {
         
         let type = try tryGet(field: "type", ofType: .string, fromObject: json, called: nameForErrors) as! String
         guard type == "PropertyValue" else {
-            throw APubParseError.wrongValueForField("type", onObject: nameForErrors, expected: "PropertyValue")
+            throw APubParseError.wrongValueForField("type", onObject: nameForErrors, expected: "PropertyValue", found: type)
         }
                 
         let name = try tryGet(field: "name", ofType: .string, fromObject: json, called: nameForErrors) as! String

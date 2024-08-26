@@ -55,7 +55,7 @@ public extension APubActionEntry {
             action = .create(try await APubNote(fromJson: object, withFilesystemFetcher: filesystemFetcher))
         
         default:
-            throw APubParseError.wrongValueForField("type", onObject: actionNameForErrors, expected: "\"Announce\" or \"Create\"")
+            throw APubParseError.wrongValueForField("type", onObject: actionNameForErrors, expected: "\"Announce\" or \"Create\"", found: type)
         }
         
         self.init(id: id, actorId: actorId, published: published, action: action)
@@ -164,7 +164,7 @@ public extension APubNote {
         
         let type = try tryGet(field: "type", ofType: .string, fromObject: json, called: noteNameForErrors) as! String
         if type != "Note" && type != "Question" {
-            throw APubParseError.wrongValueForField("type", onObject: noteNameForErrors, expected: "\"Note\" or \"Question\"")
+            throw APubParseError.wrongValueForField("type", onObject: noteNameForErrors, expected: "\"Note\" or \"Question\"", found: type)
         }
         
         let published = try tryGetDate(inField: "published", fromObject: json, called: noteNameForErrors)
@@ -256,8 +256,9 @@ public class APubDocument {
 
 public extension APubDocument {
     convenience init(fromJson json: [String: Any], called objNameForErrors: String, withFilesystemFetcher filesystemFetcher: (String) async throws -> (Data)) async throws {
-        if try tryGet(field: "type", ofType: .string, fromObject: json, called: objNameForErrors) as! String != "Document" {
-            throw APubParseError.wrongValueForField("type", onObject: objNameForErrors, expected: "Document")
+        let type = try tryGet(field: "type", ofType: .string, fromObject: json, called: objNameForErrors) as! String
+        if type != "Document" {
+            throw APubParseError.wrongValueForField("type", onObject: objNameForErrors, expected: "Document", found: type)
         }
         
         let mediaType = try tryGet(field: "mediaType", ofType: .string, fromObject: json, called: objNameForErrors) as! String
@@ -279,7 +280,7 @@ public extension APubDocument {
         let focalPoint: (Double, Double)?
         if let focalPointArr = focalPointArr {
             guard focalPointArr.count == 2, let focalPointArr = focalPointArr as? [NSNumber] else {
-                throw APubParseError.wrongValueForField("focalPoint", onObject: objNameForErrors, expected: "an array with exactly two elements, both numbers")
+                throw APubParseError.wrongValueForField("focalPoint", onObject: objNameForErrors, expected: "an array with exactly two elements, both numbers", found: "\(focalPointArr)")
             }
             
             focalPoint = (focalPointArr[0].doubleValue, focalPointArr[1].doubleValue)
@@ -308,8 +309,9 @@ public struct APubPollOption {
 
 public extension APubPollOption {
     init(fromJson json: [String: Any], called objNameForErrors: String) throws {
-        if try tryGet(field: "type", ofType: .string, fromObject: json, called: objNameForErrors) as! String != "Note" {
-            throw APubParseError.wrongValueForField("type", onObject: objNameForErrors, expected: "Note")
+        let type = try tryGet(field: "type", ofType: .string, fromObject: json, called: objNameForErrors) as! String
+        if type != "Note" {
+            throw APubParseError.wrongValueForField("type", onObject: objNameForErrors, expected: "Note", found: type)
         }
         
         self.name = try tryGet(field: "name", ofType: .string, fromObject: json, called: objNameForErrors) as! String
@@ -317,8 +319,9 @@ public extension APubPollOption {
         let replies = try tryGet(field: "replies", ofType: .object, fromObject: json, called: objNameForErrors) as! [String: Any]
         let repliesNameForErrors = "replies in \(objNameForErrors)"
         
-        if try tryGet(field: "type", ofType: .string, fromObject: replies, called: repliesNameForErrors) as! String != "Collection" {
-            throw APubParseError.wrongValueForField("type", onObject: repliesNameForErrors, expected: "Collection")
+        let repliesType = try tryGet(field: "type", ofType: .string, fromObject: replies, called: repliesNameForErrors) as! String
+        if repliesType != "Collection" {
+            throw APubParseError.wrongValueForField("type", onObject: repliesNameForErrors, expected: "Collection", found: repliesType)
         }
         
         self.numVotes = (try tryGet(field: "totalItems", ofType: .number, fromObject: replies, called: repliesNameForErrors) as! NSNumber).intValue

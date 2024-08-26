@@ -46,7 +46,7 @@ struct ContentView: View {
                             }
                         } catch {
                             // TODO handle error gracefully
-                            print(error.localizedDescription)
+                            print(error)
                         }
                     }
                     
@@ -93,7 +93,7 @@ struct ContentView: View {
             try actorList.forceRefresh()
         } catch {
             // TODO handle error gracefully
-            print(error.localizedDescription)
+            print(error)
         }
     }
 }

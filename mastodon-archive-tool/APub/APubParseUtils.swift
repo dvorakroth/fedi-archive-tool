@@ -10,7 +10,7 @@ import Foundation
 public enum APubParseError : Error {
     case missingField(String, onObject: String)
     case wrongTypeForField(String, onObject: String, expected: [JsonTypes])
-    case wrongValueForField(String, onObject: String, expected: String)
+    case wrongValueForField(String, onObject: String, expected: String, found: String)
 }
 
 public enum JsonTypes {
@@ -114,7 +114,7 @@ fileprivate func parseIsoDate(_ dateStr: String, fieldName: String, objName: Str
     let dateFormatter = ISO8601DateFormatter()
     // TODO timezone?
     guard let date = dateFormatter.date(from: dateStr) else {
-        throw APubParseError.wrongValueForField(fieldName, onObject: objName, expected: "A Valid ISO 8601 date")
+        throw APubParseError.wrongValueForField(fieldName, onObject: objName, expected: "A Valid ISO 8601 date", found: dateStr)
     }
     
     return date

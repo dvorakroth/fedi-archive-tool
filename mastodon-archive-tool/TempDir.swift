@@ -38,7 +38,7 @@ class TempDir {
         do {
             try FileManager.default.removeItem(at: self.url)
         } catch {
-            print("Error while trying to delete temp dir \(url.absoluteString): \(error.localizedDescription)")
+            print("Error while trying to delete temp dir \(url.absoluteString): \(error)")
         }
     }
 }

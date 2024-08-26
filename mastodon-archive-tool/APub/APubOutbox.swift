@@ -20,8 +20,9 @@ public class APubOutbox {
 public extension APubOutbox {
     convenience init(withActor actor: APubActor, fromJson json: [String: Any], withFilesystemFetcher filesystemFetcher: (String) async throws -> (Data)) async throws {
         
-        if try tryGet(field: "type", ofType: .string, fromObject: json, called: "Outbox") as! String != "OrderedCollection" {
-            throw APubParseError.wrongValueForField("type", onObject: "Outbox", expected: "OrderedCollection");
+        let type = try tryGet(field: "type", ofType: .string, fromObject: json, called: "Outbox") as! String
+        if type != "OrderedCollection" {
+            throw APubParseError.wrongValueForField("type", onObject: "Outbox", expected: "OrderedCollection", found: type);
         }
         
         let orderedItems = try await tryGetArrayAsync(inField: "orderedItems", fromObject: json, called: "Outbox", parsingObjectsUsing: {

@@ -47,10 +47,9 @@ class ArchiveImportQueue: ObservableObject {
                 do {
                     let _ = try await importArchive(fileURL)
                     updateImportStatus(atIndex: nextImportIdx, to: .done)
-                    // TODO signal to main view that it needs to update?
                 } catch {
-                    // TODO better way to convert errors to strings?
-                    updateImportStatus(atIndex: nextImportIdx, to: .error(error.localizedDescription))
+                    let mirror = Mirror(reflecting: error)
+                    updateImportStatus(atIndex: nextImportIdx, to: .error("\(mirror.subjectType) - \(error)"))
                 }
                 
                 await Task.yield()
