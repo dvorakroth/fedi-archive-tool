@@ -39,6 +39,7 @@
 		39A192392C28654A000C3FE6 /* DataCompression in Frameworks */ = {isa = PBXBuildFile; productRef = 39A192382C28654A000C3FE6 /* DataCompression */; };
 		39A1923B2C2867D1000C3FE6 /* TempDir.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A1923A2C2867D1000C3FE6 /* TempDir.swift */; };
 		39ACFA132C7CCEBC003C9CD5 /* AnnounceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39ACFA122C7CCEBC003C9CD5 /* AnnounceView.swift */; };
+		39ACFA152C7CD300003C9CD5 /* ArchiveImportQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39ACFA142C7CD300003C9CD5 /* ArchiveImportQueue.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -83,6 +84,7 @@
 		39A192342C285B8A000C3FE6 /* AddArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddArchiveView.swift; sourceTree = "<group>"; };
 		39A1923A2C2867D1000C3FE6 /* TempDir.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempDir.swift; sourceTree = "<group>"; };
 		39ACFA122C7CCEBC003C9CD5 /* AnnounceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnounceView.swift; sourceTree = "<group>"; };
+		39ACFA142C7CD300003C9CD5 /* ArchiveImportQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveImportQueue.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +134,7 @@
 				39A1923A2C2867D1000C3FE6 /* TempDir.swift */,
 				39816CE92C2B4B290074740C /* Junkyard.swift */,
 				39816D122C3060D10074740C /* ConvertHTML.swift */,
+				39ACFA142C7CD300003C9CD5 /* ArchiveImportQueue.swift */,
 			);
 			path = "mastodon-archive-tool";
 			sourceTree = "<group>";
@@ -292,6 +295,7 @@
 				39816CF62C2C79760074740C /* MockData.swift in Sources */,
 				3955BC6C2C4D89B2001D073F /* ShareSheetView.swift in Sources */,
 				39816CE82C2B3EEC0074740C /* ImageOrRectangle.swift in Sources */,
+				39ACFA152C7CD300003C9CD5 /* ArchiveImportQueue.swift in Sources */,
 				39A192222C2746F2000C3FE6 /* APubOutbox.swift in Sources */,
 				39A192202C2746F2000C3FE6 /* APubParseUtils.swift in Sources */,
 				39816CEA2C2B4B290074740C /* Junkyard.swift in Sources */,

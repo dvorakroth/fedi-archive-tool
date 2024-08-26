@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct AddArchiveView: View {
-    @State private var addArchiveState: AddArchiveState = .waiting
-    @State private var showDocumentPicker = true
+    @ObservedObject var importQueue = ArchiveImportQueue.getQueue()
+    
+    @State private var showDocumentPicker = false
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
@@ -17,26 +18,39 @@ struct AddArchiveView: View {
     
     var body: some View {
         VStack {
-            switch(addArchiveState) {
-            case .waiting:
-                Text("...")
-            case .processing(filename: let filename):
-                ProgressView().progressViewStyle(.circular)
-                Text("Processing \(filename)...")
-            case .error(filename: let filename, errorText: let errorText):
-                if let filename = filename {
-                    Text("Error processing \(filename)").font(.title)
-                } else {
-                    Text("Error opening file").font(.title)
+            Spacer().frame(height: 15)
+            
+            List {
+                ForEach(importQueue.queue, id: \.id) { item in
+                    HStack {
+                        switch item.status {
+                        case .waiting:
+                            Image(systemName: "clock")
+                                .frame(width: 27, height: 27)
+                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
+                        case .processing:
+                            ProgressView().progressViewStyle(.circular)
+                                .frame(width: 27, height: 27)
+                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
+                        case .done:
+                            Image(systemName: "checkmark.circle.fill").renderingMode(.template).foregroundStyle(.green)
+                                .frame(width: 27, height: 27)
+                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
+                        case .error:
+                            Image(systemName: "exclamationmark.circle.fill").renderingMode(.original)
+                                .frame(width: 27, height: 27)
+                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
+                        }
+                        Text("\(item.fileURL.lastPathComponent)")
+                        Spacer()
+                    }
                 }
-                Text(errorText)
-            case .done(let actor):
-                Text("Done importing archive for \(actor.fullUsername)!")
+                
                 Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    Text("Go back")
-                }
+                    showDocumentPicker = true
+                }, label: {
+                    Label("Add new archive", systemImage: "plus")
+                })
             }
         }
             .fileImporter(
@@ -45,38 +59,19 @@ struct AddArchiveView: View {
                 allowsMultipleSelection: false,
                 onCompletion: self.openArchive
             )
+            .navigationTitle("Import Queue")
     }
     
     func openArchive(urlOrError: Result<[URL], any Error>) {
         switch(urlOrError) {
         case .failure(let error):
-            addArchiveState = .error(filename: nil, errorText: error.localizedDescription)
+            // TODO ...something?
+            break
             
         case .success(let urls):
-            let url = urls[0]
-            self.addArchiveState = .processing(filename: url.lastPathComponent)
-            print("trying to open archive at \(url.absoluteString)")
-            
-            Task {
-                do {
-                    let actor = try await readArchive(url)
-                    self.addArchiveState = .done(actor)
-                    self.onSuccessfulLoad()
-                } catch {
-                    self.addArchiveState = .error(filename: url.lastPathComponent, errorText: error.localizedDescription)
-                }
-            }
+            importQueue.addToQueue(urls[0])
         }
-        
-
     }
-}
-
-enum AddArchiveState {
-    case waiting
-    case processing(filename: String)
-    case error(filename: String?, errorText: String)
-    case done(APubActor)
 }
 
 #Preview {
