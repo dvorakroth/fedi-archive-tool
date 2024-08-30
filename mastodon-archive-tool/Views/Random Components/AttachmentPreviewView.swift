@@ -17,13 +17,14 @@ enum AttachmentType {
 }
 
 struct AttachmentPreviewView: View {
-    let attachment: APubDocument;
-    let attachmentType: AttachmentType;
+    let attachment: APubDocument
+    let attachmentType: AttachmentType
+    let onImageTapped: (() -> Void)?
     
     @State var blurhashImage: UIImage?;
     @State var isHidden: Bool
     
-    init(attachment: APubDocument, hiddenByDefault: Bool) {
+    init(attachment: APubDocument, hiddenByDefault: Bool, onImageTapped: (() -> Void)? = nil) {
         self.attachment = attachment
         
         if attachment.mediaType.starts(with: "image/") {
@@ -37,6 +38,7 @@ struct AttachmentPreviewView: View {
         }
         
         self.isHidden = hiddenByDefault
+        self.onImageTapped = onImageTapped
     }
     
     var body: some View {
@@ -106,6 +108,11 @@ struct AttachmentPreviewView: View {
                         height: 150,
                         contentMode: .fit
                     ).cornerRadius(5)
+                        .onTapGesture {
+                            if let onImageTapped = onImageTapped {
+                                onImageTapped()
+                            }
+                        }
                     
                     VStack {
                         HStack {

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import LazyPager
 
 struct PostView: View {
     let actor: APubActor
@@ -14,6 +15,10 @@ struct PostView: View {
     
     @State var isExpanded = false
     @State var permalinkShareSheetIsShown = false
+    
+    @State var showFullscreenMedia = false
+    @State var fullscreenMediaIndex = 0
+    @State var fullscreenMediaBgOpacity: CGFloat = 1
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -132,14 +137,23 @@ struct PostView: View {
                     let attachmentPairs = divideIntoPairs(mediaAttachments)
                     Spacer().frame(height: 15)
                     VStack {
-                        ForEach(attachmentPairs, id: \.id) { (id: _, first, second) in
+                        ForEach(attachmentPairs, id: \.id) { (pairIdx, first, second) in
                             if let second = second {
                                 HStack {
-                                    AttachmentPreviewView(attachment: first, hiddenByDefault: post.sensitive)
-                                    AttachmentPreviewView(attachment: second, hiddenByDefault: post.sensitive)
+                                    AttachmentPreviewView(attachment: first, hiddenByDefault: post.sensitive) {
+                                        fullscreenMediaIndex = pairIdx * 2
+                                        showFullscreenMedia = true
+                                    }
+                                    AttachmentPreviewView(attachment: second, hiddenByDefault: post.sensitive) {
+                                        fullscreenMediaIndex = pairIdx * 2 + 1
+                                        showFullscreenMedia = true
+                                    }
                                 }
                             } else {
-                                AttachmentPreviewView(attachment: first, hiddenByDefault: post.sensitive)
+                                AttachmentPreviewView(attachment: first, hiddenByDefault: post.sensitive) {
+                                    fullscreenMediaIndex = pairIdx * 2
+                                    showFullscreenMedia = true
+                                }
                             }
                         }
                     }
@@ -167,7 +181,20 @@ struct PostView: View {
             }
             
             Spacer().frame(height: 15)
-        }.padding(.horizontal)
+        }
+            .padding(.horizontal)
+            .fullScreenCover(isPresented: $showFullscreenMedia) {
+                LazyPager(data: post.mediaAttachments ?? [], page: $fullscreenMediaIndex) { attachment in
+                    AttachmentPreviewView(attachment: attachment, hiddenByDefault: false)
+                }
+                .zoomable(min: 1, max: 5)
+                .onDismiss(backgroundOpacity: $fullscreenMediaBgOpacity) {
+                    showFullscreenMedia = false
+                }
+                .background(.black.opacity(fullscreenMediaBgOpacity))
+                .background(ClearFullScreenBackground())
+                .ignoresSafeArea()
+            }
     }
 }
 

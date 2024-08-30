@@ -40,6 +40,7 @@
 		39A1923B2C2867D1000C3FE6 /* TempDir.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A1923A2C2867D1000C3FE6 /* TempDir.swift */; };
 		39ACFA132C7CCEBC003C9CD5 /* AnnounceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39ACFA122C7CCEBC003C9CD5 /* AnnounceView.swift */; };
 		39ACFA152C7CD300003C9CD5 /* ArchiveImportQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39ACFA142C7CD300003C9CD5 /* ArchiveImportQueue.swift */; };
+		39ACFA182C8223B1003C9CD5 /* LazyPager in Frameworks */ = {isa = PBXBuildFile; productRef = 39ACFA172C8223B1003C9CD5 /* LazyPager */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -97,6 +98,7 @@
 				39A192272C27549E000C3FE6 /* ZIPFoundation in Frameworks */,
 				393F12562C42C30A0083FB03 /* BlurHash in Frameworks */,
 				39A192392C28654A000C3FE6 /* DataCompression in Frameworks */,
+				39ACFA182C8223B1003C9CD5 /* LazyPager in Frameworks */,
 				39816D162C3064B00074740C /* SwiftSoup in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -211,6 +213,7 @@
 				39A192382C28654A000C3FE6 /* DataCompression */,
 				39816D152C3064B00074740C /* SwiftSoup */,
 				393F12552C42C30A0083FB03 /* BlurHash */,
+				39ACFA172C8223B1003C9CD5 /* LazyPager */,
 			);
 			productName = "mastodon-archive-tool";
 			productReference = 392D46E02C273CC900561231 /* mastodon-archive-tool.app */;
@@ -247,6 +250,7 @@
 				39A192372C28654A000C3FE6 /* XCRemoteSwiftPackageReference "DataCompression" */,
 				39816D142C3064B00074740C /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 				393F12542C42C30A0083FB03 /* XCRemoteSwiftPackageReference "blurhash-swift" */,
+				39ACFA162C8223B1003C9CD5 /* XCRemoteSwiftPackageReference "SwiftUI-LazyPager" */,
 			);
 			productRefGroup = 392D46E12C273CC900561231 /* Products */;
 			projectDirPath = "";
@@ -566,6 +570,14 @@
 				minimumVersion = 3.8.0;
 			};
 		};
+		39ACFA162C8223B1003C9CD5 /* XCRemoteSwiftPackageReference "SwiftUI-LazyPager" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gh123man/SwiftUI-LazyPager";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -598,6 +610,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 39A192372C28654A000C3FE6 /* XCRemoteSwiftPackageReference "DataCompression" */;
 			productName = DataCompression;
+		};
+		39ACFA172C8223B1003C9CD5 /* LazyPager */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 39ACFA162C8223B1003C9CD5 /* XCRemoteSwiftPackageReference "SwiftUI-LazyPager" */;
+			productName = LazyPager;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
