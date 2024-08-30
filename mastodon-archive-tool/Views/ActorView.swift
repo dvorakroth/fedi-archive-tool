@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import LazyPager
 
 struct ActorView: View {
     let actor: APubActor
@@ -14,6 +15,12 @@ struct ActorView: View {
     @State private var profileLinkShareSheetIsShown = false
     @State private var displayFilter = DisplayFilter.Posts
     @StateObject private var dataSource = PostDataSource()
+    
+//    @State var showFullscreenMedia = false
+    @State var fullscreenMediaPreviewState: MediaPreviewState = .hidden
+//    @State var fullscreenMediaIndex = 0
+//    @State var fullscreenMediaPost: APubNote? = nil
+    @State var fullscreenMediaBgOpacity: CGFloat = 1
     
     init(actor: APubActor, overridePostList: [APubActionEntry]? = nil) {
         self.actor = actor
@@ -147,7 +154,14 @@ struct ActorView: View {
                     LazyVStack(spacing: 10) {
                         Divider()
                         ForEach(overridePostList ?? dataSource.posts) { post in
-                            ActionView(actor: actor, action: post)
+                            ActionView(actor: actor, action: post) { mediaIdx in
+//                                fullscreenMediaPost = post.action.getNote()
+//                                fullscreenMediaIndex = mediaIdx
+//                                showFullscreenMedia = true
+                                if let apubNote = post.action.getNote() {
+                                    fullscreenMediaPreviewState = .shown(apubNote: apubNote, mediaIdx: mediaIdx)
+                                }
+                            }
                                 .onAppear {
                                     loadMorePostsIfNeeded(currentEarliest: post)
                                 }
@@ -175,6 +189,42 @@ struct ActorView: View {
                         }
                     }
                 }
+        }
+        .fullScreenCover(isPresented: .init(get: {
+            switch self.fullscreenMediaPreviewState {
+            case .hidden:
+                return false
+            case .shown:
+                return true
+            }
+        }, set: { newValue in
+            if !newValue {
+                self.fullscreenMediaPreviewState = .hidden
+            } else {
+                // ???? do nothing i guess??
+                print("Warning: tried to directly set the full screen cover binding to true???")
+            }
+        })) {
+            switch fullscreenMediaPreviewState {
+            case .hidden:
+                EmptyView()
+            case .shown(let apubNote, let mediaIdx):
+                LazyPager(data: apubNote.mediaAttachments ?? [], page: .init(get: {
+                    mediaIdx
+                }, set: { newIdx in
+                    fullscreenMediaPreviewState = .shown(apubNote: apubNote, mediaIdx: newIdx)
+                })) { attachment in
+                    AttachmentPreviewView(attachment: attachment, hiddenByDefault: false)
+                }
+                .zoomable(min: 1, max: 5)
+                .onDismiss(backgroundOpacity: $fullscreenMediaBgOpacity) {
+                    fullscreenMediaPreviewState = .hidden
+                }
+                .background(.black.opacity(fullscreenMediaBgOpacity))
+                .background(ClearFullScreenBackground())
+                .ignoresSafeArea()
+            }
+            
         }
     }
     
@@ -289,6 +339,30 @@ fileprivate enum DisplayFilter {
     case Posts
     case PostsAndReplies
     case Media
+}
+
+enum MediaPreviewState: Equatable {
+    static func == (lhs: MediaPreviewState, rhs: MediaPreviewState) -> Bool {
+        switch lhs {
+        case .hidden:
+            switch rhs {
+            case .hidden:
+                return true
+            default:
+                return false
+            }
+        case .shown(apubNote: let note1, mediaIdx: let idx1):
+            switch rhs {
+            case .shown(apubNote: let note2, mediaIdx: let idx2):
+                return note1 === note2 && idx1 == idx2
+            default:
+                return false
+            }
+        }
+    }
+    
+    case hidden
+    case shown(apubNote: APubNote, mediaIdx: Int)
 }
 
 #Preview {

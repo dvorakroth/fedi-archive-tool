@@ -63,7 +63,9 @@ struct SearchView: View {
                             Divider().id(Self.topId)
                             
                             ForEach(overridePostList ?? dataSource.posts) { post in
-                                ActionView(actor: actor, action: post)
+                                ActionView(actor: actor, action: post) { _ in
+                                    // TODO onMediaClicked
+                                }
                                     .onAppear {
                                         loadMorePostsIfNeeded(currentEarliest: post)
                                     }

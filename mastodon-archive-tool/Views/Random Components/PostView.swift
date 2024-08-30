@@ -6,19 +6,15 @@
 //
 
 import SwiftUI
-import LazyPager
 
 struct PostView: View {
     let actor: APubActor
     let post: APubNote
     let announcedBy: APubActor?
+    let onMediaClicked: ((_: Int) -> Void)?
     
     @State var isExpanded = false
     @State var permalinkShareSheetIsShown = false
-    
-    @State var showFullscreenMedia = false
-    @State var fullscreenMediaIndex = 0
-    @State var fullscreenMediaBgOpacity: CGFloat = 1
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -141,18 +137,21 @@ struct PostView: View {
                             if let second = second {
                                 HStack {
                                     AttachmentPreviewView(attachment: first, hiddenByDefault: post.sensitive) {
-                                        fullscreenMediaIndex = pairIdx * 2
-                                        showFullscreenMedia = true
+                                        if let onMediaClicked = onMediaClicked {
+                                            onMediaClicked(pairIdx * 2)
+                                        }
                                     }
                                     AttachmentPreviewView(attachment: second, hiddenByDefault: post.sensitive) {
-                                        fullscreenMediaIndex = pairIdx * 2 + 1
-                                        showFullscreenMedia = true
+                                        if let onMediaClicked = onMediaClicked {
+                                            onMediaClicked(pairIdx * 2 + 1)
+                                        }
                                     }
                                 }
                             } else {
                                 AttachmentPreviewView(attachment: first, hiddenByDefault: post.sensitive) {
-                                    fullscreenMediaIndex = pairIdx * 2
-                                    showFullscreenMedia = true
+                                    if let onMediaClicked = onMediaClicked {
+                                        onMediaClicked(pairIdx * 2)
+                                    }
                                 }
                             }
                         }
@@ -181,20 +180,7 @@ struct PostView: View {
             }
             
             Spacer().frame(height: 15)
-        }
-            .padding(.horizontal)
-            .fullScreenCover(isPresented: $showFullscreenMedia) {
-                LazyPager(data: post.mediaAttachments ?? [], page: $fullscreenMediaIndex) { attachment in
-                    AttachmentPreviewView(attachment: attachment, hiddenByDefault: false)
-                }
-                .zoomable(min: 1, max: 5)
-                .onDismiss(backgroundOpacity: $fullscreenMediaBgOpacity) {
-                    showFullscreenMedia = false
-                }
-                .background(.black.opacity(fullscreenMediaBgOpacity))
-                .background(ClearFullScreenBackground())
-                .ignoresSafeArea()
-            }
+        }.padding(.horizontal)
     }
 }
 
@@ -203,7 +189,8 @@ struct PostView: View {
         PostView(
             actor: MockData.actor,
             post: MockData.posts[0].action.getNote()!,
-            announcedBy: MockData.actor
+            announcedBy: MockData.actor,
+            onMediaClicked: nil
         )
     }
 }
