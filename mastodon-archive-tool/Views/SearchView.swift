@@ -59,26 +59,30 @@ struct SearchView: View {
 //                    Spacer()
                 
                     ScrollView {
-                        LazyVStack(spacing: 10) {
-                            Divider().id(Self.topId)
-                            
-                            ForEach(overridePostList ?? dataSource.posts) { post in
-                                ActionView(actor: actor, action: post) { _ in
-                                    // TODO onMediaClicked
-                                }
+                        MediaDisplayer { displayMedia in
+                            LazyVStack(spacing: 10) {
+                                Divider().id(Self.topId)
+                                
+                                ForEach(overridePostList ?? dataSource.posts) { post in
+                                    ActionView(actor: actor, action: post) { mediaIdx in
+                                        if let apubNote = post.action.getNote() {
+                                            displayMedia(apubNote.mediaAttachments ?? [], mediaIdx)
+                                        }
+                                    }
                                     .onAppear {
                                         loadMorePostsIfNeeded(currentEarliest: post)
                                     }
-                                Divider()
+                                    Divider()
+                                }
+                                
+                                if dataSource.isLoading || overridePostList != nil {
+                                    Spacer().frame(height: 10)
+                                    ProgressView().progressViewStyle(.circular)
+                                }
                             }
-                            
-                            if dataSource.isLoading || overridePostList != nil {
-                                Spacer().frame(height: 10)
-                                ProgressView().progressViewStyle(.circular)
+                            .onAppear {
+                                loadMorePostsIfNeeded()
                             }
-                        }
-                        .onAppear {
-                            loadMorePostsIfNeeded()
                         }
                     }
                 }
