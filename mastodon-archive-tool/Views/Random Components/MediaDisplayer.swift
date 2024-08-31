@@ -70,7 +70,36 @@ struct MediaDisplayer<Content>: View where Content: View {
         })
         .fullScreenCover(isPresented: _$isPresented) {
             LazyPager(data: _$attachments.wrappedValue, page: _$attachmentIdx) { attachment in
-                AttachmentPreviewView(attachment: attachment, hiddenByDefault: false)
+                let uiImage: UIImage?
+                let fallbackIconName: String
+                
+                if attachment.mediaType.starts(with: "image/") {
+                    if let data = attachment.data {
+                        let _ = uiImage = UIImage(data: data)
+                    } else {
+                        let _ = uiImage = nil
+                    }
+                    let _ = fallbackIconName = "questionmark.square.dashed"
+                } else if attachment.mediaType.starts(with: "video/") {
+                    let _ = uiImage = nil
+                    let _ = fallbackIconName = "video.square"
+                } else if attachment.mediaType.starts(with: "audio/") {
+                    let _ = uiImage = nil
+                    let _ = fallbackIconName = "headphones.circle"
+                } else {
+                    let _ = uiImage = nil
+                    let _ = fallbackIconName = "questionmark.square.dashed"
+                }
+                
+                VStack {
+                    if let uiImage = uiImage {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                    } else {
+                        Image(systemName: fallbackIconName).font(.title)
+                    }
+                }
             }
             .zoomable(min: 1, max: 5)
             .onDismiss(backgroundOpacity: $bgOpacity) {

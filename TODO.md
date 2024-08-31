@@ -58,7 +58,8 @@ slightly advanced functionality
     * DONE ~~also work on search page~~
     * show little blips counting the index of this media attachment
     * videos?????? idk
-    * option to zoom
+    * DONE ~~option to zoom~~
+    * disable zoom when there's no media to show
     * option to save?
     * show alt text!
 * when searching, highlight the places where the text matches
