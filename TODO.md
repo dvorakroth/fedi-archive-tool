@@ -55,7 +55,7 @@ slightly advanced functionality
 * click on images to embiggen
     * DONE ~~basic functionality~~
     * show the images uh, bigger
-    * also work on search page
+    * DONE ~~also work on search page~~
     * show little blips counting the index of this media attachment
     * videos?????? idk
     * option to zoom
