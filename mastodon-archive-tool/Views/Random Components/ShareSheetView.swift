@@ -8,18 +8,47 @@
 import SwiftUI
 
 struct ShareSheetView: UIViewControllerRepresentable {
-    let url: URL
+    private let content: ShareSheetContent
+    
+    init(url: URL) {
+        self.content = .url(url)
+    }
+    
+    init(image: UIImage) {
+        self.content = .image(image)
+    }
     
     func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(
-            activityItems: [url],
-            applicationActivities: [
-                OpenInBrowserActivity()
-            ]
-        )
+        switch content {
+        case .url(let url):
+            return UIActivityViewController(
+                activityItems: [url],
+                applicationActivities: [
+                    OpenInBrowserActivity()
+                ]
+            )
+            
+        case .image(let image):
+            let activities: [UIActivity]
+//            #if targetEnvironment(macCatalyst)
+//            activities = [MacCatalystSaveFileActivity()]
+//            #else
+            activities = []
+//            #endif
+            
+            return UIActivityViewController(
+                activityItems: [image],
+                applicationActivities: activities
+            )
+        }
     }
     
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
+
+fileprivate enum ShareSheetContent {
+    case url(URL)
+    case image(UIImage)
 }
 
 #Preview {

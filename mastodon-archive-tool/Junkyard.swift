@@ -171,3 +171,48 @@ class OpenInBrowserActivity: UIActivity {
         }
     }
 }
+
+//class MacCatalystSaveFileActivity: UIActivity {
+//    var activityItem: UIImage? = nil
+//    
+//    override var activityTitle: String? {
+//        "Save File"
+//    }
+//    
+//    override var activityImage: UIImage? {
+//        UIImage(systemName: "doc")
+//    }
+//    
+//    override var activityType: UIActivity.ActivityType? {
+//        UIActivity.ActivityType("works.ish.mastodon-archive-tool.mac-catalyst-save-file")
+//    }
+//    
+//    override class var activityCategory: UIActivity.Category {
+//        .action
+//    }
+//    
+//    override func canPerform(withActivityItems activityItems: [Any]) -> Bool {
+//        return activityItems.contains { item in item is UIImage }
+//    }
+//    
+//    override func prepare(withActivityItems activityItems: [Any]) {
+//        self.activityItem = (activityItems.first { item in item is UIImage } as! UIImage)
+//    }
+//    
+//    override func perform() {
+//        if let activityItem = activityItem {
+//            activityItem.
+//            let picker = UIDocumentPickerViewController
+//        }
+//    }
+//}
+//
+//class DocumentSaveDialogController: UIDocumentPickerViewController {
+//    private let onDone: (URL?) -> Void
+//    
+//    init(onDone: @escaping (URL?) -> Void, in: ()) {
+//        self.onDone = onDone
+//        
+//        super.init(forExporting: <#T##[URL]#>)
+//    }
+//}

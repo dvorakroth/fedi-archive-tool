@@ -60,8 +60,10 @@ slightly advanced functionality
     * videos?????? idk
     * DONE ~~option to zoom~~
     * DONE ~~disable zoom when there's no media to show~~
-    * option to save?
-    * show alt text!
+    * DONE ~~option to save?~~
+    * finish implementing needlessly difficult save dialog on mac catalyst
+    * save unrecognized media?
+    * DONE ~~show alt text!~~
     * zooming in on desktop?
 * when searching, highlight the places where the text matches
 * when a post's text is hidden, still show all @mention links (and only them), like in the mastodon web ui

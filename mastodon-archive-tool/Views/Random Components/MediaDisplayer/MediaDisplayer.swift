@@ -12,11 +12,17 @@ struct MediaDisplayer<Content>: View where Content: View {
     let content: (_: @escaping MediaViewerCallback) -> Content
     
     @State fileprivate var state: MediaViewerState = .hidden
+    @State var controlsShown = true
     @State var bgOpacity: CGFloat = 1
     
     var _$isPresented: Binding<Bool> {
         Binding<Bool> {
-            state != .hidden
+            switch state {
+            case .hidden:
+                return false
+            case .shown:
+                return true
+            }
         } set: { newValue in
             if !newValue {
                 state = .hidden
@@ -56,7 +62,6 @@ struct MediaDisplayer<Content>: View where Content: View {
                 state = .shown(attachments: attachments, attachmentIdx: newIdx)
             }
         }
-
     }
 
     
@@ -67,40 +72,12 @@ struct MediaDisplayer<Content>: View where Content: View {
     var body: some View {
         content({ attachments, attachmentIdx in
             state = .shown(attachments: attachments, attachmentIdx: attachmentIdx)
+            controlsShown = true
         })
         .fullScreenCover(isPresented: _$isPresented) {
             LazyPager(data: _$attachments.wrappedValue, page: _$attachmentIdx) { attachment in
-                let uiImage: UIImage?
-                let fallbackIconName: String
-                
-                if attachment.mediaType.starts(with: "image/") {
-                    if let data = attachment.data {
-                        let _ = uiImage = UIImage(data: data)
-                    } else {
-                        let _ = uiImage = nil
-                    }
-                    let _ = fallbackIconName = "questionmark.square.dashed"
-                } else if attachment.mediaType.starts(with: "video/") {
-                    let _ = uiImage = nil
-                    let _ = fallbackIconName = "video.square"
-                } else if attachment.mediaType.starts(with: "audio/") {
-                    let _ = uiImage = nil
-                    let _ = fallbackIconName = "headphones.circle"
-                } else {
-                    let _ = uiImage = nil
-                    let _ = fallbackIconName = "questionmark.square.dashed"
-                }
-                
-                VStack {
-                    if let uiImage = uiImage {
-                        ZoomView(minZoom: 1, maxZoom: 5) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                        }
-                    } else {
-                        Image(systemName: fallbackIconName).font(.title)
-                    }
+                AttachmentView(attachment: attachment, controlsShown: $controlsShown) {
+                    _$isPresented.wrappedValue = false
                 }
             }
             // don't use the LazyPager's `zoomable` function because some items might not be zoomable (for example, missing/undisplayable media placeholders)
@@ -109,35 +86,27 @@ struct MediaDisplayer<Content>: View where Content: View {
             }
             .background(.black.opacity(bgOpacity))
             .background(ClearFullScreenBackground())
-            .ignoresSafeArea()
+//            .ignoresSafeArea()
         }
     }
 }
 
 typealias MediaViewerCallback = (_: [APubDocument], _: Int) -> Void
 
-fileprivate enum MediaViewerState: Equatable {
-    static func == (lhs: MediaViewerState, rhs: MediaViewerState) -> Bool {
-        switch lhs {
-        case .hidden:
-            switch rhs {
-            case .hidden:
-                return true
-            default:
-                return false
-            }
-        case .shown(attachments: let attachments1, attachmentIdx: let idx1):
-            switch rhs {
-            case .shown(attachments: let attachments2, attachmentIdx: let idx2):
-                return zip(attachments1, attachments2).allSatisfy({ a1, a2 in
-                    a1 === a2
-                }) && idx1 == idx2
-            default:
-                return false
-            }
-        }
-    }
-    
+fileprivate enum MediaViewerState {
     case hidden
     case shown(attachments: [APubDocument], attachmentIdx: Int)
+}
+
+#Preview {
+    MediaDisplayer { showMedia in
+        Button {
+            showMedia(MockData.attachments, 0)
+        } label: {
+            Text("Show Media")
+        }
+        .onAppear {
+            showMedia(MockData.attachments, 0)
+        }
+    }
 }

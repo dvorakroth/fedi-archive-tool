@@ -43,6 +43,7 @@
 		39ACFA182C8223B1003C9CD5 /* LazyPager in Frameworks */ = {isa = PBXBuildFile; productRef = 39ACFA172C8223B1003C9CD5 /* LazyPager */; };
 		39ACFA1A2C837D2E003C9CD5 /* MediaDisplayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39ACFA192C837D2E003C9CD5 /* MediaDisplayer.swift */; };
 		39ACFA1C2C849157003C9CD5 /* ZoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39ACFA1B2C849157003C9CD5 /* ZoomView.swift */; };
+		39ACFA1F2C84B4A1003C9CD5 /* AttachmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39ACFA1E2C84B4A1003C9CD5 /* AttachmentView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -90,6 +91,7 @@
 		39ACFA142C7CD300003C9CD5 /* ArchiveImportQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveImportQueue.swift; sourceTree = "<group>"; };
 		39ACFA192C837D2E003C9CD5 /* MediaDisplayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDisplayer.swift; sourceTree = "<group>"; };
 		39ACFA1B2C849157003C9CD5 /* ZoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomView.swift; sourceTree = "<group>"; };
+		39ACFA1E2C84B4A1003C9CD5 /* AttachmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +158,7 @@
 		39816CE62C2B3EDD0074740C /* Random Components */ = {
 			isa = PBXGroup;
 			children = (
+				39ACFA1D2C84B490003C9CD5 /* MediaDisplayer */,
 				39816CE72C2B3EEC0074740C /* ImageOrRectangle.swift */,
 				39816CEB2C2B4BBB0074740C /* ActorTable.swift */,
 				39816CF12C2C76340074740C /* ActionView.swift */,
@@ -164,7 +167,6 @@
 				3955BC672C4C5FF4001D073F /* PollView.swift */,
 				3955BC6B2C4D89B2001D073F /* ShareSheetView.swift */,
 				39ACFA122C7CCEBC003C9CD5 /* AnnounceView.swift */,
-				39ACFA192C837D2E003C9CD5 /* MediaDisplayer.swift */,
 				39ACFA1B2C849157003C9CD5 /* ZoomView.swift */,
 			);
 			path = "Random Components";
@@ -193,6 +195,15 @@
 				393F12572C4B00080083FB03 /* SearchView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		39ACFA1D2C84B490003C9CD5 /* MediaDisplayer */ = {
+			isa = PBXGroup;
+			children = (
+				39ACFA192C837D2E003C9CD5 /* MediaDisplayer.swift */,
+				39ACFA1E2C84B4A1003C9CD5 /* AttachmentView.swift */,
+			);
+			path = MediaDisplayer;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -303,6 +314,7 @@
 				39816CF42C2C79190074740C /* PostView.swift in Sources */,
 				39A1921F2C2746F2000C3FE6 /* APubActor.swift in Sources */,
 				39A1922C2C2755A2000C3FE6 /* ReadArchive.swift in Sources */,
+				39ACFA1F2C84B4A1003C9CD5 /* AttachmentView.swift in Sources */,
 				39A192312C283BAC000C3FE6 /* ActorView.swift in Sources */,
 				39816CF62C2C79760074740C /* MockData.swift in Sources */,
 				3955BC6C2C4D89B2001D073F /* ShareSheetView.swift in Sources */,
@@ -452,6 +464,7 @@
 					"$(PROJECT_DIR)",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This lets you save media from your archives to your device's photo library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -487,6 +500,7 @@
 					"$(PROJECT_DIR)",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This lets you save media from your archives to your device's photo library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

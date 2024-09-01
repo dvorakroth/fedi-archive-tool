@@ -10,11 +10,13 @@ import SwiftUI
 struct ZoomView<Content>: UIViewRepresentable where Content: View {
     let minZoom: CGFloat
     let maxZoom: CGFloat
+    let enabled: Bool
     let content: Content
     
-    init(minZoom: CGFloat, maxZoom: CGFloat, @ViewBuilder content: () -> Content) {
+    init(minZoom: CGFloat, maxZoom: CGFloat, enabled: Bool, @ViewBuilder content: () -> Content) {
         self.minZoom = minZoom
         self.maxZoom = maxZoom
+        self.enabled = enabled
         self.content = content()
     }
     
@@ -24,11 +26,15 @@ struct ZoomView<Content>: UIViewRepresentable where Content: View {
         uiScrollView.minimumZoomScale = minZoom
         uiScrollView.maximumZoomScale = maxZoom
         uiScrollView.bouncesZoom = true
+        uiScrollView.backgroundColor = .clear
+        uiScrollView.isOpaque = false
         
         if let hostedView = context.coordinator.hostingController.view {
             hostedView.translatesAutoresizingMaskIntoConstraints = true
             hostedView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             hostedView.frame = uiScrollView.bounds
+            hostedView.backgroundColor = .clear
+            hostedView.isOpaque = false
             uiScrollView.addSubview(hostedView)
         }
         
@@ -39,6 +45,8 @@ struct ZoomView<Content>: UIViewRepresentable where Content: View {
         context.coordinator.hostingController.rootView = content
         uiView.minimumZoomScale = minZoom
         uiView.maximumZoomScale = maxZoom
+        uiView.panGestureRecognizer.isEnabled = enabled
+        uiView.pinchGestureRecognizer?.isEnabled = enabled
     }
     
     func makeCoordinator() -> Coordinator {

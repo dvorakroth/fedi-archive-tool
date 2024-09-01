@@ -85,11 +85,7 @@ class MockData {
                     content: "<p>Post whomst contains three images, two broken</p>",
                     searchableContent: "Post whomst contains three images, two broken",
                     sensitive: true,
-                    mediaAttachments: [
-                        APubDocument(mediaType: "image/png", data: actor.icon!.0, altText: "a blurry photo of a dog", blurhash: nil, focalPoint: nil, size: nil),
-                        APubDocument(mediaType: "image/png", data: nil, altText: "a broken image that doesn't work", blurhash: nil, focalPoint: nil, size: nil),
-                        APubDocument(mediaType: "image/png", data: nil, altText: "a broken image that doesn't work", blurhash: nil, focalPoint: nil, size: nil)
-                    ],
+                    mediaAttachments: MockData.attachments,
                     pollOptions: MockData.poll,
                     pollEndTime: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 96 * 3600)),
                     pollIsClosed: false
@@ -142,4 +138,10 @@ class MockData {
         icon: (NSDataAsset(name: "dog-with-glasses.png", bundle: .main)!.data, "image/png"),
         headerImage: (NSDataAsset(name: "god-damn-highway.jpg", bundle: .main)!.data, "image/jpeg")
     )
+    
+    public static let attachments = [
+        APubDocument(mediaType: "image/png", data: actor.icon!.0, altText: "a blurry photo of a dog", blurhash: nil, focalPoint: nil, size: nil),
+        APubDocument(mediaType: "image/png", data: nil, altText: "a broken image that doesn't work", blurhash: nil, focalPoint: nil, size: nil),
+        APubDocument(mediaType: "image/png", data: nil, altText: "a broken image that doesn't work", blurhash: nil, focalPoint: nil, size: nil)
+    ]
 }
