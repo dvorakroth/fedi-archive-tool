@@ -93,15 +93,17 @@ struct MediaDisplayer<Content>: View where Content: View {
                 
                 VStack {
                     if let uiImage = uiImage {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
+                        ZoomView(minZoom: 1, maxZoom: 5) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                        }
                     } else {
                         Image(systemName: fallbackIconName).font(.title)
                     }
                 }
             }
-            .zoomable(min: 1, max: 5)
+            // don't use the LazyPager's `zoomable` function because some items might not be zoomable (for example, missing/undisplayable media placeholders)
             .onDismiss(backgroundOpacity: $bgOpacity) {
                 state = .hidden
             }

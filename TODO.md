@@ -54,14 +54,15 @@ slightly advanced functionality
 * better UI for media tab in ActorView? (grid view like in mastodon web ui?)
 * click on images to embiggen
     * DONE ~~basic functionality~~
-    * show the images uh, bigger
+    * DONE ~~show the images uh, bigger~~
     * DONE ~~also work on search page~~
     * show little blips counting the index of this media attachment
     * videos?????? idk
     * DONE ~~option to zoom~~
-    * disable zoom when there's no media to show
+    * DONE ~~disable zoom when there's no media to show~~
     * option to save?
     * show alt text!
+    * zooming in on desktop?
 * when searching, highlight the places where the text matches
 * when a post's text is hidden, still show all @mention links (and only them), like in the mastodon web ui
 

@@ -42,6 +42,7 @@
 		39ACFA152C7CD300003C9CD5 /* ArchiveImportQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39ACFA142C7CD300003C9CD5 /* ArchiveImportQueue.swift */; };
 		39ACFA182C8223B1003C9CD5 /* LazyPager in Frameworks */ = {isa = PBXBuildFile; productRef = 39ACFA172C8223B1003C9CD5 /* LazyPager */; };
 		39ACFA1A2C837D2E003C9CD5 /* MediaDisplayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39ACFA192C837D2E003C9CD5 /* MediaDisplayer.swift */; };
+		39ACFA1C2C849157003C9CD5 /* ZoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39ACFA1B2C849157003C9CD5 /* ZoomView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -88,6 +89,7 @@
 		39ACFA122C7CCEBC003C9CD5 /* AnnounceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnounceView.swift; sourceTree = "<group>"; };
 		39ACFA142C7CD300003C9CD5 /* ArchiveImportQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveImportQueue.swift; sourceTree = "<group>"; };
 		39ACFA192C837D2E003C9CD5 /* MediaDisplayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDisplayer.swift; sourceTree = "<group>"; };
+		39ACFA1B2C849157003C9CD5 /* ZoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +165,7 @@
 				3955BC6B2C4D89B2001D073F /* ShareSheetView.swift */,
 				39ACFA122C7CCEBC003C9CD5 /* AnnounceView.swift */,
 				39ACFA192C837D2E003C9CD5 /* MediaDisplayer.swift */,
+				39ACFA1B2C849157003C9CD5 /* ZoomView.swift */,
 			);
 			path = "Random Components";
 			sourceTree = "<group>";
@@ -291,6 +294,7 @@
 				39ACFA132C7CCEBC003C9CD5 /* AnnounceView.swift in Sources */,
 				39ACFA1A2C837D2E003C9CD5 /* MediaDisplayer.swift in Sources */,
 				39816D132C3060D10074740C /* ConvertHTML.swift in Sources */,
+				39ACFA1C2C849157003C9CD5 /* ZoomView.swift in Sources */,
 				39A1923B2C2867D1000C3FE6 /* TempDir.swift in Sources */,
 				39A1922E2C280A74000C3FE6 /* DbInterface.swift in Sources */,
 				39A192352C285B8A000C3FE6 /* AddArchiveView.swift in Sources */,
