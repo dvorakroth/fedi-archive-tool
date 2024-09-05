@@ -14,8 +14,8 @@ struct ShareSheetView: UIViewControllerRepresentable {
         self.content = .url(url)
     }
     
-    init(image: UIImage) {
-        self.content = .image(image)
+    init(image: UIImage, data: Data, mimetype: String) {
+        self.content = .image(image, data, mimetype: mimetype)
     }
     
     func makeUIViewController(context: Context) -> UIActivityViewController {
@@ -28,17 +28,10 @@ struct ShareSheetView: UIViewControllerRepresentable {
                 ]
             )
             
-        case .image(let image):
-            let activities: [UIActivity]
-//            #if targetEnvironment(macCatalyst)
-//            activities = [MacCatalystSaveFileActivity()]
-//            #else
-            activities = []
-//            #endif
-            
+        case .image(let image, let data, let mimetype):
             return UIActivityViewController(
                 activityItems: [image],
-                applicationActivities: activities
+                applicationActivities: [MacCatalystSaveFileActivity(data: data, mimetype: mimetype)]
             )
         }
     }
@@ -48,7 +41,7 @@ struct ShareSheetView: UIViewControllerRepresentable {
 
 fileprivate enum ShareSheetContent {
     case url(URL)
-    case image(UIImage)
+    case image(UIImage, Data, mimetype: String)
 }
 
 #Preview {

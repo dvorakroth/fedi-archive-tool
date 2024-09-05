@@ -92,6 +92,7 @@
 		39ACFA192C837D2E003C9CD5 /* MediaDisplayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDisplayer.swift; sourceTree = "<group>"; };
 		39ACFA1B2C849157003C9CD5 /* ZoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomView.swift; sourceTree = "<group>"; };
 		39ACFA1E2C84B4A1003C9CD5 /* AttachmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentView.swift; sourceTree = "<group>"; };
+		39B02D022C89CC3900EA7AAD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +133,7 @@
 		392D46E22C273CC900561231 /* mastodon-archive-tool */ = {
 			isa = PBXGroup;
 			children = (
+				39B02D022C89CC3900EA7AAD /* Info.plist */,
 				39A192362C285DC4000C3FE6 /* Views */,
 				39A1921A2C2746E9000C3FE6 /* APub */,
 				392D46E32C273CC900561231 /* mastodon_archive_toolApp.swift */,
@@ -464,6 +466,7 @@
 					"$(PROJECT_DIR)",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "mastodon-archive-tool/Info.plist";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This lets you save media from your archives to your device's photo library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -500,6 +503,7 @@
 					"$(PROJECT_DIR)",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "mastodon-archive-tool/Info.plist";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This lets you save media from your archives to your device's photo library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

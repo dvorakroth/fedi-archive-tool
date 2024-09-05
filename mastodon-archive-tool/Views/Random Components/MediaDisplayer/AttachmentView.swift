@@ -84,7 +84,7 @@ struct AttachmentView: View {
                                 .clipShape(Circle())
                                 .padding()
                                 .popover(isPresented: $saveShareSheetIsShown, content: {
-                                    ShareSheetView(image: uiImage)
+                                    ShareSheetView(image: uiImage, data: attachment.data ?? Data(), mimetype: attachment.mediaType)
                                 })
                             }
                             

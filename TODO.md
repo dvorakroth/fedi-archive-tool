@@ -61,7 +61,7 @@ slightly advanced functionality
     * DONE ~~option to zoom~~
     * DONE ~~disable zoom when there's no media to show~~
     * DONE ~~option to save?~~
-    * finish implementing needlessly difficult save dialog on mac catalyst
+    * DONE ~~finish implementing needlessly difficult save dialog on mac catalyst~~
     * save unrecognized media?
     * DONE ~~show alt text!~~
     * show alt text in a non-awful way? ("Show More")

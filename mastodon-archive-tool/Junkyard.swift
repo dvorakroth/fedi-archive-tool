@@ -172,47 +172,120 @@ class OpenInBrowserActivity: UIActivity {
     }
 }
 
-//class MacCatalystSaveFileActivity: UIActivity {
-//    var activityItem: UIImage? = nil
-//    
-//    override var activityTitle: String? {
-//        "Save File"
-//    }
-//    
-//    override var activityImage: UIImage? {
-//        UIImage(systemName: "doc")
-//    }
-//    
-//    override var activityType: UIActivity.ActivityType? {
-//        UIActivity.ActivityType("works.ish.mastodon-archive-tool.mac-catalyst-save-file")
-//    }
-//    
-//    override class var activityCategory: UIActivity.Category {
-//        .action
-//    }
-//    
-//    override func canPerform(withActivityItems activityItems: [Any]) -> Bool {
-//        return activityItems.contains { item in item is UIImage }
-//    }
-//    
-//    override func prepare(withActivityItems activityItems: [Any]) {
-//        self.activityItem = (activityItems.first { item in item is UIImage } as! UIImage)
-//    }
-//    
-//    override func perform() {
-//        if let activityItem = activityItem {
-//            activityItem.
-//            let picker = UIDocumentPickerViewController
-//        }
-//    }
-//}
-//
-//class DocumentSaveDialogController: UIDocumentPickerViewController {
-//    private let onDone: (URL?) -> Void
-//    
-//    init(onDone: @escaping (URL?) -> Void, in: ()) {
-//        self.onDone = onDone
-//        
-//        super.init(forExporting: <#T##[URL]#>)
-//    }
-//}
+class MacCatalystSaveFileActivity: UIActivity {
+    let data: Data
+    let mimetype: String
+    
+    init(data: Data, mimetype: String) {
+        self.data = data
+        self.mimetype = mimetype
+    }
+    
+    override var activityTitle: String? {
+        "Save File"
+    }
+    
+    override var activityImage: UIImage? {
+        UIImage(systemName: "doc")
+    }
+    
+    override var activityType: UIActivity.ActivityType? {
+        UIActivity.ActivityType("works.ish.mastodon-archive-tool.mac-catalyst-save-file")
+    }
+    
+    override class var activityCategory: UIActivity.Category {
+        .action
+    }
+    
+    override func canPerform(withActivityItems activityItems: [Any]) -> Bool {
+        return ProcessInfo.processInfo.isiOSAppOnMac || ProcessInfo.processInfo.isMacCatalystApp
+    }
+    
+    override func perform() {
+        // this is all so convoluted and i hate it so much
+        
+        let fileUrl = FileManager.default.temporaryDirectory.appendingPathComponent("file" + (mimetypesToExtensions[mimetype] ?? ".bin"))
+        do {
+            try data.write(to: fileUrl)
+        } catch {
+            print("Writing temp file \(fileUrl) encountered an error: \(error)")
+            return
+        }
+        
+        let picker = DocumentSaveDialogController(fileUrl: fileUrl) { url in
+            if url == nil {
+                do {
+                    try FileManager.default.removeItem(at: fileUrl)
+                } catch {
+                    print("Removing temp file \(fileUrl) encountered an error: \(error)")
+                }
+                return
+            }
+        }
+        
+        var rootViewController = UIApplication.shared.currentWindow?.rootViewController
+        while let presentedViewController = rootViewController?.presentedViewController {
+            rootViewController = rootViewController?.presentedViewController
+        }
+        rootViewController?.present(picker, animated: true)
+    }
+}
+
+/// this class shouldn't have to exist and yet, in defiance of the will of Hashem may He be blessed, in defiance to the very ethical rules and conceptions that hold all of human society loosely together, as an affront to the universe itself, this class, undeinably, exists
+class DocumentSaveDialogController: UIDocumentPickerViewController, UIDocumentPickerDelegate {
+    private let onDone: (URL?) -> Void
+    
+    init(fileUrl: URL, onDone: @escaping (URL?) -> Void) {
+        self.onDone = onDone
+        
+        super.init(forExporting: [fileUrl], asCopy: false)
+        self.delegate = self
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        onDone(nil)
+    }
+    
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        onDone(urls[0])
+    }
+}
+
+let mimetypesToExtensions = [
+    "audio/aac": ".aac",
+    "audio/midi": ".mid",
+    "audio/x-midi": ".mid",
+    "audio/mpeg": ".mp3",
+    "audio/ogg": ".oga",
+    "audio/wav": ".wav",
+    "audio/webm": ".weba",
+    "audio/3gpp": ".3gp",
+    "audio/3gpp2": ".3g2",
+    
+    "application/ogg": ".ogx",
+    "application/pdf": ".pdf",
+    
+    "image/apng": ".apng",
+    "image/avif": ".avif",
+    "image/bmp": ".bmp",
+    "image/gif": ".gif",
+    "image/vnd.microsoft.icon": ".ico",
+    "image/jpeg": ".jpeg",
+    "image/png": ".png",
+    "image/svg+xml": ".svg",
+    "image/tiff": ".tiff",
+    "image/webp": ".webp",
+    
+    "video/x-msvideo": ".avi",
+    "video/mp4": ".mp4",
+    "video/mpeg": ".mpeg",
+    "video/ogg": ".ogv",
+    "video/mp2t": ".ts",
+    "video/webm": ".webm",
+    "video/3gpp": ".3gp",
+    "video/3gpp2": ".3g2"
+]
