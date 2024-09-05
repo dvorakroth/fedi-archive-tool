@@ -64,6 +64,7 @@ slightly advanced functionality
     * finish implementing needlessly difficult save dialog on mac catalyst
     * save unrecognized media?
     * DONE ~~show alt text!~~
+    * show alt text in a non-awful way? ("Show More")
     * zooming in on desktop?
 * when searching, highlight the places where the text matches
 * when a post's text is hidden, still show all @mention links (and only them), like in the mastodon web ui
