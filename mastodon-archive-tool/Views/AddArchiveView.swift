@@ -83,7 +83,9 @@ struct QueueItemView: View {
                                 VStack {
                                     Text("Error importing \(queueItem.fileURL.lastPathComponent)").font(.title)
                                     Spacer().frame(height: 15)
-                                    Text(errorText).fixedSize(horizontal: false, vertical: true)
+                                    Text(errorText)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                        .textSelection(.enabled)
                                     Spacer().frame(height: 15)
                                     Button("Done") {
                                         showErrorModal = false

@@ -13,6 +13,7 @@ struct AttachmentView: View {
     let onClose: () -> Void
     
     @State var saveShareSheetIsShown = false
+    @State var altTextSheetIsShown = false
     
     
     var body: some View {
@@ -69,61 +70,80 @@ struct AttachmentView: View {
             }
             
             if controlsShown {
-                GeometryReader { geo in
-                    VStack(spacing: 0) {
-                        HStack {
-                            if let uiImage = uiImage {
-                                Button {
-                                    saveShareSheetIsShown = true
-                                } label: {
-                                    Image(systemName: "square.and.arrow.up")
-                                        .font(.caption)
-                                }
-                                .buttonStyle(.bordered)
-                                .foregroundStyle(.white)
-                                .clipShape(Circle())
-                                .padding()
-                                .popover(isPresented: $saveShareSheetIsShown, content: {
-                                    ShareSheetView(image: uiImage, data: attachment.data ?? Data(), mimetype: attachment.mediaType)
-                                })
-                            }
-                            
-                            Spacer()
-                            
+                VStack(spacing: 0) {
+                    HStack {
+                        Button {
+                            onClose()
+                        } label: {
+                            Image(systemName: "xmark")
+                                .font(.caption)
+                        }
+                        .buttonStyle(.bordered)
+                        .foregroundStyle(.white)
+                        .clipShape(Circle())
+                        
+                        Spacer()
+                        
+                        if let altText = attachment.altText {
                             Button {
-                                onClose()
+                                altTextSheetIsShown.toggle()
                             } label: {
-                                Image(systemName: "xmark")
+                                Image(systemName: "alt").font(.caption)
+                            }
+                            .buttonStyle(.bordered)
+                            .foregroundStyle(.white)
+                            .clipShape(Circle())
+                            .sheet(isPresented: $altTextSheetIsShown) {
+                                VStack {
+                                    HStack {
+                                        Button {
+                                            altTextSheetIsShown = false
+                                        } label: {
+                                            Image(systemName: "xmark")
+                                                .font(.caption)
+                                        }
+                                        .buttonStyle(.bordered)
+                                        .foregroundStyle(.white)
+                                        .clipShape(Circle())
+                                        .padding()
+                                        
+                                        Spacer()
+                                    }
+                                    
+                                    GeometryReader { geo in
+                                        ScrollView {
+                                            VStack {
+                                                Spacer()
+                                                Text(altText)
+                                                    .padding()
+                                                    .textSelection(.enabled)
+                                                Spacer()
+                                            }.frame(minHeight: geo.size.height)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if let uiImage = uiImage {
+                            Button {
+                                saveShareSheetIsShown = true
+                            } label: {
+                                Image(systemName: "square.and.arrow.up")
                                     .font(.caption)
                             }
                             .buttonStyle(.bordered)
                             .foregroundStyle(.white)
                             .clipShape(Circle())
-                            .padding()
-                        }.padding()
-                        
-                        Spacer()
-                        
-                        if let altText = attachment.altText {
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 0, green: 0, blue: 0, opacity: 0),
-                                    Color(red: 0, green: 0, blue: 0, opacity: 0.8)
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                            .frame(width: geo.size.width, height: 20)
-                            
-                            Text(altText)
-                                .foregroundStyle(.white)
-                                .padding()
-                                .frame(width: geo.size.width)
-                                .background {
-                                    Color(red: 0, green: 0, blue: 0, opacity: 0.8)
-                                }
+                            .popover(isPresented: $saveShareSheetIsShown) {
+                                ShareSheetView(image: uiImage, data: attachment.data ?? Data(), mimetype: attachment.mediaType)
+                            }
                         }
-                    }
+                        
+                        
+                    }.padding()
+                    
+                    Spacer()
                 }
             }
         }

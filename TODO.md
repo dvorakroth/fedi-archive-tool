@@ -64,7 +64,8 @@ slightly advanced functionality
     * DONE ~~finish implementing needlessly difficult save dialog on mac catalyst~~
     * save unrecognized media?
     * DONE ~~show alt text!~~
-    * show alt text in a non-awful way? ("Show More")
+    * DONE ~~show alt text in a non-awful way? ("Show More")~~
+    * why isn't the text properly selectable,,,,,
     * zooming in on desktop?
 * when searching, highlight the places where the text matches
 * when a post's text is hidden, still show all @mention links (and only them), like in the mastodon web ui
@@ -87,6 +88,7 @@ bugs and workarounds
 --------------------
 
 * DONE ~~on iPad/Mac, when deleting an actor, navigate away from its ActorView if open~~
+* show RTL text properly; just,,, in general,
 * perform deletions async so they don't stick the ui thread?
 * deleting an actor while an import for it is ongoing causes a crash?
 * it seems like my mastodon server is actually exporting malformed `outbox.json` files right now!!! they contain two `orderedItems` properties, and Swift's JSON parser seems to just ignore the second one, so we always get an empty array for it
