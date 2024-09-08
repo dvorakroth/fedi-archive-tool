@@ -96,6 +96,15 @@ struct AttachmentView: View {
                             .sheet(isPresented: $altTextSheetIsShown) {
                                 VStack {
                                     HStack {
+                                        Spacer()
+                                        
+                                        Text("Alt Text")
+                                            .font(.title2)
+                                            .padding()
+                                        
+                                        Spacer()
+                                    }
+                                        .overlay(alignment: .topLeading) {
                                         Button {
                                             altTextSheetIsShown = false
                                         } label: {
@@ -106,8 +115,6 @@ struct AttachmentView: View {
                                         .foregroundStyle(.white)
                                         .clipShape(Circle())
                                         .padding()
-                                        
-                                        Spacer()
                                     }
                                     
                                     GeometryReader { geo in

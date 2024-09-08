@@ -66,7 +66,7 @@ slightly advanced functionality
     * DONE ~~show alt text!~~
     * DONE ~~show alt text in a non-awful way? ("Show More")~~
     * why isn't the text properly selectable,,,,,
-    * show title ("Alt Text") on alt text sheet
+    * DONE ~~show title ("Alt Text") on alt text sheet~~
     * zooming in on desktop?
 * when searching, highlight the places where the text matches
 * when a post's text is hidden, still show all @mention links (and only them), like in the mastodon web ui
