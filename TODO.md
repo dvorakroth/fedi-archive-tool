@@ -58,6 +58,7 @@ slightly advanced functionality
     * DONE ~~also work on search page~~
     * show little blips counting the index of this media attachment
     * videos?????? idk
+    * audio clips????????? idk2
     * DONE ~~option to zoom~~
     * DONE ~~disable zoom when there's no media to show~~
     * DONE ~~option to save?~~
