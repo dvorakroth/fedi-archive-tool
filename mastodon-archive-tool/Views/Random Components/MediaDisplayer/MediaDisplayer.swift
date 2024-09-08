@@ -12,7 +12,6 @@ struct MediaDisplayer<Content>: View where Content: View {
     let content: (_: @escaping MediaViewerCallback) -> Content
     
     @State fileprivate var state: MediaViewerState = .hidden
-    @State var controlsShown = true
     @State var bgOpacity: CGFloat = 1
     
     var _$isPresented: Binding<Bool> {
@@ -72,11 +71,10 @@ struct MediaDisplayer<Content>: View where Content: View {
     var body: some View {
         content({ attachments, attachmentIdx in
             state = .shown(attachments: attachments, attachmentIdx: attachmentIdx)
-            controlsShown = true
         })
         .fullScreenCover(isPresented: _$isPresented) {
             LazyPager(data: _$attachments.wrappedValue, page: _$attachmentIdx) { attachment in
-                AttachmentView(attachment: attachment, controlsShown: $controlsShown) {
+                AttachmentView(attachment: attachment) {
                     _$isPresented.wrappedValue = false
                 }
             }

@@ -13,7 +13,7 @@ struct ZoomView<Content>: UIViewRepresentable where Content: View {
     let enabled: Bool
     let content: Content
     
-    init(minZoom: CGFloat, maxZoom: CGFloat, enabled: Bool, @ViewBuilder content: () -> Content) {
+    init(minZoom: CGFloat, maxZoom: CGFloat, enabled: Bool = true, @ViewBuilder content: () -> Content) {
         self.minZoom = minZoom
         self.maxZoom = maxZoom
         self.enabled = enabled
