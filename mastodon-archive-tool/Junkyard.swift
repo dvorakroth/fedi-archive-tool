@@ -204,7 +204,14 @@ class MacCatalystSaveFileActivity: UIActivity {
     override func perform() {
         // this is all so convoluted and i hate it so much
         
-        let fileUrl = FileManager.default.temporaryDirectory.appendingPathComponent("file" + (mimetypesToExtensions[mimetype] ?? ".bin"))
+        let filename = "attachment" + (mimetypesToExtensions[mimetype] ?? ".bin")
+        let tmpDir = FileManager.default.temporaryDirectory
+        let fileUrl: URL
+        if #available(iOS 16.0, *) {
+            fileUrl = tmpDir.appending(path: filename)
+        } else {
+            fileUrl = tmpDir.appendingPathComponent(filename)
+        }
         do {
             try data.write(to: fileUrl)
         } catch {

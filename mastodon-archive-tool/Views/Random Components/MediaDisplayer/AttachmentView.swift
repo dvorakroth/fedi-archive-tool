@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVKit
 
 struct AttachmentView: View {
     let attachment: APubDocument
@@ -13,46 +14,61 @@ struct AttachmentView: View {
     
     @State var saveShareSheetIsShown = false
     @State var altTextSheetIsShown = false
+    @State var tmpAVDir: TempDir? = nil
+    @State fileprivate var mediaType: MediaType? = nil
     
-    
-    var body: some View {
-        let uiImage: UIImage?
-        let fallbackIconName: String
-        
-        if attachment.mediaType.starts(with: "image/") {
-            if let data = attachment.data {
-                let _ = uiImage = UIImage(data: data)
-            } else {
-                let _ = uiImage = nil
-            }
-            let _ = fallbackIconName = "questionmark.square.dashed"
-        } else if attachment.mediaType.starts(with: "video/") {
-            let _ = uiImage = nil
-            let _ = fallbackIconName = "video.square"
-        } else if attachment.mediaType.starts(with: "audio/") {
-            let _ = uiImage = nil
-            let _ = fallbackIconName = "headphones.circle"
-        } else {
-            let _ = uiImage = nil
-            let _ = fallbackIconName = "questionmark.square.dashed"
+    func initializeIfNecessary() {
+        guard mediaType == nil else {
+            return
         }
         
+        if attachment.mediaType.starts(with: "image/") {
+            let fallbackIcon = "questionmark.square.dashed"
+            if let data = attachment.data, let image = UIImage(data: data) {
+                mediaType = .image(image, fallbackIcon: fallbackIcon)
+            } else {
+                mediaType = .unknown(fallbackIcon: fallbackIcon)
+            }
+        } else if attachment.mediaType.starts(with: "video/") {
+            let fallbackIcon = "video.square"
+            if let mediaUrl = writeAVToTempDir() {
+                mediaType = .audiovisual(AVPlayer(url: mediaUrl), fallbackIcon: fallbackIcon)
+            } else {
+                mediaType = .unknown(fallbackIcon: fallbackIcon)
+            }
+        } else if attachment.mediaType.starts(with: "audio/") {
+            let fallbackIcon = "headphones.circle"
+            if let mediaUrl = writeAVToTempDir() {
+                mediaType = .audiovisual(AVPlayer(url: mediaUrl), fallbackIcon: fallbackIcon)
+            } else {
+                mediaType = .unknown(fallbackIcon: fallbackIcon)
+            }
+        } else {
+            mediaType = .unknown(fallbackIcon: "questionmark.square.dashed")
+        }
+    }
+    
+    var body: some View {
         ZStack {
-            if let uiImage = uiImage {
+            switch mediaType {
+            case .image(let uiImage, _):
                 ZoomView(minZoom: 1, maxZoom: 5) {
                     Image(uiImage: uiImage)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                 }
-            } else {
+            case .audiovisual(let avPlayer, _):
+                VideoPlayer(player: avPlayer)
+            case .unknown(let fallbackIcon):
                 GeometryReader { geo in
                     ZStack {
-                        Image(systemName: fallbackIconName)
+                        Image(systemName: fallbackIcon)
                             .font(.largeTitle)
                             .foregroundColor(.white)
                     }.frame(width: geo.size.width, height: geo.size.height)
                 }
-                
+            case .none:
+                let _ = 0 // do nothing i guess!
             }
             
             VStack(spacing: 0) {
@@ -117,7 +133,7 @@ struct AttachmentView: View {
                         }
                     }
                     
-                    if let uiImage = uiImage {
+                    if let data = attachment.data {
                         Button {
                             saveShareSheetIsShown = true
                         } label: {
@@ -128,7 +144,14 @@ struct AttachmentView: View {
                         .foregroundStyle(.white)
                         .clipShape(Circle())
                         .popover(isPresented: $saveShareSheetIsShown) {
-                            ShareSheetView(image: uiImage, data: attachment.data ?? Data(), mimetype: attachment.mediaType)
+                            switch mediaType {
+                            case .image(let uiImage, _):
+                                ShareSheetView(image: uiImage, data: attachment.data ?? Data(), mimetype: attachment.mediaType)
+                            case .audiovisual, .unknown:
+                                ShareSheetView(fileData: data, mimetype: attachment.mediaType)
+                            case .none:
+                                let _ = 0 // do nothing i guess??
+                            }
                         }
                     }
                     
@@ -138,7 +161,56 @@ struct AttachmentView: View {
                 Spacer()
             }
         }
+        .onAppear {
+            initializeIfNecessary()
+        }
     }
+
+    func writeAVToTempDir() -> URL? {
+        guard let data = attachment.data else {
+            return nil
+        }
+        
+        let needToCreateFile: Bool
+        
+        if tmpAVDir == nil {
+            do {
+                tmpAVDir = try TempDir()
+            } catch {
+                print("Error creating temporary directory: \(error)")
+                return nil
+            }
+            
+            needToCreateFile = true
+        } else {
+            needToCreateFile = false
+        }
+        
+        let fileExtension = mimetypesToExtensions[attachment.mediaType] ?? ".bin"
+        let fileUrl: URL
+        if #available(iOS 16.0, *) {
+            fileUrl = tmpAVDir!.url.appending(path: "mediaFile" + fileExtension)
+        } else {
+            fileUrl = tmpAVDir!.url.appendingPathComponent("mediaFile" + fileExtension)
+        }
+        
+        if needToCreateFile {
+            do {
+                try data.write(to: fileUrl)
+            } catch {
+                print("Error writing video to temporary directory: \(error)")
+                return nil
+            }
+        }
+        
+        return fileUrl
+    }
+}
+
+fileprivate enum MediaType {
+    case image(UIImage, fallbackIcon: String)
+    case audiovisual(AVPlayer, fallbackIcon: String)
+    case unknown(fallbackIcon: String)
 }
 
 #Preview {

@@ -57,18 +57,19 @@ slightly advanced functionality
     * DONE ~~show the images uh, bigger~~
     * DONE ~~also work on search page~~
     * show little blips counting the index of this media attachment
-    * videos?????? idk
-    * audio clips????????? idk2
+    * DONE ~~videos?????? idk~~
+    * DONE ~~audio clips????????? idk2~~
     * DONE ~~option to zoom~~
     * DONE ~~disable zoom when there's no media to show~~
     * DONE ~~option to save?~~
     * DONE ~~finish implementing needlessly difficult save dialog on mac catalyst~~
-    * save unrecognized media?
+    * DONE ~~save unrecognized media?~~
     * DONE ~~show alt text!~~
     * DONE ~~show alt text in a non-awful way? ("Show More")~~
     * why isn't the text properly selectable,,,,,
     * DONE ~~show title ("Alt Text") on alt text sheet~~
     * zooming in on desktop?
+    * TODO comment about deleting the temp file in ShareSheetView
 * when searching, highlight the places where the text matches
 * when a post's text is hidden, still show all @mention links (and only them), like in the mastodon web ui
 
