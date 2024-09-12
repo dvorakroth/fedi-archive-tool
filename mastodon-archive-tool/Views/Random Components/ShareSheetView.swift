@@ -59,10 +59,14 @@ struct ShareSheetView: UIViewControllerRepresentable {
                 applicationActivities: nil //[MacCatalystSaveFileActivity(data: fileData, mimetype: mimetype)]
             )
             
-            // TODO delete file after completion
-//            v.completionWithItemsHandler = { jkl in
-//                print(jkl)
-//            }
+            // kludge for now until i refactor some db shit: delete file after completion but only sometimes because this is quite finicky apparently
+            v.completionWithItemsHandler = { activityType, completed, returnedItems, activityError in
+                do {
+                    try FileManager.default.removeItem(at: fileUrl)
+                } catch {
+                    print("Deleting temp file \(fileUrl) encountered an error: \(error)")
+                }
+            }
             return v
         }
     }

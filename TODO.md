@@ -69,8 +69,9 @@ slightly advanced functionality
     * why isn't the text properly selectable,,,,,
     * DONE ~~show title ("Alt Text") on alt text sheet~~
     * zooming in on desktop? + double tap to zoom on mobile
-    * TODO comment about deleting the temp file in ShareSheetView
+    * DONE ~~TODO comment about deleting the temp file in ShareSheetView~~
     * keep original attachment filenames, for saving
+    * major refactor in how attachments are stored: store actual files on the filesystem! that way AVPlayer and share sheets won't need the annoying temp files kludge
     * gap above the AVPlayer so you can see the close/alt/share buttons more clearly
 * when searching, highlight the places where the text matches
 * when a post's text is hidden, still show all @mention links (and only them), like in the mastodon web ui
