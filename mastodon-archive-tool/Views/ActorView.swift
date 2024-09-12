@@ -26,14 +26,25 @@ struct ActorView: View {
                 VStack {
                     ZStack {
                         VStack(spacing: 0) {
-                            ImageOrRectangle(
-                                image: .data(actor.headerImage?.0),
-                                fallbackColor: .secondary,
-                                fallbackIcon: nil,
-                                width: geo.size.width,
-                                height: 200,
-                                contentMode: .fill
-                            )
+                            MediaDisplayer { displayMedia in
+                                ImageOrRectangle(
+                                    image: .data(actor.headerImage?.0),
+                                    fallbackColor: .secondary,
+                                    fallbackIcon: nil,
+                                    width: geo.size.width,
+                                    height: 200,
+                                    contentMode: .fill
+                                )
+                                .onTapGesture {
+                                    guard let headerImage = actor.headerImage else {
+                                        return
+                                    }
+                                    
+                                    let fakeAttachment = APubDocument(mediaType: headerImage.1, data: headerImage.0, altText: nil, blurhash: nil, focalPoint: nil, size: nil)
+                                    
+                                    displayMedia([fakeAttachment], 0)
+                                }
+                            }
                             
                             HStack(spacing: 0) {
                                 Spacer()
@@ -42,7 +53,7 @@ struct ActorView: View {
                                 }
                                     .buttonStyle(.borderedProminent)
                                     .padding(.trailing)
-                                    .popover(isPresented: $profileLinkShareSheetIsShown, content: {
+                                    .sheet(isPresented: $profileLinkShareSheetIsShown, content: {
                                         if let url = URL(string: actor.url) {
                                             ShareSheetView(url: url)
                                         } else {
@@ -55,15 +66,26 @@ struct ActorView: View {
                         VStack(spacing: 0) {
                             Spacer().frame(height: 260 - 80)
                             HStack {
-                                ImageOrRectangle(
-                                    image: .data(actor.icon?.0),
-                                    fallbackColor: .secondary,
-                                    fallbackIcon: nil,
-                                    width: 80,
-                                    height: 80
-                                )
+                                MediaDisplayer { displayMedia in
+                                    ImageOrRectangle(
+                                        image: .data(actor.icon?.0),
+                                        fallbackColor: .secondary,
+                                        fallbackIcon: nil,
+                                        width: 80,
+                                        height: 80
+                                    )
                                     .cornerRadius(8)
                                     .padding(.leading)
+                                    .onTapGesture {
+                                        guard let icon = actor.icon else {
+                                            return
+                                        }
+                                        
+                                        let fakeAttachment = APubDocument(mediaType: icon.1, data: icon.0, altText: nil, blurhash: nil, focalPoint: nil, size: nil)
+                                        
+                                        displayMedia([fakeAttachment], 0)
+                                    }
+                                }
     
                                 Spacer()
                             }
