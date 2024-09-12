@@ -68,10 +68,14 @@ slightly advanced functionality
     * DONE ~~show alt text in a non-awful way? ("Show More")~~
     * why isn't the text properly selectable,,,,,
     * DONE ~~show title ("Alt Text") on alt text sheet~~
-    * zooming in on desktop?
+    * zooming in on desktop? + double tap to zoom on mobile
     * TODO comment about deleting the temp file in ShareSheetView
+    * keep original attachment filenames, for saving
+    * gap above the AVPlayer so you can see the close/alt/share buttons more clearly
 * when searching, highlight the places where the text matches
 * when a post's text is hidden, still show all @mention links (and only them), like in the mastodon web ui
+* in actor view, use a GeometryReader to make the Posts/Posts&Replies/Media "tabs" "responsive"
+* in post view, change attachment icon by attachment type(s)
 
 performance optimizations
 -------------------------
