@@ -96,6 +96,7 @@ bugs and workarounds
 --------------------
 
 * DONE ~~on iPad/Mac, when deleting an actor, navigate away from its ActorView if open~~
+* because of how UIActivityViewController works, there's always a blank popover, with the actual share sheet popover next to it; find some workaround for this bullshit i guess!!! or not lol
 * show RTL text properly; just,,, in general,
 * perform deletions async so they don't stick the ui thread?
 * deleting an actor while an import for it is ongoing causes a crash?
