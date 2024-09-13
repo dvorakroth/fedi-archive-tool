@@ -56,7 +56,7 @@ slightly advanced functionality
     * DONE ~~basic functionality~~
     * DONE ~~show the images uh, bigger~~
     * DONE ~~also work on search page~~
-    * show little blips counting the index of this media attachment
+    * WONTFIX not worth it lol ~~show little blips counting the index of this media attachment~~
     * DONE ~~videos?????? idk~~
     * DONE ~~audio clips????????? idk2~~
     * DONE ~~option to zoom~~
@@ -66,7 +66,7 @@ slightly advanced functionality
     * DONE ~~save unrecognized media?~~
     * DONE ~~show alt text!~~
     * DONE ~~show alt text in a non-awful way? ("Show More")~~
-    * why isn't the text properly selectable,,,,,
+    * WONTFIX apple bug ~~why isn't the text properly selectable,,,,,~~
     * DONE ~~show title ("Alt Text") on alt text sheet~~
     * zooming in on desktop? + double tap to zoom on mobile
     * DONE ~~TODO comment about deleting the temp file in ShareSheetView~~
