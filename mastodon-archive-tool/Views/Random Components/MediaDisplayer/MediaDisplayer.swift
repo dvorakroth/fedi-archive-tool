@@ -9,6 +9,7 @@ import SwiftUI
 import LazyPager
 
 struct MediaDisplayer<Content>: View where Content: View {
+    let actorId: String
     let content: (_: @escaping MediaViewerCallback) -> Content
     
     @State fileprivate var state: MediaViewerState = .hidden
@@ -64,7 +65,8 @@ struct MediaDisplayer<Content>: View where Content: View {
     }
 
     
-    init(@ViewBuilder content: @escaping (_: @escaping MediaViewerCallback) -> Content) {
+    init(actorId: String, @ViewBuilder content: @escaping (_: @escaping MediaViewerCallback) -> Content) {
+        self.actorId = actorId
         self.content = content
     }
     
@@ -74,7 +76,7 @@ struct MediaDisplayer<Content>: View where Content: View {
         })
         .fullScreenCover(isPresented: _$isPresented) {
             LazyPager(data: _$attachments.wrappedValue, page: _$attachmentIdx) { attachment in
-                AttachmentView(attachment: attachment) {
+                AttachmentView(actorId: actorId, attachment: attachment) {
                     _$isPresented.wrappedValue = false
                 }
             }
@@ -97,7 +99,7 @@ fileprivate enum MediaViewerState {
 }
 
 #Preview {
-    MediaDisplayer { showMedia in
+    MediaDisplayer(actorId: MockData.actor.id) { showMedia in
         Button {
             showMedia(MockData.attachments, 0)
         } label: {

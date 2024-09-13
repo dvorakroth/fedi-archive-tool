@@ -59,7 +59,7 @@ struct SearchView: View {
 //                    Spacer()
                 
                     ScrollView {
-                        MediaDisplayer { displayMedia in
+                        MediaDisplayer(actorId: actor.id) { displayMedia in
                             LazyVStack(spacing: 10) {
                                 Divider().id(Self.topId)
                                 

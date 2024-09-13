@@ -72,7 +72,7 @@ slightly advanced functionality
     * DONE ~~TODO comment about deleting the temp file in ShareSheetView~~
     * DONE ~~keep original attachment filenames, for saving~~
     * DONE ~~major refactor in how attachments are stored: store actual files on the filesystem! that way AVPlayer and share sheets won't need the annoying temp files kludge~~
-    * use the new refactored attachment import code to better utilize both AVPlayer and the share sheet, with no temp files
+    * DONE ~~use the new refactored attachment import code to better utilize both AVPlayer and the share sheet, with no temp files~~
     * gap above the AVPlayer so you can see the close/alt/share buttons more clearly
 * when searching, highlight the places where the text matches
 * when a post's text is hidden, still show all @mention links (and only them), like in the mastodon web ui

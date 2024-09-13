@@ -197,7 +197,7 @@ fileprivate func directoryForSavingMedia(actorId: String) throws -> URL {
     return actorMediaDir
 }
 
-fileprivate func readMedia(atPath path: String, forActorId actorId: String) -> Data? {
+func urlForMedia(atPath path: String, forActorId actorId: String) -> URL? {
     let actorMediaDir: URL
     
     do {
@@ -207,7 +207,14 @@ fileprivate func readMedia(atPath path: String, forActorId actorId: String) -> D
         return nil
     }
     
-    let mediaUrl = actorMediaDir.appendingPathComponentNonDeprecated(path)
+    return actorMediaDir.appendingPathComponentNonDeprecated(path)
+}
+
+fileprivate func readMedia(atPath path: String, forActorId actorId: String) -> Data? {
+    let mediaUrl = urlForMedia(atPath: path, forActorId: actorId)
+    guard let mediaUrl = mediaUrl else {
+        return nil
+    }
     
     do {
         return try Data(contentsOf: mediaUrl)
@@ -386,18 +393,18 @@ extension APubActionEntry {
         let stringMatchCondition: Expression<Bool>
         if let matchingSearchString = matchingSearchString {
             let substringExp =
-                "%"
-                + escapeExpressionForSqlLike(
-                    matchingSearchString,
-                    usingEscapeChar: "\\"
-                )
-                + "%"
+            "%"
+            + escapeExpressionForSqlLike(
+                matchingSearchString,
+                usingEscapeChar: "\\"
+            )
+            + "%"
             
             stringMatchCondition =
-                notes[note_searchable_content].like(substringExp) ||
-                (notes[note_cw] ?? Expression(value: "")).like(substringExp) ||
-                Expression("EXISTS(SELECT 1 FROM attachments WHERE attachments.note_id = notes.id AND attachments.alt_text IS NOT NULL AND attachments.alt_text LIKE ? LIMIT 1)", [substringExp]) ||
-                Expression("EXISTS(SELECT 1 FROM pollOptions WHERE pollOptions.note_id = notes.id AND pollOptions.name LIKE ? LIMIT 1)", [substringExp])
+            notes[note_searchable_content].like(substringExp) ||
+            (notes[note_cw] ?? Expression(value: "")).like(substringExp) ||
+            Expression("EXISTS(SELECT 1 FROM attachments WHERE attachments.note_id = notes.id AND attachments.alt_text IS NOT NULL AND attachments.alt_text LIKE ? LIMIT 1)", [substringExp]) ||
+            Expression("EXISTS(SELECT 1 FROM pollOptions WHERE pollOptions.note_id = notes.id AND pollOptions.name LIKE ? LIMIT 1)", [substringExp])
         } else {
             stringMatchCondition = Expression(value: true)
         }
@@ -440,11 +447,11 @@ extension APubActionEntry {
                 .select(actions[*], notes[*])
                 .where(
                     stringMatchCondition
-                        && maxDateCondition
-                        && actionTypeCondition
-                        && repliesCondition
-                        && mediaCondition
-                        && actions[action_actor_id] == actorId
+                    && maxDateCondition
+                    && actionTypeCondition
+                    && repliesCondition
+                    && mediaCondition
+                    && actions[action_actor_id] == actorId
                 )
                 .order(actions[action_published].desc)
                 .limit(maxNumberOfPosts)
@@ -475,7 +482,7 @@ extension APubActionEntry {
                 ownNoteId = nil
                 foreignNoteId = noteId
             }
-        
+            
         case .announceOwn(let note):
             try note.save()
             actionType = 1
@@ -625,37 +632,37 @@ extension APubDocument {
         return try attachmentRows.map { try APubDocument(withRow: $0, forActorId: actorId) }
     }
     
-//    static func fetchDocuments(
-//        forActor actorId: String,
-//        toDateTimeExclusive: Date? = nil,
-//        maxNumberOfPosts: Int?
-//    ) throws -> [(APubDocument, APubActionEntry)] {
-//        let maxDateCondition: Expression<Bool>
-//        if let toDateTimeExclusive = toDateTimeExclusive {
-//            maxDateCondition = actions[action_published] < toDateTimeExclusive
-//        } else {
-//            maxDateCondition = Expression(value: true)
-//        }
-//        
-//        let rows = try Array(try DbInterface.getDb().prepareRowIterator(
-//            attachments
-//                .join(actions, on: actions[action_id] == attachments[attachments_note_id])
-//                .where(
-//                    actions[action_actor_id] == actorId
-//                    && actions[action_action_type] == 0
-//                    && maxDateCondition
-//                )
-//                .order(
-//                    actions[action_published].desc,
-//                    attachments[attachments_order_num].asc
-//                )
-//                .limit(maxNumberOfPosts)
-//        ))
-//        
-//        return try rows.map { row in
-//            (try APubDocument(withRow: row, forActorId: actorId), try APubActionEntry(fromRow: row))
-//        }
-//    }
+    //    static func fetchDocuments(
+    //        forActor actorId: String,
+    //        toDateTimeExclusive: Date? = nil,
+    //        maxNumberOfPosts: Int?
+    //    ) throws -> [(APubDocument, APubActionEntry)] {
+    //        let maxDateCondition: Expression<Bool>
+    //        if let toDateTimeExclusive = toDateTimeExclusive {
+    //            maxDateCondition = actions[action_published] < toDateTimeExclusive
+    //        } else {
+    //            maxDateCondition = Expression(value: true)
+    //        }
+    //
+    //        let rows = try Array(try DbInterface.getDb().prepareRowIterator(
+    //            attachments
+    //                .join(actions, on: actions[action_id] == attachments[attachments_note_id])
+    //                .where(
+    //                    actions[action_actor_id] == actorId
+    //                    && actions[action_action_type] == 0
+    //                    && maxDateCondition
+    //                )
+    //                .order(
+    //                    actions[action_published].desc,
+    //                    attachments[attachments_order_num].asc
+    //                )
+    //                .limit(maxNumberOfPosts)
+    //        ))
+    //
+    //        return try rows.map { row in
+    //            (try APubDocument(withRow: row, forActorId: actorId), try APubActionEntry(fromRow: row))
+    //        }
+    //    }
     
     static func deleteDocuments(forNote noteId: String, actorId: String) throws -> Void {
         let attachmentsForNote = attachments.filter(

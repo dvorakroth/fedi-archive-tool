@@ -26,7 +26,7 @@ struct ActorView: View {
                 VStack {
                     ZStack {
                         VStack(spacing: 0) {
-                            MediaDisplayer { displayMedia in
+                            MediaDisplayer(actorId: actor.id) { displayMedia in
                                 ImageOrRectangle(
                                     image: .data(actor.headerImage?.0),
                                     fallbackColor: .secondary,
@@ -55,7 +55,7 @@ struct ActorView: View {
                                     .padding(.trailing)
                                     .sheet(isPresented: $profileLinkShareSheetIsShown, content: {
                                         if let url = URL(string: actor.url) {
-                                            ShareSheetView(url: url)
+                                            ShareSheetView(ShareSheetContent.url(url))
                                         } else {
                                             Text("Could not parse user URL: \(actor.url)")
                                         }
@@ -66,7 +66,7 @@ struct ActorView: View {
                         VStack(spacing: 0) {
                             Spacer().frame(height: 260 - 80)
                             HStack {
-                                MediaDisplayer { displayMedia in
+                                MediaDisplayer(actorId: actor.id) { displayMedia in
                                     ImageOrRectangle(
                                         image: .data(actor.icon?.0),
                                         fallbackColor: .secondary,
@@ -166,7 +166,7 @@ struct ActorView: View {
                     
                     Spacer().frame(height: 15)
                     
-                    MediaDisplayer { displayMedia in
+                    MediaDisplayer(actorId: actor.id) { displayMedia in
                         LazyVStack(spacing: 10) {
                             Divider()
                             ForEach(overridePostList ?? dataSource.posts) { post in

@@ -9,12 +9,12 @@ import SwiftUI
 import AVKit
 
 struct AttachmentView: View {
+    let actorId: String
     let attachment: APubDocument
     let onClose: () -> Void
     
     @State var saveShareSheetIsShown = false
     @State var altTextSheetIsShown = false
-    @State var tmpAVDir: TempDir? = nil
     @State fileprivate var mediaType: MediaType? = nil
     
     func initializeIfNecessary() {
@@ -31,14 +31,14 @@ struct AttachmentView: View {
             }
         } else if attachment.mediaType.starts(with: "video/") {
             let fallbackIcon = "video.square"
-            if let mediaUrl = writeAVToTempDir() {
+            if let mediaUrl = urlForMedia(atPath: attachment.path, forActorId: actorId) {
                 mediaType = .audiovisual(AVPlayer(url: mediaUrl), fallbackIcon: fallbackIcon)
             } else {
                 mediaType = .unknown(fallbackIcon: fallbackIcon)
             }
         } else if attachment.mediaType.starts(with: "audio/") {
             let fallbackIcon = "headphones.circle"
-            if let mediaUrl = writeAVToTempDir() {
+            if let mediaUrl = urlForMedia(atPath: attachment.path, forActorId: actorId) {
                 mediaType = .audiovisual(AVPlayer(url: mediaUrl), fallbackIcon: fallbackIcon)
             } else {
                 mediaType = .unknown(fallbackIcon: fallbackIcon)
@@ -146,9 +146,11 @@ struct AttachmentView: View {
                         .popover(isPresented: $saveShareSheetIsShown) {
                             switch mediaType {
                             case .image(let uiImage, _):
-                                ShareSheetView(image: uiImage, data: attachment.data ?? Data(), mimetype: attachment.mediaType)
+                                ShareSheetView(ShareSheetContent.image(uiImage, attachment.data ?? Data(), originalFilename: (attachment.path as NSString).lastPathComponent))
                             case .audiovisual, .unknown:
-                                ShareSheetView(fileData: data, mimetype: attachment.mediaType)
+                                if let mediaUrl = urlForMedia(atPath: attachment.path, forActorId: actorId) {
+                                    ShareSheetView(ShareSheetContent.localUrl(mediaUrl))
+                                }
                             case .none:
                                 let _ = 0 // do nothing i guess??
                             }
@@ -165,41 +167,6 @@ struct AttachmentView: View {
             initializeIfNecessary()
         }
     }
-
-    func writeAVToTempDir() -> URL? {
-        guard let data = attachment.data else {
-            return nil
-        }
-        
-        let needToCreateFile: Bool
-        
-        if tmpAVDir == nil {
-            do {
-                tmpAVDir = try TempDir()
-            } catch {
-                print("Error creating temporary directory: \(error)")
-                return nil
-            }
-            
-            needToCreateFile = true
-        } else {
-            needToCreateFile = false
-        }
-        
-        let fileExtension = mimetypesToExtensions[attachment.mediaType] ?? ".bin"
-        let fileUrl: URL = tmpAVDir!.url.appendingPathComponentNonDeprecated("mediaFile" + fileExtension)
-        
-        if needToCreateFile {
-            do {
-                try data.write(to: fileUrl)
-            } catch {
-                print("Error writing video to temporary directory: \(error)")
-                return nil
-            }
-        }
-        
-        return fileUrl
-    }
 }
 
 fileprivate enum MediaType {
@@ -211,5 +178,5 @@ fileprivate enum MediaType {
 #Preview {
     @State var controlsShown = true
     
-    return AttachmentView(attachment: MockData.attachments[0], onClose: {})
+    return AttachmentView(actorId: MockData.actor.id, attachment: MockData.attachments[0], onClose: {})
 }

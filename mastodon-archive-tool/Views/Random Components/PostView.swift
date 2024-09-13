@@ -172,7 +172,7 @@ struct PostView: View {
                     .font(.caption)
                     .popover(isPresented: $permalinkShareSheetIsShown, content: {
                         if let url = URL(string: post.url) {
-                            ShareSheetView(url: url)
+                            ShareSheetView(ShareSheetContent.url(url))
                         } else {
                             Text("Could not parse post URL: \(post.url)")
                         }

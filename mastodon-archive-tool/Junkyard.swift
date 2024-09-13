@@ -217,11 +217,11 @@ class OpenInBrowserActivity: UIActivity {
 
 class MacCatalystSaveFileActivity: UIActivity {
     let data: Data
-    let mimetype: String
+    let originalFilename: String
     
-    init(data: Data, mimetype: String) {
+    init(data: Data, originalFilename: String) {
         self.data = data
-        self.mimetype = mimetype
+        self.originalFilename = originalFilename
     }
     
     override var activityTitle: String? {
@@ -247,9 +247,8 @@ class MacCatalystSaveFileActivity: UIActivity {
     override func perform() {
         // this is all so convoluted and i hate it so much
         
-        let filename = "attachment" + (mimetypesToExtensions[mimetype] ?? ".bin")
         let tmpDir = FileManager.default.temporaryDirectory
-        let fileUrl = tmpDir.appendingPathComponentNonDeprecated(filename)
+        let fileUrl = tmpDir.appendingPathComponentNonDeprecated(originalFilename)
         do {
             try data.write(to: fileUrl)
         } catch {
