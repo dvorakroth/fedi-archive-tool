@@ -135,13 +135,13 @@ class MockData {
             ("Am I real?", "No, I'm just a demo for the UI designer"),
             ("No, really, am I real?", "The very definition of \"real\" in this context is irrelevant! This is just data being typed in so the UI designer has something to display")
         ],
-        icon: (NSDataAsset(name: "dog-with-glasses.png", bundle: .main)!.data, "image/png"),
-        headerImage: (NSDataAsset(name: "god-damn-highway.jpg", bundle: .main)!.data, "image/jpeg")
+        icon: (data: NSDataAsset(name: "dog-with-glasses.png", bundle: .main)!.data, path: "INVALID", mediaType: "image/png"),
+        headerImage: (NSDataAsset(name: "god-damn-highway.jpg", bundle: .main)!.data, path: "INVALID", mediaType: "image/jpeg")
     )
     
     public static let attachments = [
-        APubDocument(mediaType: "image/png", data: actor.icon!.0, altText: "a blurry photo of a dog", blurhash: nil, focalPoint: nil, size: nil),
-        APubDocument(mediaType: "image/png", data: nil, altText: "a broken image that doesn't work", blurhash: nil, focalPoint: nil, size: nil),
-        APubDocument(mediaType: "image/png", data: nil, altText: "a broken image that doesn't work", blurhash: nil, focalPoint: nil, size: nil)
+        APubDocument(mediaType: "image/png", path: "INVALID", data: actor.icon!.0, altText: "a blurry photo of a dog", blurhash: nil, focalPoint: nil, size: nil),
+        APubDocument(mediaType: "image/png", path: "INVALID", data: nil, altText: "a broken image that doesn't work", blurhash: nil, focalPoint: nil, size: nil),
+        APubDocument(mediaType: "image/png", path: "INVALID", data: nil, altText: "a broken image that doesn't work", blurhash: nil, focalPoint: nil, size: nil)
     ]
 }

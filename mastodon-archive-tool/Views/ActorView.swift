@@ -40,7 +40,7 @@ struct ActorView: View {
                                         return
                                     }
                                     
-                                    let fakeAttachment = APubDocument(mediaType: headerImage.1, data: headerImage.0, altText: nil, blurhash: nil, focalPoint: nil, size: nil)
+                                    let fakeAttachment = APubDocument(mediaType: headerImage.mediaType, path: headerImage.path, data: headerImage.data, altText: nil, blurhash: nil, focalPoint: nil, size: nil)
                                     
                                     displayMedia([fakeAttachment], 0)
                                 }
@@ -81,7 +81,7 @@ struct ActorView: View {
                                             return
                                         }
                                         
-                                        let fakeAttachment = APubDocument(mediaType: icon.1, data: icon.0, altText: nil, blurhash: nil, focalPoint: nil, size: nil)
+                                        let fakeAttachment = APubDocument(mediaType: icon.mediaType, path: icon.path, data: icon.data, altText: nil, blurhash: nil, focalPoint: nil, size: nil)
                                         
                                         displayMedia([fakeAttachment], 0)
                                     }

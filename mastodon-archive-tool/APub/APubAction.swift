@@ -238,14 +238,16 @@ public extension APubNote {
 /// this has an extremely confusing name in the ActivityPub/ActivityStreams/whatever standard, but it's basically just a media attachment on a post
 public class APubDocument {
     let mediaType: String;
+    let path: String;
     let data: Data?;
     let altText: String?;
     let blurhash: String?;
     let focalPoint: (Double, Double)?;
     let size: (Int, Int)?;
     
-    init(mediaType: String, data: Data?, altText: String?, blurhash: String?, focalPoint: (Double, Double)?, size: (Int, Int)?) {
+    init(mediaType: String, path: String, data: Data?, altText: String?, blurhash: String?, focalPoint: (Double, Double)?, size: (Int, Int)?) {
         self.mediaType = mediaType
+        self.path = path
         self.data = data
         self.altText = altText
         self.blurhash = blurhash
@@ -263,12 +265,12 @@ public extension APubDocument {
         
         let mediaType = try tryGet(field: "mediaType", ofType: .string, fromObject: json, called: objNameForErrors) as! String
         
-        let relativePath = try tryGet(field: "url", ofType: .string, fromObject: json, called: objNameForErrors) as! String
+        let path = try tryGet(field: "url", ofType: .string, fromObject: json, called: objNameForErrors) as! String
         let data: Data?
         do {
-            data = try await filesystemFetcher(relativePath)
+            data = try await filesystemFetcher(path)
         } catch ArchiveReadingError.fileNotFoundInArchive(filename: _) {
-            print("WARNING: File not found in archive: \(relativePath)")
+            print("WARNING: File not found in archive: \(path)")
             data = nil
         }
         
@@ -298,7 +300,7 @@ public extension APubDocument {
             size = nil
         }
         
-        self.init(mediaType: mediaType, data: data, altText: altText, blurhash: blurhash, focalPoint: focalPoint, size: size)
+        self.init(mediaType: mediaType, path: path, data: data, altText: altText, blurhash: blurhash, focalPoint: focalPoint, size: size)
     }
 }
 

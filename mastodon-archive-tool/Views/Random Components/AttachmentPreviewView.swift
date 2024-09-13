@@ -140,5 +140,5 @@ struct AttachmentPreviewView: View {
 }
 
 #Preview {
-    AttachmentPreviewView(attachment: APubDocument(mediaType: "image/png", data: nil, altText: "a picture of a dog", blurhash: "WA9Z_$j[00%2%M9ZE1jsxtWBa}xt00j?~pNGM{%M-:j[M|t7WBIU", focalPoint: nil, size: nil), hiddenByDefault: true)
+    AttachmentPreviewView(attachment: APubDocument(mediaType: "image/png", path: "INVALID", data: nil, altText: "a picture of a dog", blurhash: "WA9Z_$j[00%2%M9ZE1jsxtWBa}xt00j?~pNGM{%M-:j[M|t7WBIU", focalPoint: nil, size: nil), hiddenByDefault: true)
 }

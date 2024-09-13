@@ -55,12 +55,7 @@ func importArchive(_ url: URL) async throws -> APubActor {
         }
     } else if url.absoluteString.hasSuffix(".tar.gz") {
         tmpDir = try TempDir()
-        let tarUrl: URL
-        if #available(iOS 16.0, *) {
-            tarUrl = tmpDir!.url.appending(path: url.lastPathComponent.dropLast(3))
-        } else {
-            tarUrl = tmpDir!.url.appendingPathComponent(String(url.lastPathComponent.dropLast(3)))
-        }
+        let tarUrl = tmpDir!.url.appendingPathComponentNonDeprecated(String(url.lastPathComponent.dropLast(3)))
         
         if let uncompressedData = try Data(contentsOf: url).gunzip() {
             try uncompressedData.write(to: tarUrl)

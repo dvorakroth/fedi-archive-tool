@@ -15,10 +15,10 @@ public class APubActor: Identifiable {
     let url: String;
     let created: Date;
     let table: [(String, String)];
-    let icon: (Data, String)?;
-    let headerImage: (Data, String)?;
+    let icon: (data: Data, path: String, mediaType: String)?;
+    let headerImage: (data: Data, path: String, mediaType: String)?;
     
-    init(id: String, username: String, name: String, bio: String, url: String, created: Date, table: [(String, String)], icon: (Data, String)?, headerImage: (Data, String)?) {
+    init(id: String, username: String, name: String, bio: String, url: String, created: Date, table: [(String, String)], icon: (data: Data, path: String, mediaType: String)?, headerImage: (data: Data, path: String, mediaType: String)?) {
         self.id = id
         self.username = username
         self.name = name
@@ -70,7 +70,7 @@ public extension APubActor {
         self.init(id: id, username: username, name: name, bio: bio, url: url, created: created, table: table, icon: icon, headerImage: headerImage)
     }
     
-    private static func parseImage(fromField fieldName: String, ofJson json: [String: Any], withFilesystemFetcher filesystemFetcher: (String) async throws -> (Data), asPartOfActor actorName: String) async throws -> (Data, String)? {
+    private static func parseImage(fromField fieldName: String, ofJson json: [String: Any], withFilesystemFetcher filesystemFetcher: (String) async throws -> (Data), asPartOfActor actorName: String) async throws -> (data: Data, path: String, mediaType: String)? {
         
         let imageField = try tryGetNullable(field: fieldName, ofType: .object, fromObject: json, called: actorName) as! [String: Any]?
         
@@ -82,7 +82,7 @@ public extension APubActor {
         let imageType = try tryGet(field: "mediaType", ofType: .string, fromObject: imageField, called: "\(fieldName) on \(actorName)") as! String
         
         do {
-            return (try await filesystemFetcher(imagePath), imageType)
+            return (data: try await filesystemFetcher(imagePath), path: imagePath, mediaType: imageType)
         } catch(ArchiveReadingError.fileNotFoundInArchive(filename: _)) {
             print("WARNING: file not found in archive: \(imagePath)")
             return nil

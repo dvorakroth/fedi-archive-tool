@@ -41,12 +41,7 @@ struct ShareSheetView: UIViewControllerRepresentable {
         case .fileData(let fileData, let mimetype):
             let filename = "attachment" + (mimetypesToExtensions[mimetype] ?? ".bin")
             let tmpDir = FileManager.default.temporaryDirectory
-            let fileUrl: URL
-            if #available(iOS 16.0, *) {
-                fileUrl = tmpDir.appending(path: filename)
-            } else {
-                fileUrl = tmpDir.appendingPathComponent(filename)
-            }
+            let fileUrl = tmpDir.appendingPathComponentNonDeprecated(filename)
             do {
                 try fileData.write(to: fileUrl)
             } catch {

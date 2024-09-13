@@ -187,12 +187,7 @@ struct AttachmentView: View {
         }
         
         let fileExtension = mimetypesToExtensions[attachment.mediaType] ?? ".bin"
-        let fileUrl: URL
-        if #available(iOS 16.0, *) {
-            fileUrl = tmpAVDir!.url.appending(path: "mediaFile" + fileExtension)
-        } else {
-            fileUrl = tmpAVDir!.url.appendingPathComponent("mediaFile" + fileExtension)
-        }
+        let fileUrl: URL = tmpAVDir!.url.appendingPathComponentNonDeprecated("mediaFile" + fileExtension)
         
         if needToCreateFile {
             do {

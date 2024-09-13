@@ -7,6 +7,49 @@
 
 import SwiftUI
 
+extension URL {
+    func appendingPathComponentNonDeprecated(_ pathComponent: String) -> URL {
+        if #available(iOS 16.0, *) {
+            return self.appending(path: pathComponent)
+        } else {
+            return self.appendingPathComponent(pathComponent)
+        }
+    }
+    
+    var normalPath: String {
+        if #available(iOS 16.0, *) {
+            return self.path(percentEncoded: false)
+        } else {
+            return self.path
+        }
+    }
+}
+
+extension Data {
+    var hexString: String {
+        var result = String(repeating: "x", count: self.count * 2)
+        
+        for i in 0..<self.count {
+            let byte = String(format:"%02X", self[i])
+            
+            let startIndex = result.index(result.startIndex, offsetBy: i * 2)
+            let endIndex = result.index(startIndex, offsetBy: 1)
+            result.replaceSubrange(startIndex...endIndex, with: byte)
+        }
+        
+        return result
+    }
+    
+    func write(to url: URL, options: Data.WritingOptions = [], creatingDirectory: Bool) throws {
+        if creatingDirectory {
+            let dirPath = url.deletingLastPathComponent()
+            try FileManager.default.createDirectory(at: dirPath, withIntermediateDirectories: true)
+        }
+        
+        try self.write(to: url, options: options)
+    }
+}
+
 func formatDateWithoutTime(_ dateTime: Date) -> String {
     let formatter = DateFormatter()
     formatter.timeStyle = .none
@@ -206,12 +249,7 @@ class MacCatalystSaveFileActivity: UIActivity {
         
         let filename = "attachment" + (mimetypesToExtensions[mimetype] ?? ".bin")
         let tmpDir = FileManager.default.temporaryDirectory
-        let fileUrl: URL
-        if #available(iOS 16.0, *) {
-            fileUrl = tmpDir.appending(path: filename)
-        } else {
-            fileUrl = tmpDir.appendingPathComponent(filename)
-        }
+        let fileUrl = tmpDir.appendingPathComponentNonDeprecated(filename)
         do {
             try data.write(to: fileUrl)
         } catch {

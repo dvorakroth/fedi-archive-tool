@@ -70,13 +70,15 @@ slightly advanced functionality
     * DONE ~~show title ("Alt Text") on alt text sheet~~
     * zooming in on desktop? + double tap to zoom on mobile
     * DONE ~~TODO comment about deleting the temp file in ShareSheetView~~
-    * keep original attachment filenames, for saving
-    * major refactor in how attachments are stored: store actual files on the filesystem! that way AVPlayer and share sheets won't need the annoying temp files kludge
+    * DONE ~~keep original attachment filenames, for saving~~
+    * DONE ~~major refactor in how attachments are stored: store actual files on the filesystem! that way AVPlayer and share sheets won't need the annoying temp files kludge~~
+    * use the new refactored attachment import code to better utilize both AVPlayer and the share sheet, with no temp files
     * gap above the AVPlayer so you can see the close/alt/share buttons more clearly
 * when searching, highlight the places where the text matches
 * when a post's text is hidden, still show all @mention links (and only them), like in the mastodon web ui
 * in actor view, use a GeometryReader to make the Posts/Posts&Replies/Media "tabs" "responsive"
 * in post view, change attachment icon by attachment type(s)
+* revisit whether it's still necessary to distinguish in the DB between announcing one's own post and announcing another user's post
 
 performance optimizations
 -------------------------
@@ -96,6 +98,8 @@ bugs and workarounds
 --------------------
 
 * DONE ~~on iPad/Mac, when deleting an actor, navigate away from its ActorView if open~~
+* deleting an actor makes the actor list freeze??
+* in PostView, the "Show less" button doesn't work when the attachment is hidden
 * because of how UIActivityViewController works, there's always a blank popover, with the actual share sheet popover next to it; find some workaround for this bullshit i guess!!! or not lol
 * show RTL text properly; just,,, in general,
 * perform deletions async so they don't stick the ui thread?

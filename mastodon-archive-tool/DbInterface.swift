@@ -10,20 +10,14 @@ import SQLite
 
 fileprivate class DbInterface {
     private static let DB_FILENAME = "app_db.sqlite"
+    fileprivate static let MEDIA_DIR = "mediaPerActor"
     private static let CURRENT_DB_VERSION = 1
     
     private let db: Connection
     
     private init() throws {
         let containingDir = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        
-        var dbFile: String
-        if #available(iOS 16.0, *) {
-            dbFile = containingDir.appending(path: DbInterface.DB_FILENAME).absoluteURL.path
-        } else {
-            dbFile = containingDir.appendingPathComponent(DbInterface.DB_FILENAME).absoluteURL.path
-        }
-        
+        var dbFile: String = containingDir.appendingPathComponentNonDeprecated(DbInterface.DB_FILENAME).absoluteURL.path
         let dbAlreadyExists = FileManager.default.fileExists(atPath: dbFile)
         
         self.db = try Connection(dbFile)
@@ -75,9 +69,9 @@ fileprivate class DbInterface {
             t.column(actor_url)
             t.column(actor_created)
             t.column(actor_table_json)
-            t.column(actor_icon)
+            t.column(actor_icon_path)
             t.column(actor_icon_type)
-            t.column(actor_headerimage)
+            t.column(actor_headerimage_path)
             t.column(actor_headerimage_type)
         })
         
@@ -114,7 +108,7 @@ fileprivate class DbInterface {
             t.column(attachments_note_id)
             t.column(attachments_order_num)
             t.column(attachments_media_type)
-            t.column(attachments_data)
+            t.column(attachments_data_path)
             t.column(attachments_alt_text)
             t.column(attachments_blurhash)
             t.column(attachments_focal_point_x)
@@ -146,9 +140,9 @@ fileprivate let actor_bio = Expression<String>("bio")
 fileprivate let actor_url = Expression<String>("url")
 fileprivate let actor_created = Expression<Date>("created")
 fileprivate let actor_table_json = Expression<String>("table_json")
-fileprivate let actor_icon = Expression<SQLite.Blob?>("icon")
+fileprivate let actor_icon_path = Expression<String?>("icon_path")
 fileprivate let actor_icon_type = Expression<String?>("icon_type")
-fileprivate let actor_headerimage = Expression<SQLite.Blob?>("headerimage")
+fileprivate let actor_headerimage_path = Expression<String?>("headerimage_path")
 fileprivate let actor_headerimage_type = Expression<String?>("headerimage_type")
 
 fileprivate let actions = Table("actions")
@@ -177,7 +171,7 @@ fileprivate let attachments = Table("attachments")
 fileprivate let attachments_note_id = Expression<String>("note_id")
 fileprivate let attachments_order_num = Expression<Int>("order_num")
 fileprivate let attachments_media_type = Expression<String>("media_type")
-fileprivate let attachments_data = Expression<SQLite.Blob?>("data")
+fileprivate let attachments_data_path = Expression<String>("data_path")
 fileprivate let attachments_alt_text = Expression<String?>("alt_text")
 fileprivate let attachments_blurhash = Expression<String?>("blurhash")
 fileprivate let attachments_focal_point_x = Expression<Double?>("focal_point_x")
@@ -190,6 +184,38 @@ fileprivate let pollOptions_note_id = Expression<String>("note_id")
 fileprivate let pollOptions_order_num = Expression<Int>("order_num")
 fileprivate let pollOptions_name = Expression<String>("name")
 fileprivate let pollOptions_num_votes = Expression<Int>("num_votes")
+
+fileprivate func directoryForSavingMedia(actorId: String) throws -> URL {
+    let containingDir = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+    let mediaDir = containingDir.appendingPathComponentNonDeprecated(DbInterface.MEDIA_DIR)
+    try FileManager.default.createDirectory(at: mediaDir, withIntermediateDirectories: true)
+    
+    let actorIdAsHex = actorId.data(using: .utf8)!.hexString
+    let actorMediaDir = mediaDir.appendingPathComponentNonDeprecated(actorIdAsHex)
+    try FileManager.default.createDirectory(at: actorMediaDir, withIntermediateDirectories: true)
+    
+    return actorMediaDir
+}
+
+fileprivate func readMedia(atPath path: String, forActorId actorId: String) -> Data? {
+    let actorMediaDir: URL
+    
+    do {
+        actorMediaDir = try directoryForSavingMedia(actorId: actorId)
+    } catch {
+        print("Getting media directory for actorId \(actorId) encountered an error: \(error)")
+        return nil
+    }
+    
+    let mediaUrl = actorMediaDir.appendingPathComponentNonDeprecated(path)
+    
+    do {
+        return try Data(contentsOf: mediaUrl)
+    } catch {
+        print("Reading media file at \(mediaUrl) encountered an error: \(error)")
+        return nil
+    }
+}
 
 class ActorList: ObservableObject {
     @Published var actors: [APubActor] = []
@@ -211,12 +237,26 @@ extension APubOutbox {
             }
         }
         
+        try saveAllMedia()
+        
         DispatchQueue.main.schedule {
             do {
                 try ActorList.shared.forceRefresh()
             } catch {
                 print(error)
             }
+        }
+    }
+    
+    fileprivate func saveAllMedia() throws {
+        let mediaDir = try directoryForSavingMedia(actorId: self.actor.id)
+        
+        // profile & header pics
+        try self.actor.saveAllMedia(to: mediaDir)
+        
+        // posts
+        for actionEntry in self.orderedItems {
+            try actionEntry.saveAllMedia(to: mediaDir)
         }
     }
 }
@@ -248,8 +288,7 @@ extension APubActor {
             encoding: .utf8
         )!
         
-        try DbInterface.getDb().run(actors.insert(
-            or: .replace,
+        try DbInterface.getDb().run(actors.upsert(
             actor_id <- id,
             actor_username <- username,
             actor_name <- name,
@@ -257,10 +296,11 @@ extension APubActor {
             actor_url <- url,
             actor_created <- created,
             actor_table_json <- tableJson,
-            actor_icon <- icon?.0.datatypeValue,
-            actor_icon_type <- icon?.1,
-            actor_headerimage <- headerImage?.0.datatypeValue,
-            actor_headerimage_type <- headerImage?.1
+            actor_icon_path <- icon?.path,
+            actor_icon_type <- icon?.mediaType,
+            actor_headerimage_path <- headerImage?.path,
+            actor_headerimage_type <- headerImage?.mediaType,
+            onConflictOf: actor_id
         ))
     }
     
@@ -271,34 +311,44 @@ extension APubActor {
                 actors.filter(actorIds.contains(actor_id)).delete()
             )
         }
+        
+        // delete all of these actors' media from the filesystem too
+        for actorId in actorIds {
+            let mediaDir = try directoryForSavingMedia(actorId: actorId)
+            if FileManager.default.fileExists(atPath: mediaDir.normalPath) {
+                try FileManager.default.removeItem(at: mediaDir)
+            }
+        }
     }
     
     private convenience init(fromRow actorRow: Row) throws {
+        let actorId = actorRow[actor_id]
+        
         var table: [(String, String)] = []
         for row in try JSONSerialization.jsonObject(with: actorRow[actor_table_json].data(using: .utf8)!) as! [[String]] {
             table.append((row[0], row[1]))
         }
         
-        let iconData = actorRow[actor_icon]
+        let iconPath = actorRow[actor_icon_path]
         let iconType = actorRow[actor_icon_type]
-        let icon: (Data, String)?
-        if let iconData = iconData, let iconType = iconType {
-            icon = (Data.fromDatatypeValue(iconData), iconType)
+        let icon: (data: Data, path: String, mediaType: String)?
+        if let iconPath = iconPath, let iconType = iconType, let iconData = readMedia(atPath: iconPath, forActorId: actorId) {
+            icon = (data: iconData, path: iconPath, mediaType: iconType)
         } else {
             icon = nil
         }
         
-        let headerData = actorRow[actor_headerimage]
+        let headerPath = actorRow[actor_headerimage_path]
         let headerType = actorRow[actor_headerimage_type]
-        let header: (Data, String)?
-        if let headerData = headerData, let headerType = headerType {
-            header = (Data.fromDatatypeValue(headerData), headerType)
+        let header: (data: Data, path: String, mediaType: String)?
+        if let headerPath = headerPath, let headerType = headerType, let headerData = readMedia(atPath: headerPath, forActorId: actorId) {
+            header = (data: headerData, path: headerPath, mediaType: headerType)
         } else {
             header = nil
         }
         
         self.init(
-            id: actorRow[actor_id],
+            id: actorId,
             username: actorRow[actor_username],
             name: actorRow[actor_name],
             bio: actorRow[actor_bio],
@@ -308,6 +358,18 @@ extension APubActor {
             icon: icon,
             headerImage: header
         )
+    }
+    
+    fileprivate func saveAllMedia(to mediaDir: URL) throws {
+        if let (data, path, _) = self.icon {
+            let iconPath = mediaDir.appendingPathComponentNonDeprecated(path)
+            try data.write(to: iconPath, creatingDirectory: true)
+        }
+        
+        if let (data, path, _) = self.headerImage {
+            let headerPath = mediaDir.appendingPathComponentNonDeprecated(path)
+            try data.write(to: headerPath, creatingDirectory: true)
+        }
     }
 }
 
@@ -406,7 +468,7 @@ extension APubActionEntry {
         case .announce(let noteId):
             actionType = 1
             
-            if let _ = try APubNote.fetchNote(byId: noteId) {
+            if try APubNote.doesNoteExist(noteId: noteId) {
                 ownNoteId = noteId
                 foreignNoteId = nil
             } else {
@@ -421,14 +483,14 @@ extension APubActionEntry {
             foreignNoteId = nil
         }
         
-        try DbInterface.getDb().run(actions.insert(
-            or: .replace,
+        try DbInterface.getDb().run(actions.upsert(
             action_id <- self.id,
             action_actor_id <- self.actorId,
             action_published <- self.published,
             action_action_type <- actionType,
             action_same_user_note_id <- ownNoteId,
-            action_other_user_note_id <- foreignNoteId
+            action_other_user_note_id <- foreignNoteId,
+            onConflictOf: action_id
         ))
     }
     
@@ -459,6 +521,15 @@ extension APubActionEntry {
         
         self.init(id: id, actorId: actorId, published: published, action: action)
     }
+    
+    fileprivate func saveAllMedia(to mediaDir: URL) throws {
+        switch self.action {
+        case .create(let note):
+            try note.saveAllMedia(to: mediaDir)
+        default:
+            break
+        }
+    }
 }
 
 extension APubNote {
@@ -471,9 +542,12 @@ extension APubNote {
         return try APubNote(fromRow: noteRow)
     }
     
+    static func doesNoteExist(noteId: String) throws -> Bool {
+        try DbInterface.getDb().prepare("SELECT EXISTS(SELECT 1 FROM notes WHERE id = ? LIMIT 1);", noteId).scalar() as! Int64 == 1
+    }
+    
     fileprivate func save() throws {
-        try DbInterface.getDb().run(notes.insert(
-            or: .replace,
+        try DbInterface.getDb().run(notes.upsert(
             note_id <- self.id,
             note_actor_id <- self.actorId,
             note_published <- self.published,
@@ -485,10 +559,11 @@ extension APubNote {
             note_searchable_content <- self.searchableContent,
             note_sensitive <- self.sensitive,
             note_poll_end_time <- self.pollEndTime,
-            note_poll_is_closed <- self.pollIsClosed
+            note_poll_is_closed <- self.pollIsClosed,
+            onConflictOf: note_id
         ))
         
-        try APubDocument.deleteDocuments(forNote: self.id)
+        try APubDocument.deleteDocuments(forNote: self.id, actorId: self.actorId)
         if let mediaAttachments = self.mediaAttachments {
             for (idx, attachment) in mediaAttachments.enumerated() {
                 try attachment.save(withNoteId: id, orderNum: idx)
@@ -509,13 +584,14 @@ extension APubNote {
         pollOptions: [APubPollOption]? = nil
     ) throws {
         let id = noteRow[notes[note_id]]
+        let actorId = noteRow[notes[note_actor_id]]
         
-        let mediaAttachments = try mediaAttachments ?? APubDocument.fetchDocuments(forNote: id)
+        let mediaAttachments = try mediaAttachments ?? APubDocument.fetchDocuments(forNote: id, actorId: actorId)
         let pollOptions = try pollOptions ?? APubPollOption.fetchPollOptions(forNote: id)
         
         self.init(
             id: id,
-            actorId: noteRow[notes[note_actor_id]],
+            actorId: actorId,
             published: noteRow[notes[note_published]],
             visibilityLevel: APubNoteVisibilityLevel(rawValue: noteRow[notes[note_visibility]]) ?? .unknown,
             url: noteRow[notes[note_url]],
@@ -530,17 +606,23 @@ extension APubNote {
             pollIsClosed: noteRow[notes[note_poll_is_closed]]
         )
     }
+    
+    fileprivate func saveAllMedia(to mediaDir: URL) throws {
+        for attachment in self.mediaAttachments ?? [] {
+            try attachment.saveMedia(to: mediaDir)
+        }
+    }
 }
 
 extension APubDocument {
-    static func fetchDocuments(forNote noteId: String) throws -> [APubDocument] {
+    static func fetchDocuments(forNote noteId: String, actorId: String) throws -> [APubDocument] {
         let attachmentRows = try Array(try DbInterface.getDb().prepareRowIterator(
             attachments
                 .where(attachments_note_id == noteId)
                 .order(attachments_order_num)
         ))
         
-        return try attachmentRows.map(APubDocument.init(withRow:))
+        return try attachmentRows.map { try APubDocument(withRow: $0, forActorId: actorId) }
     }
     
 //    static func fetchDocuments(
@@ -571,24 +653,46 @@ extension APubDocument {
 //        ))
 //        
 //        return try rows.map { row in
-//            (try APubDocument(withRow: row), try APubActionEntry(fromRow: row))
+//            (try APubDocument(withRow: row, forActorId: actorId), try APubActionEntry(fromRow: row))
 //        }
 //    }
     
-    static func deleteDocuments(forNote noteId: String) throws -> Void {
+    static func deleteDocuments(forNote noteId: String, actorId: String) throws -> Void {
         let attachmentsForNote = attachments.filter(
             attachments_note_id == noteId
         )
+        
+        // fetch media data file paths
+        let mediaPaths = try Array(try DbInterface.getDb().prepareRowIterator(
+            attachmentsForNote.select(attachments_data_path)
+        ))
+        
+        // try to delete them all
+        for mediaFileRow in mediaPaths {
+            let mediaPath = mediaFileRow[attachments_data_path]
+            
+            do {
+                let mediaDir = try directoryForSavingMedia(actorId: actorId)
+                let mediaUrl = mediaDir.appendingPathComponentNonDeprecated(mediaPath)
+                
+                try FileManager.default.removeItem(at: mediaUrl)
+            } catch {
+                print("Deleting media file \(mediaPath) for actor \(actorId) encountered an error: \(error)")
+            }
+        }
+        
+        // actually delete from the db
         try DbInterface.getDb().run(attachmentsForNote.delete())
     }
     
     fileprivate func save(withNoteId noteId: String, orderNum: Int) throws {
+        // ideally, this should be using `.upsert()` as well, but realistically, that function doesn't support `ON CONFLICT` with multiple columns; but it's OK because there's no tables that FK-reference this one, so there's no risk of anything getting deleted
         try DbInterface.getDb().run(attachments.insert(
             or: .replace,
             attachments_note_id <- noteId,
             attachments_order_num <- orderNum,
             attachments_media_type <- self.mediaType,
-            attachments_data <- self.data?.datatypeValue,
+            attachments_data_path <- self.path,
             attachments_alt_text <- self.altText,
             attachments_blurhash <- self.blurhash,
             attachments_focal_point_x <- self.focalPoint?.0,
@@ -598,15 +702,9 @@ extension APubDocument {
         ))
     }
     
-    private convenience init(withRow attachmentRow: Row) throws {
-        let blob = attachmentRow[attachments_data]
-        let data: Data?
-        if let blob = blob {
-            data = Data.fromDatatypeValue(blob)
-        } else {
-            data = nil
-        }
-        
+    private convenience init(withRow attachmentRow: Row, forActorId actorId: String) throws {
+        let path = attachmentRow[attachments_data_path]
+        let data = readMedia(atPath: path, forActorId: actorId)
         
         let focalPointX = attachmentRow[attachments_focal_point_x]
         let focalPointY = attachmentRow[attachments_focal_point_y]
@@ -628,12 +726,22 @@ extension APubDocument {
         
         self.init(
             mediaType: attachmentRow[attachments_media_type],
+            path: path,
             data: data,
             altText: attachmentRow[attachments_alt_text],
             blurhash: attachmentRow[attachments_blurhash],
             focalPoint: focalPoint,
             size: size
         )
+    }
+    
+    fileprivate func saveMedia(to mediaDir: URL) throws {
+        guard let data = data else {
+            return
+        }
+        
+        let filePath = mediaDir.appendingPathComponentNonDeprecated(self.path)
+        try data.write(to: filePath, creatingDirectory: true)
     }
 }
 
@@ -656,6 +764,7 @@ extension APubPollOption {
     }
     
     fileprivate func save(withNoteId noteId: String, orderNum: Int) throws {
+        // ideally, this should be using `.upsert()` as well, but realistically, that function doesn't support `ON CONFLICT` with multiple columns; but it's OK because there's no tables that FK-reference this one, so there's no risk of anything getting deleted
         try DbInterface.getDb().run(pollOptions.insert(
             or: .replace,
             pollOptions_note_id <- noteId,
