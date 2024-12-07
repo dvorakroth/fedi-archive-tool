@@ -17,7 +17,7 @@ fileprivate class DbInterface {
     
     private init() throws {
         let containingDir = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        var dbFile: String = containingDir.appendingPathComponentNonDeprecated(DbInterface.DB_FILENAME).absoluteURL.path
+        let dbFile: String = containingDir.appendingPathComponentNonDeprecated(DbInterface.DB_FILENAME).absoluteURL.path
         let dbAlreadyExists = FileManager.default.fileExists(atPath: dbFile)
         
         self.db = try Connection(dbFile)
@@ -388,7 +388,8 @@ extension APubActionEntry {
         maxNumberOfPosts: Int? = nil,
         includeAnnounces: Bool = true,
         includeReplies: Bool = true,
-        onlyIncludePostsWithMedia: Bool = false
+        onlyIncludePostsWithMedia: Bool = false,
+        onlyDMs: Bool = false
     ) throws -> [APubActionEntry] {
         let stringMatchCondition: Expression<Bool>
         if let matchingSearchString = matchingSearchString {
@@ -441,6 +442,13 @@ extension APubActionEntry {
             mediaCondition = Expression(value: true)
         }
         
+        let dmsCondition: Expression<Bool>
+        if onlyDMs {
+            dmsCondition = notes[note_visibility] == APubNoteVisibilityLevel.dm.rawValue
+        } else {
+            dmsCondition = Expression(value: true)
+        }
+        
         let entryRowsArr = try Array(try DbInterface.getDb().prepareRowIterator(
             actions
                 .join(.leftOuter, notes, on: notes[note_id] == (actions[action_same_user_note_id] ?? actions[action_other_user_note_id]))
@@ -451,6 +459,7 @@ extension APubActionEntry {
                     && actionTypeCondition
                     && repliesCondition
                     && mediaCondition
+                    && dmsCondition
                     && actions[action_actor_id] == actorId
                 )
                 .order(actions[action_published].desc)

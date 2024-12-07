@@ -26,7 +26,7 @@ basic functionality
 * DONE? ~~placeholder images for when media/avatar/header *was* specified, but just wasn't found in the archive?~~
 * DONE? ~~instead of "Go to Profile" and "Permalink" buttons, use the built-in share sheet~~
 * DONE ~~divide actor's posts into Posts, Posts+Replies, Media~~
-* separate view for DMs?
+* DONE ~~separate view for DMs?~~
 * DONE ~~title in navigation view when looking at a profile~~
 * DONE ~~show little icon when post is a reply to something~~
 * DONE ~~post privacy levels~~

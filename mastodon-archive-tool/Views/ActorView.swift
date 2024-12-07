@@ -133,33 +133,59 @@ struct ActorView: View {
                     HStack {
                         Spacer()
                         
-                        Button("Posts", systemImage: "note.text") {
+                        Button(action: {
                             withAnimation {
                                 displayFilter = DisplayFilter.Posts
                                 categoryChanged()
                             }
+                        }) {
+                            Image(systemName: "note.text")
+                                .accessibilityHidden(true)
                         }
                         .disabled(displayFilter == DisplayFilter.Posts)
+                        .accessibilityLabel("Posts")
                         
                         Spacer()
                         
-                        Button("incl. Replies", systemImage: "bubble.left.and.bubble.right") {
+                        Button(action: {
                             withAnimation {
                                 displayFilter = DisplayFilter.PostsAndReplies
                                 categoryChanged()
                             }
+                        }) {
+                            Image(systemName: "bubble.left.and.bubble.right")
+                                .accessibilityHidden(true)
                         }
                         .disabled(displayFilter == DisplayFilter.PostsAndReplies)
+                        .accessibilityLabel("Posts and Replies")
                         
                         Spacer()
                         
-                        Button("Media", systemImage: "photo") {
+                        Button(action: {
                             withAnimation {
                                 displayFilter = DisplayFilter.Media
                                 categoryChanged()
                             }
+                        }) {
+                            Image(systemName: "photo")
+                                .accessibilityHidden(true)
                         }
                         .disabled(displayFilter == DisplayFilter.Media)
+                        .accessibilityLabel("Media")
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            withAnimation {
+                                displayFilter = DisplayFilter.DMs
+                                categoryChanged()
+                            }
+                        }) {
+                            Image(systemName: "envelope")
+                                .accessibilityHidden(true)
+                        }
+                        .disabled(displayFilter == DisplayFilter.DMs)
+                        .accessibilityLabel("Direct Messages")
                         
                         Spacer()
                     }
@@ -273,22 +299,32 @@ fileprivate class PostDataSource: ObservableObject {
         let includeAnnounces: Bool
         let includeReplies: Bool
         let onlyIncludePostsWithMedia: Bool
+        let onlyDMs: Bool
         
         switch postType {
         case .Posts:
             includeAnnounces = true
             includeReplies = false
             onlyIncludePostsWithMedia = false
+            onlyDMs = false
             
         case .PostsAndReplies:
             includeAnnounces = true
             includeReplies = true
             onlyIncludePostsWithMedia = false
+            onlyDMs = false
             
         case .Media:
             includeAnnounces = false
             includeReplies = true
             onlyIncludePostsWithMedia = true
+            onlyDMs = false
+        
+        case .DMs:
+            includeAnnounces = true
+            includeReplies = true
+            onlyIncludePostsWithMedia = false
+            onlyDMs = true
         }
         
         // TODO maybe make this async lol
@@ -298,7 +334,8 @@ fileprivate class PostDataSource: ObservableObject {
             maxNumberOfPosts: POSTS_PER_PAGE,
             includeAnnounces: includeAnnounces,
             includeReplies: includeReplies,
-            onlyIncludePostsWithMedia: onlyIncludePostsWithMedia
+            onlyIncludePostsWithMedia: onlyIncludePostsWithMedia,
+            onlyDMs: onlyDMs
         )
         
         if morePosts.count < POSTS_PER_PAGE {
@@ -317,6 +354,7 @@ fileprivate enum DisplayFilter {
     case Posts
     case PostsAndReplies
     case Media
+    case DMs
 }
 
 #Preview {
