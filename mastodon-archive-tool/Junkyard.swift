@@ -269,7 +269,7 @@ class MacCatalystSaveFileActivity: UIActivity {
         
         var rootViewController = UIApplication.shared.currentWindow?.rootViewController
         while let presentedViewController = rootViewController?.presentedViewController {
-            rootViewController = rootViewController?.presentedViewController
+            rootViewController = presentedViewController
         }
         rootViewController?.present(picker, animated: true)
     }

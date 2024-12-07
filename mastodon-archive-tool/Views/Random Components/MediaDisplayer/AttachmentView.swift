@@ -146,7 +146,7 @@ struct AttachmentView: View {
                         .popover(isPresented: $saveShareSheetIsShown) {
                             switch mediaType {
                             case .image(let uiImage, _):
-                                ShareSheetView(ShareSheetContent.image(uiImage, attachment.data ?? Data(), originalFilename: (attachment.path as NSString).lastPathComponent))
+                                ShareSheetView(ShareSheetContent.image(uiImage, data, originalFilename: (attachment.path as NSString).lastPathComponent))
                             case .audiovisual, .unknown:
                                 if let mediaUrl = urlForMedia(atPath: attachment.path, forActorId: actorId) {
                                     ShareSheetView(ShareSheetContent.localUrl(mediaUrl))
