@@ -99,7 +99,7 @@ bugs and workarounds
 
 * DONE ~~on iPad/Mac, when deleting an actor, navigate away from its ActorView if open~~
 * deleting an actor makes the actor list freeze??
-* in PostView, the "Show less" button doesn't work when the attachment is hidden
+* on mac catalyst, in PostView, the "Show less" button doesn't work when the attachment is hidden
 * because of how UIActivityViewController works, there's always a blank popover, with the actual share sheet popover next to it; find some workaround for this bullshit i guess!!! or not lol
 * show RTL text properly; just,,, in general,
 * perform deletions async so they don't stick the ui thread?
