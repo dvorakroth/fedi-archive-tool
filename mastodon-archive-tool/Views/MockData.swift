@@ -86,9 +86,9 @@ class MockData {
                     searchableContent: "Post whomst contains three images, two broken",
                     sensitive: true,
                     mediaAttachments: MockData.attachments,
-                    pollOptions: MockData.poll,
-                    pollEndTime: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 96 * 3600)),
-                    pollIsClosed: false
+                    pollOptions: nil,
+                    pollEndTime: nil,
+                    pollIsClosed: nil
                 )
             )),
         APubActionEntry(
@@ -140,7 +140,7 @@ class MockData {
     )
     
     public static let attachments = [
-        APubDocument(mediaType: "image/png", path: "INVALID", data: actor.icon!.0, altText: "a blurry photo of a dog", blurhash: nil, focalPoint: nil, size: nil),
+        APubDocument(mediaType: "image/png", path: "INVALID", data: actor.icon!.0, altText: "a blurry photo of a dog", blurhash: "WA9Z_$j[00%2%M9ZE1jsxtWBa}xt00j?~pNGM{%M-:j[M|t7WBIU", focalPoint: nil, size: nil),
         APubDocument(mediaType: "image/png", path: "INVALID", data: nil, altText: "a broken image that doesn't work", blurhash: nil, focalPoint: nil, size: nil),
         APubDocument(mediaType: "image/png", path: "INVALID", data: nil, altText: "a broken image that doesn't work", blurhash: nil, focalPoint: nil, size: nil)
     ]

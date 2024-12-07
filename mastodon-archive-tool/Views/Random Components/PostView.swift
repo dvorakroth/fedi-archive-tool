@@ -188,7 +188,7 @@ struct PostView: View {
     ScrollView {
         PostView(
             actor: MockData.actor,
-            post: MockData.posts[0].action.getNote()!,
+            post: MockData.posts[1].action.getNote()!,
             announcedBy: MockData.actor,
             onMediaClicked: nil
         )
