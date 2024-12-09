@@ -275,12 +275,12 @@ extension APubOutbox {
                 }
             }
             
-            if let mediaDirTmp2 = mediaDirTmpInDeletion {
-                if FileManager.default.fileExists(atPath: mediaDirTmp2.path) {
+            if let mediaDirTmpInDeletion = mediaDirTmpInDeletion {
+                if FileManager.default.fileExists(atPath: mediaDirTmpInDeletion.path) {
                     do {
-                        try FileManager.default.removeItem(at: mediaDirTmp2)
+                        try FileManager.default.removeItem(at: mediaDirTmpInDeletion)
                     } catch {
-                        print("Error trying to delete \(mediaDirTmp2): \(error)")
+                        print("Error trying to delete \(mediaDirTmpInDeletion): \(error)")
                     }
                 }
             }
@@ -308,8 +308,8 @@ extension APubOutbox {
         } catch {
             print("Error moving \(mediaDirTmpInWriting) to \(mediaDirFinal), trying to rollback")
             
-            if let mediaDirTmp2_ = mediaDirTmpInDeletion {
-                try FileManager.default.moveItem(at: mediaDirTmp2_, to: mediaDirFinal)
+            if let mediaDirTmpInDeletion_ = mediaDirTmpInDeletion {
+                try FileManager.default.moveItem(at: mediaDirTmpInDeletion_, to: mediaDirFinal)
                 mediaDirTmpInDeletion = nil
             }
             
