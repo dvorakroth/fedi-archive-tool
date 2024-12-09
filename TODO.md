@@ -79,6 +79,7 @@ slightly advanced functionality
 * in actor view, use a GeometryReader to make the Posts/Posts&Replies/Media "tabs" "responsive"
 * in post view, change attachment icon by attachment type(s)
 * revisit whether it's still necessary to distinguish in the DB between announcing one's own post and announcing another user's post
+* in import queue, give imports an actual progress bar circle thing
 
 performance optimizations
 -------------------------
@@ -103,7 +104,7 @@ bugs and workarounds
 * on mac catalyst, because of how UIActivityViewController works, there's always a blank popover, with the actual share sheet popover next to it; find some workaround for this bullshit i guess!!! or not lol
 * show RTL text properly; just,,, in general,
 * perform deletions async so they don't stick the ui thread?
-* deleting an actor while an import for it is ongoing causes a crash?
+* deleting an actor while an import for it is ongoing causes a crash? -- maybe, add deletions to the import queue
 * it seems like my mastodon server is actually exporting malformed `outbox.json` files right now!!! they contain two `orderedItems` properties, and Swift's JSON parser seems to just ignore the second one, so we always get an empty array for it
     ```json
     "type": "OrderedCollection",
