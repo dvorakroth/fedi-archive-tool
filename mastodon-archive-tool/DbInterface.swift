@@ -185,14 +185,17 @@ fileprivate let pollOptions_order_num = Expression<Int>("order_num")
 fileprivate let pollOptions_name = Expression<String>("name")
 fileprivate let pollOptions_num_votes = Expression<Int>("num_votes")
 
-fileprivate func directoryForSavingMedia(actorId: String) throws -> URL {
+fileprivate func directoryForSavingMedia(actorId: String, namePrefix: String? = nil, createIfDoesntExist: Bool = true) throws -> URL {
     let containingDir = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
     let mediaDir = containingDir.appendingPathComponentNonDeprecated(DbInterface.MEDIA_DIR)
     try FileManager.default.createDirectory(at: mediaDir, withIntermediateDirectories: true)
     
     let actorIdAsHex = actorId.data(using: .utf8)!.hexString
-    let actorMediaDir = mediaDir.appendingPathComponentNonDeprecated(actorIdAsHex)
-    try FileManager.default.createDirectory(at: actorMediaDir, withIntermediateDirectories: true)
+    let actorMediaDir = mediaDir.appendingPathComponentNonDeprecated((namePrefix ?? "") + actorIdAsHex)
+    
+    if createIfDoesntExist {
+        try FileManager.default.createDirectory(at: actorMediaDir, withIntermediateDirectories: true)
+    }
     
     return actorMediaDir
 }
@@ -238,13 +241,17 @@ class ActorList: ObservableObject {
 extension APubOutbox {
     func atomicSave() throws {
         try DbInterface.getDb().transaction {
+            try DbInterface.getDb().run(
+                actors.where(actor_id == self.actor.id).delete()
+            )
+            
             try self.actor.save()
             for actionEntry in self.orderedItems {
                 try actionEntry.save()
             }
+            
+            try saveAllMedia()
         }
-        
-        try saveAllMedia()
         
         DispatchQueue.main.schedule {
             do {
@@ -256,14 +263,57 @@ extension APubOutbox {
     }
     
     fileprivate func saveAllMedia() throws {
-        let mediaDir = try directoryForSavingMedia(actorId: self.actor.id)
+        let mediaDirFinal = try directoryForSavingMedia(actorId: self.actor.id, createIfDoesntExist: false)
+        let mediaDirTmpInWriting = try directoryForSavingMedia(actorId: self.actor.id, namePrefix: "TMP_IN_WRITING_" + UUID().uuidString + "_")
+        var mediaDirTmpInDeletion: URL? = nil
+        defer {
+            if FileManager.default.fileExists(atPath: mediaDirTmpInWriting.path) {
+                do {
+                    try FileManager.default.removeItem(at: mediaDirTmpInWriting)
+                } catch {
+                    print("Error trying to delete \(mediaDirTmpInWriting): \(error)")
+                }
+            }
+            
+            if let mediaDirTmp2 = mediaDirTmpInDeletion {
+                if FileManager.default.fileExists(atPath: mediaDirTmp2.path) {
+                    do {
+                        try FileManager.default.removeItem(at: mediaDirTmp2)
+                    } catch {
+                        print("Error trying to delete \(mediaDirTmp2): \(error)")
+                    }
+                }
+            }
+        }
         
         // profile & header pics
-        try self.actor.saveAllMedia(to: mediaDir)
+        try self.actor.saveAllMedia(to: mediaDirTmpInWriting)
         
         // posts
         for actionEntry in self.orderedItems {
-            try actionEntry.saveAllMedia(to: mediaDir)
+            try actionEntry.saveAllMedia(to: mediaDirTmpInWriting)
+        }
+        
+        if FileManager.default.fileExists(atPath: mediaDirFinal.path) {
+            mediaDirTmpInDeletion = try directoryForSavingMedia(
+                actorId: self.actor.id,
+                namePrefix: "TMP_IN_DELETION_" + UUID().uuidString + "_",
+                createIfDoesntExist: false
+            )
+            try FileManager.default.moveItem(at: mediaDirFinal, to: mediaDirTmpInDeletion!)
+        }
+        
+        do {
+            try FileManager.default.moveItem(at: mediaDirTmpInWriting, to: mediaDirFinal)
+        } catch {
+            print("Error moving \(mediaDirTmpInWriting) to \(mediaDirFinal), trying to rollback")
+            
+            if let mediaDirTmp2_ = mediaDirTmpInDeletion {
+                try FileManager.default.moveItem(at: mediaDirTmp2_, to: mediaDirFinal)
+                mediaDirTmpInDeletion = nil
+            }
+            
+            throw error
         }
     }
 }
