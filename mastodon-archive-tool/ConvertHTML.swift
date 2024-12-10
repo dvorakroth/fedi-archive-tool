@@ -319,3 +319,125 @@ fileprivate func romanNumeral(_ number: Int) -> String {
     
     return result.lowercased()
 }
+
+func convertHTMLToBlocks(element: Element) -> [ParsedHTMLNode] {
+    return convertHTMLToBlocks(element: element, parentAttributes: []) ?? []
+}
+
+fileprivate func convertHTMLToBlocks(
+    element: Element,
+    parentAttributes: [CustomAttributes]
+) -> [ParsedHTMLNode]? {
+    if element.hasClass("invisible") {
+        return nil
+    }
+    
+    let tagName = element.tagName()
+    
+    if tagName == "br" {
+        return [.text(text: AttributedString(
+            "\n",
+            attributes: customAttributesToRealAttributes(parentAttributes)
+        ))]
+    }
+    
+    var updatedAttributes = parentAttributes
+    
+    switch tagName {
+    case "b", "strong":
+        updatedAttributes.append(.bold)
+    case "i", "em":
+        updatedAttributes.append(.italic)
+    case "u", "ins":
+        updatedAttributes.append(.underline)
+    case "strike", "s", "del":
+        updatedAttributes.append(.strikethrough)
+    case "code", "pre":
+        updatedAttributes.append(.code)
+    case "blockquote":
+        updatedAttributes.append(.blockquote)
+    case "sub":
+        updatedAttributes.append(.sub)
+    case "sup":
+        updatedAttributes.append(.sup)
+    case "h1":
+        updatedAttributes.append(.heading(1))
+    case "h2":
+        updatedAttributes.append(.heading(2))
+    case "h3":
+        updatedAttributes.append(.heading(3))
+    case "h4":
+        updatedAttributes.append(.heading(4))
+    case "h5":
+        updatedAttributes.append(.heading(5))
+    case "h6":
+        updatedAttributes.append(.heading(6))
+    case "a":
+        if let href = try? element.attr("href") {
+            updatedAttributes.append(.link(to: href))
+        }
+    default: break
+    }
+    
+    var convertedChildren: [ParsedHTMLNode] = []
+    
+    for childNode in element.getChildNodes() {
+        guard !(childNode is Comment || childNode is DocumentType) else {
+            continue
+        }
+        
+        if let childNode = childNode as? TextNode {
+            convertedChildren.append(.text(text: AttributedString(
+                childNode.text().replacingOccurrences(of: "\n", with: ""),
+                attributes: customAttributesToRealAttributes(updatedAttributes)
+            )))
+        } else if let childElement = childNode as? Element {
+            convertedChildren.append(contentsOf: convertHTMLToBlocks(element: childElement, parentAttributes: updatedAttributes) ?? [])
+        }
+    }
+    
+    // unify adjacent text nodes
+    convertedChildren = convertedChildren.reduce(into: []) { result, child in
+        guard result.count >= 1 else {
+            result.append(child)
+            return
+        }
+        
+        if case .text(let newText) = child {
+            if case .text(let prevText) = result.last {
+                result.remove(at: result.count - 1)
+                result.append(.text(text: prevText + newText))
+                return
+            }
+        }
+        
+        result.append(child)
+    }
+    
+    switch tagName {
+    case "li":
+        return [.listItem(children: convertedChildren)]
+    case "ul":
+        return [.list(ordered: false, items: convertedChildren)]
+    case "ol":
+        return [.list(ordered: true, items: convertedChildren)]
+    case "blockquote":
+        return [.blockquote(children: convertedChildren)]
+    default:
+        break
+    }
+    
+    if BLOCK_DISPLAY_TAGS.firstIndex(of: tagName) != nil {
+        return [.block(children: convertedChildren)]
+    }
+    
+    return convertedChildren
+}
+
+indirect enum ParsedHTMLNode {
+    case text(text: AttributedString)
+    case block(children: [ParsedHTMLNode])
+    case listItem(children: [ParsedHTMLNode])
+    case list(ordered: Bool, items: [ParsedHTMLNode])
+    case blockquote(children: [ParsedHTMLNode])
+}
