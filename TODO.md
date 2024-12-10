@@ -79,7 +79,7 @@ slightly advanced functionality
 * in actor view, use a GeometryReader to make the Posts/Posts&Replies/Media "tabs" "responsive"
 * in post view, change attachment icon by attachment type(s)
 * revisit whether it's still necessary to distinguish in the DB between announcing one's own post and announcing another user's post
-* in import queue, give imports an actual progress bar circle thing
+* DONE ~~in import queue, give imports an actual progress bar circle thing~~
 
 performance optimizations
 -------------------------

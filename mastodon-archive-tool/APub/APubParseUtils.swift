@@ -134,7 +134,7 @@ func tryGetArray<T>(inField field: String, fromObject object: [String: Any], cal
     return result
 }
 
-func tryGetArrayAsync<T>(inField field: String, fromObject object: [String: Any], called objName: String, parsingObjectsUsing objParser: (Any, String, String) async throws -> T) async throws -> [T] {
+func tryGetArrayAsync<T>(inField field: String, fromObject object: [String: Any], called objName: String, parsingObjectsUsing objParser: (Any, String, String, Int, Int) async throws -> T) async throws -> [T] {
     
     let items = try tryGetArray(
         inField: field,
@@ -144,8 +144,8 @@ func tryGetArrayAsync<T>(inField field: String, fromObject object: [String: Any]
         }
     
     var result: [T] = []
-    for (item, itemName, objName) in items {
-        result.append(try await objParser(item, itemName, objName))
+    for (idx, (item, itemName, objName)) in items.enumerated() {
+        result.append(try await objParser(item, itemName, objName, idx, items.count))
     }
     
     return result

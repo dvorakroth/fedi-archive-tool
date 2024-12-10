@@ -199,7 +199,7 @@ public extension APubNote {
         }
         
         let mediaAttachments = try await tryGetArrayAsync(inField: "attachment", fromObject: json, called: noteNameForErrors, parsingObjectsUsing: {
-            (obj: Any, itemNameForErrors: String, objNameForErrors: String) throws -> APubDocument in
+            (obj: Any, itemNameForErrors: String, objNameForErrors: String, _: Int, _: Int) throws -> APubDocument in
             
             guard let obj = obj as? [String: Any] else {
                 throw APubParseError.wrongTypeForField(itemNameForErrors, onObject: objNameForErrors, expected: [.object])

@@ -238,8 +238,13 @@ class ActorList: ObservableObject {
     }
 }
 
+enum OutboxSaveProgress {
+    case doneWritingDb
+    case doneWritingMediaFiles
+}
+
 extension APubOutbox {
-    func atomicSave() throws {
+    func atomicSave(progressCallback: (OutboxSaveProgress) -> ()) throws {
         try DbInterface.getDb().transaction {
             try DbInterface.getDb().run(
                 actors.where(actor_id == self.actor.id).delete()
@@ -249,8 +254,10 @@ extension APubOutbox {
             for actionEntry in self.orderedItems {
                 try actionEntry.save()
             }
+            progressCallback(.doneWritingDb)
             
             try saveAllMedia()
+            progressCallback(.doneWritingMediaFiles)
         }
         
         DispatchQueue.main.schedule {

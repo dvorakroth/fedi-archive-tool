@@ -61,8 +61,9 @@ struct QueueItemView: View {
                 Image(systemName: "clock")
                     .frame(width: 27, height: 27)
                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
-            case .processing:
-                ProgressView().progressViewStyle(.circular)
+            case .processing(let progress):
+                ProgressView(value: progress, total: 1.0)
+                    .progressViewStyle(GodDamnCircularProgressViewStyle())
                     .frame(width: 27, height: 27)
                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
             case .done:
@@ -102,6 +103,53 @@ struct QueueItemView: View {
     }
 }
 
+/**
+ the built-in circular progress view style doesn't work on iOS/iPadOS (always shows the indeterminite infinitely-spinning one) so i had to make my fucking own
+ 
+ some developer at apple computer incorporated has already had to contend with writing probably basically this exact code once before and yet here i am having to redo it because reusing built-in things is impossible!!!!!!
+ 
+ and the worst/best part of this, is how apple warns you about this in the `ProgressView` documentation:
+ 
+   > On platforms other than macOS, the circular style may appear as an indeterminate indicator instead.
+ 
+ "may"????? my sibling in deity you developed the other platforms YOU CAN TELL ME WHAT THE BEHAVIOR WILL BE ON THOSE OTHER PLATFORMS YOU DEVELOPED
+ 
+ just another normal day in the Computer industry!!!!!!!!!
+ */
+struct GodDamnCircularProgressViewStyle: ProgressViewStyle {
+    @Environment(\.colorScheme) var colorScheme
+    
+    func makeBody(configuration: Configuration) -> some View {
+        GeometryReader { geom in
+            ZStack {
+                Circle()
+                    .stroke(style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                    .fill(colorScheme == .light ? .black : .white)
+                    .opacity(0.15)
+                    .frame(width: geom.size.width * 0.7, height: geom.size.width * 0.7)
+                    .padding(.horizontal, geom.size.width * 0.15)
+                    .padding(.vertical, geom.size.height * 0.15)
+                
+                Circle()
+                    .trim(from: 0, to: configuration.fractionCompleted ?? 1.0)
+                    .stroke(style: StrokeStyle(lineWidth: 2.4, lineCap: .round))
+                    .fill(Color.accentColor)
+                    .rotationEffect(.degrees(-90.0))
+                    .animation(.linear, value: configuration.fractionCompleted)
+                    .frame(width: geom.size.width * 0.7, height: geom.size.width * 0.7)
+                    .padding(.horizontal, geom.size.width * 0.15)
+                    .padding(.vertical, geom.size.height * 0.15)
+            }
+        }.frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
 #Preview {
-    AddArchiveView()
+    AddArchiveView(importQueue: MockArchiveImportQueue(queueItems: [
+        QueueItem(
+            id: 1,
+            fileURL: URL(string: "file:///path/to/archive.zip")!,
+            status: .processing(0.6)
+        )
+    ]))
 }

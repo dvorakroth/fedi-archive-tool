@@ -10,7 +10,13 @@ import ZIPFoundation
 import Tarscape
 import DataCompression
 
-func importArchive(_ url: URL) async throws -> APubActor {
+let IMPORT_PROGRESS_STARTED = 0.05;
+let IMPORT_PROGRESS_READ_ACTOR = 0.1;
+let IMPORT_PROGRESS_READ_POSTS = 0.9;
+let IMPORT_PROGRESS_WROTE_DB = 0.95;
+let IMPORT_PROGRESS_WROTE_MEDIA = 1.0;
+
+func importArchive(_ url: URL, progressCallback: @escaping (Double) -> ()) async throws -> APubActor {
     let getFileFromArchive: (String) async throws -> Data
     var tmpDir: TempDir? = nil
     
@@ -85,9 +91,30 @@ func importArchive(_ url: URL) async throws -> APubActor {
         throw ArchiveReadingError.unrecognizedFormat("File extension is not .zip or .tar.gz on \(url.lastPathComponent)")
     }
     
+    progressCallback(IMPORT_PROGRESS_STARTED)
+    
     let actor = try await readActor(getFileFromArchive)
-    let outbox = try await readOutbox(forActor: actor, getFileFromArchive)
-    try outbox.atomicSave()
+    progressCallback(IMPORT_PROGRESS_READ_ACTOR)
+    
+    let outbox = try await readOutbox(
+        forActor: actor,
+        getFileFromArchive: getFileFromArchive,
+        progressCallback: { outboxProgress in
+            progressCallback(
+                (IMPORT_PROGRESS_READ_POSTS - IMPORT_PROGRESS_READ_ACTOR) * outboxProgress
+                + IMPORT_PROGRESS_READ_ACTOR
+            )
+        }
+    )
+    
+    try outbox.atomicSave() { progressStage in
+        switch progressStage {
+        case .doneWritingDb:
+            progressCallback(IMPORT_PROGRESS_WROTE_DB)
+        case .doneWritingMediaFiles:
+            progressCallback(IMPORT_PROGRESS_WROTE_MEDIA)
+        }
+    }
     
     return actor
 }
@@ -111,7 +138,11 @@ fileprivate func readActor(_ getFileFromArchive: (String) async throws -> (Data)
     return try await APubActor(fromJson: jsonObj, withFilesystemFetcher: getFileFromArchive)
 }
 
-fileprivate func readOutbox(forActor actor: APubActor, _ getFileFromArchive: (String) async throws -> (Data)) async throws -> APubOutbox {
+fileprivate func readOutbox(
+    forActor actor: APubActor,
+    getFileFromArchive: (String) async throws -> (Data),
+    progressCallback: (Double) -> ()
+) async throws -> APubOutbox {
     let jsonObj = try JSONSerialization.jsonObject(
         with: try await getFileFromArchive("outbox.json")
     )
@@ -120,5 +151,10 @@ fileprivate func readOutbox(forActor actor: APubActor, _ getFileFromArchive: (St
         throw ArchiveReadingError.malformedFile(filename: "outbox.json", details: nil)
     }
     
-    return try await APubOutbox(withActor: actor, fromJson: jsonObj, withFilesystemFetcher: getFileFromArchive)
+    return try await APubOutbox(
+        withActor: actor,
+        fromJson: jsonObj, 
+        withFilesystemFetcher: getFileFromArchive,
+        progressCallback: progressCallback
+    )
 }

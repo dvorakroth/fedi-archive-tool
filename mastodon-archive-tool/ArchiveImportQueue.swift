@@ -13,7 +13,7 @@ class ArchiveImportQueue: ObservableObject {
     private var importInProgress = false
     private var globalIdCounter = 0
     
-    private init() {}
+    fileprivate init() {}
     private static var singletonInstance: ArchiveImportQueue? = nil
     
     static func getQueue() -> ArchiveImportQueue {
@@ -30,7 +30,7 @@ class ArchiveImportQueue: ObservableObject {
         startHandlingImports()
     }
     
-    private func startHandlingImports() {
+    fileprivate func startHandlingImports() {
         if importInProgress {
             // no need to do anything, the currently running task handler will handle the next item from the queue when it's done
             return
@@ -42,10 +42,12 @@ class ArchiveImportQueue: ObservableObject {
             while let nextImportIdx = getNextImportIdx() {
                 let fileURL = queue[nextImportIdx].fileURL
                 
-                updateImportStatus(atIndex: nextImportIdx, to: .processing)
+                updateImportStatus(atIndex: nextImportIdx, to: .processing(0.0))
                 
                 do {
-                    let _ = try await importArchive(fileURL)
+                    let _ = try await importArchive(fileURL) { progress in
+                        self.updateImportStatus(atIndex: nextImportIdx, to: .processing(progress))
+                    }
                     updateImportStatus(atIndex: nextImportIdx, to: .done)
                 } catch {
                     let mirror = Mirror(reflecting: error)
@@ -77,6 +79,17 @@ class ArchiveImportQueue: ObservableObject {
     }
 }
 
+class MockArchiveImportQueue: ArchiveImportQueue {
+    public init(queueItems: [QueueItem]) {
+        super.init()
+        self.queue = queueItems
+    }
+    
+    override fileprivate func startHandlingImports() {
+        // do nothing
+    }
+}
+
 struct QueueItem: Identifiable {
     let id: Int
     let fileURL: URL
@@ -85,7 +98,7 @@ struct QueueItem: Identifiable {
 
 enum ImportStatus {
     case waiting
-    case processing
+    case processing(Double)
     case error(String)
     case done
 }
