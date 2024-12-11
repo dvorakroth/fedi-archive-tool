@@ -414,13 +414,31 @@ fileprivate func convertHTMLToBlocks(
         result.append(child)
     }
     
+    // remove text nodes that are entirely whitespace?
+    convertedChildren = convertedChildren.filter {
+        child in
+        switch child {
+        case .text(text: let text):
+            return !NSAttributedString(text).string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        default:
+            return true
+        }
+    }
+    
     switch tagName {
     case "li":
-        return [.listItem(children: convertedChildren)]
+        return [.listItem(number: nil, children: convertedChildren)]
     case "ul":
-        return [.list(ordered: false, items: convertedChildren)]
+        return [.list(items: convertedChildren)]
     case "ol":
-        return [.list(ordered: true, items: convertedChildren)]
+        var listItemCounter = 1
+        for (idx, child) in convertedChildren.enumerated() {
+            if case .listItem(_, let children) = child {
+                convertedChildren[idx] = .listItem(number: listItemCounter, children: children)
+                listItemCounter += 1
+            }
+        }
+        return [.list(items: convertedChildren)]
     case "blockquote":
         return [.blockquote(children: convertedChildren)]
     default:
@@ -437,7 +455,7 @@ fileprivate func convertHTMLToBlocks(
 indirect enum ParsedHTMLNode {
     case text(text: AttributedString)
     case block(children: [ParsedHTMLNode])
-    case listItem(children: [ParsedHTMLNode])
-    case list(ordered: Bool, items: [ParsedHTMLNode])
+    case listItem(number: Int?, children: [ParsedHTMLNode])
+    case list(items: [ParsedHTMLNode])
     case blockquote(children: [ParsedHTMLNode])
 }

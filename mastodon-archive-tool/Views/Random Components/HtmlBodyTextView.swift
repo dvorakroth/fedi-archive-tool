@@ -44,6 +44,12 @@ fileprivate enum ParseState {
 fileprivate struct HTMLElementView: View {
     let node: ParsedHTMLNode
     
+    private let listColumns = [
+        GridItem(.fixed(10)),
+        GridItem(.flexible(minimum: 10, maximum: 30), alignment: .top),
+        GridItem(.flexible(), alignment: .leading)
+    ]
+    
     var body: some View {
         switch node {
         case .text(text: let attrStr):
@@ -56,6 +62,34 @@ fileprivate struct HTMLElementView: View {
                     HTMLElementView(node: node)
                 }
             }.padding(.vertical)
+        case .list(items: let children):
+            LazyVGrid(columns: listColumns, spacing: 0) {
+                ForEach(Array(children.enumerated()), id: \.offset) { (idx, node) in
+                    HStack {
+                        Spacer()
+                    }
+                    HStack {
+                        if case .listItem(let number, _) = node {
+                            if let number = number {
+                                Text("\(number).")
+                            } else {
+                                Text("•")
+                            }
+                        } else {
+                            Spacer()
+                        }
+                    }
+                    HStack {
+                        HTMLElementView(node: node)
+                    }
+                }
+            }
+        case .listItem(number: _, children: let children):
+            VStack(alignment: .leading) {
+                ForEach(Array(children.enumerated()), id: \.offset) { (idx, node) in
+                    HTMLElementView(node: node)
+                }
+            }.padding(.vertical, 2)
         default:
             Text("TODO;")
         }
@@ -70,10 +104,18 @@ fileprivate struct HTMLElementView: View {
             world! this   is a long text string but the main point of it all is really that what you should do is you should
             <a href=\"https://ish.works/\">click <b>here</b></a>
         </p>
-        <ul>
-            <li>one</li>
-            <li>two</li>
+        <ol>
+            <p>well,</p>
+            <li>one<br>real<br>thing</li>
+            <li>two lorem ipsum dolor sit amet consectetur adipiscing velit does the word wrapping actually work this time</li>
             <li>three</li>
-        </ul>
+            <li>
+                <ul>
+                    <li>four point one, lorem ipsum dolor sit amet consectetur adipiscing velit</li>
+                    <li>four point two</li>
+                    <li>four point three</li>
+                </ul>
+            </li>
+        </ol>
     """)
 }
