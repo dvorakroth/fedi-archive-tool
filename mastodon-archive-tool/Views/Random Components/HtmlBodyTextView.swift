@@ -71,9 +71,9 @@ fileprivate struct HTMLElementView: View {
                     HStack {
                         if case .listItem(let number, _) = node {
                             if let number = number {
-                                Text("\(number).")
+                                Text("\(number).").padding(.vertical, 2)
                             } else {
-                                Text("•")
+                                Text("•").padding(.vertical, 2)
                             }
                         } else {
                             Spacer()
