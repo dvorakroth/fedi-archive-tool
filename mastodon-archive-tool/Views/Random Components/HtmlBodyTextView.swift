@@ -56,12 +56,12 @@ fileprivate struct HTMLElementView: View {
             if attrStr.characters.count > 1 || !attrStr.characters.allSatisfy({ $0 == " "}) {
                 Text(attrStr)
             }
-        case .block(children: let children):
+        case .block(hasMargin: let hasMargin, children: let children):
             VStack(alignment: .leading) {
                 ForEach(Array(children.enumerated()), id: \.offset) { (idx, node) in
                     HTMLElementView(node: node)
                 }
-            }.padding(.vertical)
+            }.padding(.vertical, hasMargin ? 10 : 0)
         case .list(items: let children):
             LazyVGrid(columns: listColumns, spacing: 0) {
                 ForEach(Array(children.enumerated()), id: \.offset) { (idx, node) in
@@ -90,8 +90,21 @@ fileprivate struct HTMLElementView: View {
                     HTMLElementView(node: node)
                 }
             }.padding(.vertical, 2)
-        default:
-            Text("TODO;")
+        case .blockquote(children: let children):
+            HStack {
+                VStack(alignment: .leading) {
+                    ForEach(Array(children.enumerated()), id: \.offset) { (idx, node) in
+                        HTMLElementView(node: node)
+                    }
+                }
+                    .padding(.leading, 25)
+                    .padding(.vertical, 10)
+            }.overlay {
+                HStack {
+                    Rectangle().frame(width: 2).padding(.leading, 6)
+                    Spacer()
+                }
+            }
         }
         
     }
@@ -117,5 +130,18 @@ fileprivate struct HTMLElementView: View {
                 </ul>
             </li>
         </ol>
+        <blockquote>
+            <p>what is any of this anyway? <sup>2</sup>U<sub>2</sub> <s>nevermind</s></p>
+            <p>none of anything is clear</p>
+            <code>function test() {
+        print("hello, world!\n");
+        return 0;
+    }</code>
+            <blockquote>
+                <p>will my amazing new code be able to handle nested blockquotes?</p>
+                <br>
+                <p>of course it will!</p>
+            </blockquote>
+        </blockquote>
     """)
 }

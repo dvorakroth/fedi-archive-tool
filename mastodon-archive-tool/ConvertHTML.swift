@@ -342,6 +342,7 @@ fileprivate func convertHTMLToBlocks(
     }
     
     var updatedAttributes = parentAttributes
+    var keepNewlines = false
     
     switch tagName {
     case "b", "strong":
@@ -354,6 +355,7 @@ fileprivate func convertHTMLToBlocks(
         updatedAttributes.append(.strikethrough)
     case "code", "pre":
         updatedAttributes.append(.code)
+        keepNewlines = true
     case "blockquote":
         updatedAttributes.append(.blockquote)
     case "sub":
@@ -388,7 +390,9 @@ fileprivate func convertHTMLToBlocks(
         
         if let childNode = childNode as? TextNode {
             convertedChildren.append(.text(text: AttributedString(
-                childNode.text().replacingOccurrences(of: "\n", with: ""),
+                keepNewlines
+                    ? childNode.text() // TODO why doesn't this work?
+                    : childNode.text().replacingOccurrences(of: "\n", with: ""),
                 attributes: customAttributesToRealAttributes(updatedAttributes)
             )))
         } else if let childElement = childNode as? Element {
@@ -446,7 +450,7 @@ fileprivate func convertHTMLToBlocks(
     }
     
     if BLOCK_DISPLAY_TAGS.firstIndex(of: tagName) != nil {
-        return [.block(children: convertedChildren)]
+        return [.block(hasMargin: tagName.starts(with: "h"), children: convertedChildren)]
     }
     
     return convertedChildren
@@ -454,7 +458,7 @@ fileprivate func convertHTMLToBlocks(
 
 indirect enum ParsedHTMLNode {
     case text(text: AttributedString)
-    case block(children: [ParsedHTMLNode])
+    case block(hasMargin: Bool, children: [ParsedHTMLNode])
     case listItem(number: Int?, children: [ParsedHTMLNode])
     case list(items: [ParsedHTMLNode])
     case blockquote(children: [ParsedHTMLNode])
