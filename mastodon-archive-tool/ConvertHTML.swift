@@ -37,7 +37,7 @@ fileprivate enum CustomAttributes {
     case link(to: String)
 }
 
-fileprivate let BLOCK_DISPLAY_TAGS = ["p", "div", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol"]
+fileprivate let BLOCK_DISPLAY_TAGS = ["p", "div", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "pre"]
 
 fileprivate func convertHTML(
     element: Element,
@@ -192,8 +192,6 @@ fileprivate func customAttributesToRealAttributes(_ customAttributes: [CustomAtt
         case .code:
             shouldBeMonospaced = true
         
-        // TODO blockquote???? idk how i'd do this at all lol
-        
         case .sub:
             subOrSuperLevel -= 1
         
@@ -232,11 +230,11 @@ fileprivate func customAttributesToRealAttributes(_ customAttributes: [CustomAtt
     
     var baselineOffset: CGFloat = 0
     for _ in 0..<abs(subOrSuperLevel) {
-        requestedSize *= 0.75
+        requestedSize *= 0.65
         if subOrSuperLevel > 0 {
-            baselineOffset += requestedSize * 0.5
+            baselineOffset += requestedSize * 0.45
         } else {
-            baselineOffset -= requestedSize * 0.4
+            baselineOffset -= requestedSize * 0.2
         }
     }
     result[.baselineOffset] = baselineOffset
@@ -391,8 +389,8 @@ fileprivate func convertHTMLToBlocks(
         if let childNode = childNode as? TextNode {
             convertedChildren.append(.text(text: AttributedString(
                 keepNewlines
-                    ? childNode.text() // TODO why doesn't this work?
-                    : childNode.text().replacingOccurrences(of: "\n", with: ""),
+                    ? childNode.getWholeText()
+                    : (childNode.text().replacingOccurrences(of: "\n", with: "")),
                 attributes: customAttributesToRealAttributes(updatedAttributes)
             )))
         } else if let childElement = childNode as? Element {
@@ -418,12 +416,23 @@ fileprivate func convertHTMLToBlocks(
         result.append(child)
     }
     
+    // trim spaces at the beginnings and ends of lines
+    convertedChildren = convertedChildren.map {
+        child in
+        switch child {
+        case .text(text: let text):
+            return .text(text: text.trimmingSpacesAtStartEndAndAroundNewlines())
+        default:
+            return child
+        }
+    }
+    
     // remove text nodes that are entirely whitespace?
     convertedChildren = convertedChildren.filter {
         child in
         switch child {
         case .text(text: let text):
-            return !NSAttributedString(text).string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            return !text.characters.isEmpty
         default:
             return true
         }

@@ -172,6 +172,76 @@ extension Array {
     }
 }
 
+extension AttributedString {
+    func trimmingSpacesAtStartEndAndAroundNewlines() -> AttributedString {
+        // TODO ughhhhh this doesn't handle monospace blockssss sldkfjsdlkjfasd;l
+        
+        var result = self
+        
+        while result.characters.count > 0
+                && result.characters.first!.isWhitespace
+                && !result.characters.first!.isNewline {
+            result.removeSubrange(result.startIndex...result.startIndex)
+        }
+        
+        while result.characters.count > 0
+                && result.characters.last!.isWhitespace
+                && !result.characters.last!.isNewline {
+            result.removeSubrange(result.index(beforeCharacter: result.endIndex)..<result.endIndex)
+        }
+        
+        var lastFoundNewline: Index? = nil
+        while true {
+            let indexToStartSearching: Index
+            if let lastFoundNewline = lastFoundNewline {
+                indexToStartSearching = result.index(afterCharacter: lastFoundNewline)
+            } else {
+                indexToStartSearching = result.startIndex
+            }
+            
+            guard result.characters.indices.contains(indexToStartSearching) else {
+                break
+            }
+            
+            lastFoundNewline = result.characters[indexToStartSearching..<result.endIndex].firstIndex(of: "\n")
+            if lastFoundNewline == nil {
+                break
+            }
+            
+            while lastFoundNewline! > result.startIndex {
+                let indexBeforeNewline = result.index(beforeCharacter: lastFoundNewline!)
+                guard result.characters.indices.contains(indexBeforeNewline) else {
+                    break
+                }
+                
+                let char = result.characters[indexBeforeNewline]
+                guard char.isWhitespace && !char.isNewline else {
+                    break
+                }
+                
+                result.removeSubrange(indexBeforeNewline..<lastFoundNewline!)
+                lastFoundNewline = indexBeforeNewline
+            }
+            
+            while true {
+                let indexAfterNewline = result.index(afterCharacter: lastFoundNewline!)
+                guard result.characters.indices.contains(indexAfterNewline) else {
+                    break
+                }
+                
+                let char = result.characters[indexAfterNewline]
+                guard char.isWhitespace && !char.isNewline else {
+                    break
+                }
+                
+                result.removeSubrange(indexAfterNewline...indexAfterNewline)
+            }
+        }
+        
+        return result
+    }
+}
+
 public extension UIApplication {
     var currentWindow: UIWindow? {
         let foregroundScene = UIApplication.shared.connectedScenes

@@ -54,10 +54,10 @@ fileprivate struct HTMLElementView: View {
         switch node {
         case .text(text: let attrStr):
             if attrStr.characters.count > 1 || !attrStr.characters.allSatisfy({ $0 == " "}) {
-                Text(attrStr)
+                Text(attrStr).fixedSize(horizontal: false, vertical: true)
             }
         case .block(hasMargin: let hasMargin, children: let children):
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 0) {
                 ForEach(Array(children.enumerated()), id: \.offset) { (idx, node) in
                     HTMLElementView(node: node)
                 }
@@ -85,14 +85,14 @@ fileprivate struct HTMLElementView: View {
                 }
             }
         case .listItem(number: _, children: let children):
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 0) {
                 ForEach(Array(children.enumerated()), id: \.offset) { (idx, node) in
                     HTMLElementView(node: node)
                 }
             }.padding(.vertical, 2)
         case .blockquote(children: let children):
             HStack {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 0) {
                     ForEach(Array(children.enumerated()), id: \.offset) { (idx, node) in
                         HTMLElementView(node: node)
                     }
@@ -127,20 +127,22 @@ fileprivate struct HTMLElementView: View {
                     <li>four point one, lorem ipsum dolor sit amet consectetur adipiscing velit</li>
                     <li>four point two</li>
                     <li>four point three</li>
+                    <li>doin some weird <a href="mailto:ish@example.net">shit <h1>hello</h1> ugh</a> but i guess it works!</li>
                 </ul>
             </li>
         </ol>
         <blockquote>
             <p>what is any of this anyway? <sup>2</sup>U<sub>2</sub> <s>nevermind</s></p>
             <p>none of anything is clear</p>
-            <code>function test() {
-        print("hello, world!\n");
+            <p>if only i could render html without <code>resorting to</code> this drudgery!
+            <pre>function test() {
+        print("hello, world!\\n");
         return 0;
-    }</code>
+    }</pre></p>
             <blockquote>
-                <p>will my amazing new code be able to handle nested blockquotes?</p>
+                <p>will my amazing new code be able to handle nested blockquotes?
                 <br>
-                <p>of course it will!</p>
+                of course it will!</p>
             </blockquote>
         </blockquote>
     """)
