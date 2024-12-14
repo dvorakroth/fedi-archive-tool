@@ -174,8 +174,6 @@ extension Array {
 
 extension AttributedString {
     func trimmingSpacesAtStartEndAndAroundNewlines() -> AttributedString {
-        // TODO ughhhhh this doesn't handle monospace blockssss sldkfjsdlkjfasd;l
-        
         var result = self
         
         while result.characters.count > 0

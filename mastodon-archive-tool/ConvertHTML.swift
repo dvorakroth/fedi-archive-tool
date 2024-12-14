@@ -351,9 +351,11 @@ fileprivate func convertHTMLToBlocks(
         updatedAttributes.append(.underline)
     case "strike", "s", "del":
         updatedAttributes.append(.strikethrough)
-    case "code", "pre":
-        updatedAttributes.append(.code)
+    case "pre":
         keepNewlines = true
+        fallthrough
+    case "code":
+        updatedAttributes.append(.code)
     case "blockquote":
         updatedAttributes.append(.blockquote)
     case "sub":
@@ -416,25 +418,27 @@ fileprivate func convertHTMLToBlocks(
         result.append(child)
     }
     
-    // trim spaces at the beginnings and ends of lines
-    convertedChildren = convertedChildren.map {
-        child in
-        switch child {
-        case .text(text: let text):
-            return .text(text: text.trimmingSpacesAtStartEndAndAroundNewlines())
-        default:
-            return child
+    if !keepNewlines {
+        // trim spaces at the beginnings and ends of lines
+        convertedChildren = convertedChildren.map {
+            child in
+            switch child {
+            case .text(text: let text):
+                return .text(text: text.trimmingSpacesAtStartEndAndAroundNewlines())
+            default:
+                return child
+            }
         }
-    }
-    
-    // remove text nodes that are entirely whitespace?
-    convertedChildren = convertedChildren.filter {
-        child in
-        switch child {
-        case .text(text: let text):
-            return !text.characters.isEmpty
-        default:
-            return true
+        
+        // remove text nodes that are entirely whitespace?
+        convertedChildren = convertedChildren.filter {
+            child in
+            switch child {
+            case .text(text: let text):
+                return !text.characters.isEmpty
+            default:
+                return true
+            }
         }
     }
     

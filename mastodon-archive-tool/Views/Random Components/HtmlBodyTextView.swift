@@ -97,11 +97,10 @@ fileprivate struct HTMLElementView: View {
                         HTMLElementView(node: node)
                     }
                 }
-                    .padding(.leading, 25)
-                    .padding(.vertical, 10)
+                    .padding(.leading, 15)
             }.overlay {
                 HStack {
-                    Rectangle().frame(width: 2).padding(.leading, 6)
+                    Rectangle().frame(width: 2).padding(.leading, 2)
                     Spacer()
                 }
             }
@@ -111,7 +110,8 @@ fileprivate struct HTMLElementView: View {
 }
 
 #Preview {
-    HtmlBodyTextView(htmlString: """
+    ScrollView {
+        HtmlBodyTextView(htmlString: """
         <h1>Test post</h1>
         <p>hello,
             world! this   is a long text string but the main point of it all is really that what you should do is you should
@@ -134,16 +134,21 @@ fileprivate struct HTMLElementView: View {
         <blockquote>
             <p>what is any of this anyway? <sup>2</sup>U<sub>2</sub> <s>nevermind</s></p>
             <p>none of anything is clear</p>
-            <p>if only i could render html without <code>resorting to</code> this drudgery!
+            <p>if only i could render html without <code>resorting
+    to any of</code> this drudgery!
             <pre>function test() {
-        print("hello, world!\\n");
+        print("hello, world!\\n");<b>jkl</b>
         return 0;
     }</pre></p>
             <blockquote>
                 <p>will my amazing new code be able to handle nested blockquotes?
                 <br>
                 of course it will!</p>
+                <blockquote>
+                    <p>amazing</p>
+                </blockquote>
             </blockquote>
         </blockquote>
     """)
+    }.padding()
 }
