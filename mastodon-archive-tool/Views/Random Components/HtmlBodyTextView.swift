@@ -69,7 +69,9 @@ fileprivate struct HTMLElementView: View {
                 ForEach(Array(children.enumerated()), id: \.offset) { (idx, node) in
                     HTMLElementView(node: node, isFirst: idx == 0, isLast: idx == children.count - 1)
                 }
-            }.padding(.vertical, hasMargin ? 10 : 0)
+            }
+                .padding(.top, (isFirst && !hasMargin ? 0 : 10))
+                .padding(.bottom, (isLast && !hasMargin ? 0 : 10))
         case .list(items: let children):
             LazyVGrid(columns: listColumns, spacing: 0) {
                 ForEach(Array(children.enumerated()), id: \.offset) { (idx, node) in
@@ -112,8 +114,8 @@ fileprivate struct HTMLElementView: View {
                     Spacer()
                 }
             }
-            .padding(.top, isFirst ? 0 : 20)
-            .padding(.bottom, isLast ? 0 : 20)
+            .padding(.top, isFirst ? 0 : 10)
+            .padding(.bottom, isLast ? 0 : 10)
         }
         
     }
