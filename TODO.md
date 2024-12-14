@@ -48,7 +48,7 @@ slightly advanced functionality
 * detail view for individual posts
     * show any replies that might be in the DB
     * show what the post might be replying to
-* convert the HTML into individual SwiftUI components or something???? (that way block elements like lists and blockquotes and whatnot will be more.... believeable)
+* DONE ~~convert the HTML into individual SwiftUI components or something???? (that way block elements like lists and blockquotes and whatnot will be more.... believeable)~~
 * unified view of all posts from all actors
 * accessibility stuff??? idk 😬
 * better UI for media tab in ActorView? (grid view like in mastodon web ui?)
