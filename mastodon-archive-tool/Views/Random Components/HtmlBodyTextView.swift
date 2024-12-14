@@ -5,6 +5,12 @@
 //  Created by Wolfe on 10.12.24.
 //
 
+// note for future probably-me editing this!
+// hi! what's up! hope you have flying trains in the future!
+// anyway, dynamic type doesn't really work well in the xcode preview for whatever reason, so uh,,, yeah; enjoy
+// bye
+
+
 import SwiftUI
 import SwiftSoup
 
