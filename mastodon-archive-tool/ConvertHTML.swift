@@ -28,18 +28,18 @@ fileprivate func stripFormattingFromBlocks(_ blocks: [ParsedHTMLNode]) -> String
     
     for block in blocks {
         switch block {
-        case .text(text: let text):
+        case .text(text: let text, isRtl: _):
             result += text.characters
-        case .listItem(number: let number, children: let children):
+        case .listItem(number: let number, children: let children, isRtl: _):
             if let number = number {
                 result += " \(number). "
             }
             fallthrough
-        case .block(hasMargin: _, children: let children):
+        case .block(hasMargin: _, children: let children, isRtl: _):
             fallthrough
-        case .list(items: let children):
+        case .list(items: let children, isRtl: _):
             fallthrough
-        case .blockquote(children: let children):
+        case .blockquote(children: let children, isRtl: _):
             result += " " + stripFormattingFromBlocks(children)
         }
     }
@@ -52,11 +52,11 @@ func convertHTMLToBlocks(element: Element, defaultFont: UIFont) -> [ParsedHTMLNo
 }
 
 indirect enum ParsedHTMLNode {
-    case text(text: AttributedString)
-    case block(hasMargin: Bool, children: [ParsedHTMLNode])
-    case listItem(number: Int?, children: [ParsedHTMLNode])
-    case list(items: [ParsedHTMLNode])
-    case blockquote(children: [ParsedHTMLNode])
+    case text(text: AttributedString, isRtl: Bool? = nil)
+    case block(hasMargin: Bool, children: [ParsedHTMLNode], isRtl: Bool = false)
+    case listItem(number: Int?, children: [ParsedHTMLNode], isRtl: Bool = false)
+    case list(items: [ParsedHTMLNode], isRtl: Bool = false)
+    case blockquote(children: [ParsedHTMLNode], isRtl: Bool = false)
 }
 
 fileprivate func convertHTMLToBlocks(
@@ -127,12 +127,16 @@ fileprivate func convertHTMLToBlocks(
         }
         
         if let childNode = childNode as? TextNode {
-            convertedChildren.append(.text(text: AttributedString(
-                keepNewlines
-                    ? childNode.getWholeText()
-                    : (childNode.text().replacingOccurrences(of: "\n", with: "")),
-                attributes: customAttributesToRealAttributes(updatedAttributes, defaultFont: defaultFont)
-            )))
+            let text = keepNewlines
+                ? childNode.getWholeText()
+                : (childNode.text().replacingOccurrences(of: "\n", with: ""))
+            convertedChildren.append(.text(
+                text: AttributedString(
+                    text,
+                    attributes: customAttributesToRealAttributes(updatedAttributes, defaultFont: defaultFont)
+                ),
+                isRtl: text.guessIfRtl()
+            ))
         } else if let childElement = childNode as? Element {
             convertedChildren.append(contentsOf: convertHTMLToBlocks(element: childElement, parentAttributes: updatedAttributes, defaultFont: defaultFont) ?? [])
         }
@@ -145,10 +149,10 @@ fileprivate func convertHTMLToBlocks(
             return
         }
         
-        if case .text(let newText) = child {
-            if case .text(let prevText) = result.last {
+        if case .text(text: let newText, isRtl: let newIsRtl) = child {
+            if case .text(text: let prevText, isRtl: let prevIsRtl) = result.last {
                 result.remove(at: result.count - 1)
-                result.append(.text(text: prevText + newText))
+                result.append(ParsedHTMLNode.text(text: prevText + newText, isRtl: prevIsRtl ?? newIsRtl))
                 return
             }
         }
@@ -161,8 +165,8 @@ fileprivate func convertHTMLToBlocks(
         convertedChildren = convertedChildren.map {
             child in
             switch child {
-            case .text(text: let text):
-                return .text(text: text.trimmingSpacesAtStartEndAndAroundNewlines())
+            case .text(text: let text, isRtl: let isRtl):
+                return .text(text: text.trimmingSpacesAtStartEndAndAroundNewlines(), isRtl: isRtl)
             default:
                 return child
             }
@@ -172,7 +176,7 @@ fileprivate func convertHTMLToBlocks(
         convertedChildren = convertedChildren.filter {
             child in
             switch child {
-            case .text(text: let text):
+            case .text(text: let text, isRtl: _):
                 return !text.characters.isEmpty
             default:
                 return true
@@ -180,28 +184,45 @@ fileprivate func convertHTMLToBlocks(
         }
     }
     
+    let allChildrenAreRtl = convertedChildren.reduce(into: nil as Bool?) { result, child in
+        switch child {
+        case .text(text: _, isRtl: let isRtl):
+            if let isRtl = isRtl {
+                result = (result ?? true) && isRtl
+            }
+        case .block(hasMargin: _, children: _, isRtl: let isRtl):
+            fallthrough
+        case .listItem(number: _, children: _, isRtl: let isRtl):
+            fallthrough
+        case .list(items: _, isRtl: let isRtl):
+            fallthrough
+        case .blockquote(children: _, isRtl: let isRtl):
+            result = (result ?? true) && isRtl
+        }
+    } ?? false
+    
     switch tagName {
     case "li":
-        return [.listItem(number: nil, children: convertedChildren)]
+        return [.listItem(number: nil, children: convertedChildren, isRtl: allChildrenAreRtl)]
     case "ul":
-        return [.list(items: convertedChildren)]
+        return [.list(items: convertedChildren, isRtl: allChildrenAreRtl)]
     case "ol":
         var listItemCounter = 1
         for (idx, child) in convertedChildren.enumerated() {
-            if case .listItem(_, let children) = child {
+            if case .listItem(number: _, children: let children, isRtl: _) = child {
                 convertedChildren[idx] = .listItem(number: listItemCounter, children: children)
                 listItemCounter += 1
             }
         }
-        return [.list(items: convertedChildren)]
+        return [.list(items: convertedChildren, isRtl: allChildrenAreRtl)]
     case "blockquote":
-        return [.blockquote(children: convertedChildren)]
+        return [.blockquote(children: convertedChildren, isRtl: allChildrenAreRtl)]
     default:
         break
     }
     
     if BLOCK_DISPLAY_TAGS.firstIndex(of: tagName) != nil {
-        return [.block(hasMargin: tagName.starts(with: "h"), children: convertedChildren)]
+        return [.block(hasMargin: tagName.starts(with: "h"), children: convertedChildren, isRtl: allChildrenAreRtl)]
     }
     
     return convertedChildren

@@ -103,7 +103,7 @@ bugs and workarounds
 * on mac catalyst, in PostView, the "Show less" button doesn't work when the attachment is hidden
 * on mac catalyst, because of how UIActivityViewController works, there's always a blank popover, with the actual share sheet popover next to it; find some workaround for this bullshit i guess!!! or not lol
 * on mac catalyst, the share sheet's copy functionality doesn't work????
-* show RTL text properly; just,,, in general,
+* DONE ~~show RTL text properly; just,,, in general,~~
 * perform deletions async so they don't stick the ui thread?
 * deleting an actor while an import for it is ongoing causes a crash? -- maybe, add deletions to the import queue
 * it seems like my mastodon server is actually exporting malformed `outbox.json` files right now!!! they contain two `orderedItems` properties, and Swift's JSON parser seems to just ignore the second one, so we always get an empty array for it

@@ -54,6 +54,8 @@ fileprivate enum ParseState {
 }
 
 fileprivate struct HTMLElementView: View {
+    @Environment(\.layoutDirection) var layoutDirection
+    
     let node: ParsedHTMLNode
     let isFirst: Bool
     let isLast: Bool
@@ -66,28 +68,33 @@ fileprivate struct HTMLElementView: View {
     
     var body: some View {
         switch node {
-        case .text(text: let attrStr):
+        case .text(text: let attrStr, isRtl: let isRtl):
             if attrStr.characters.count > 1 || !attrStr.characters.allSatisfy({ $0 == " "}) {
-                Text(attrStr).fixedSize(horizontal: false, vertical: true)
+                Text(attrStr)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .environment(\.layoutDirection, getLayoutDirection(isRtl: isRtl) ?? layoutDirection)
             }
-        case .block(hasMargin: let hasMargin, children: let children):
+        case .block(hasMargin: let hasMargin, children: let children, isRtl: let isRtl):
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(Array(children.enumerated()), id: \.offset) { (idx, node) in
                     HTMLElementView(node: node, isFirst: idx == 0, isLast: idx == children.count - 1)
                 }
             }
+                .environment(\.layoutDirection, getLayoutDirection(isRtl: isRtl) ?? layoutDirection)
                 .padding(.top, (isFirst && !hasMargin ? 0 : 10))
                 .padding(.bottom, (isLast && !hasMargin ? 0 : 10))
-        case .list(items: let children):
+        case .list(items: let children, isRtl: let isRtl):
             LazyVGrid(columns: listColumns, spacing: 0) {
                 ForEach(Array(children.enumerated()), id: \.offset) { (idx, node) in
                     HStack {
                         Spacer()
                     }
                     HStack {
-                        if case .listItem(let number, _) = node {
+                        if case .listItem(number: let number, children: _, isRtl: _) = node {
                             if let number = number {
-                                Text("\(number).").padding(.vertical, 2)
+                                // dirty hack but... it works,,,
+                                Text(isRtl ? ".\(number)" : "\(number).")
+                                    .padding(.vertical, 2)
                             } else {
                                 Text("•").padding(.vertical, 2)
                             }
@@ -100,13 +107,16 @@ fileprivate struct HTMLElementView: View {
                     }
                 }
             }
-        case .listItem(number: _, children: let children):
+                .environment(\.layoutDirection, getLayoutDirection(isRtl: isRtl) ?? layoutDirection)
+        case .listItem(number: _, children: let children, isRtl: let isRtl):
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(Array(children.enumerated()), id: \.offset) { (idx, node) in
                     HTMLElementView(node: node, isFirst: idx == 0, isLast: idx == children.count - 1)
                 }
-            }.padding(.vertical, 2)
-        case .blockquote(children: let children):
+            }
+                .padding(.vertical, 2)
+                .environment(\.layoutDirection, getLayoutDirection(isRtl: isRtl) ?? layoutDirection)
+        case .blockquote(children: let children, isRtl: let isRtl):
             HStack {
                 VStack(alignment: .leading, spacing: 0) {
                     ForEach(Array(children.enumerated()), id: \.offset) { (idx, node) in
@@ -120,8 +130,9 @@ fileprivate struct HTMLElementView: View {
                     Spacer()
                 }
             }
-            .padding(.top, isFirst ? 0 : 10)
-            .padding(.bottom, isLast ? 0 : 10)
+                .environment(\.layoutDirection, getLayoutDirection(isRtl: isRtl) ?? layoutDirection)
+                .padding(.top, isFirst ? 0 : 10)
+                .padding(.bottom, isLast ? 0 : 10)
         }
         
     }
@@ -135,11 +146,13 @@ fileprivate struct HTMLElementView: View {
             world! this   is a long text string but the main point of it all is really that what you should do is you should
             <a href=\"https://ish.works/\">click <b>here</b></a>
         </p>
+        <p>כדי לבדוק אם זה עובד, הנה פסקה שהיא כל כולה בעברית, כי כשכל המסמך ב-English, אז קשה לדעת אם הקוד ימין-לשמאל המדהים שלי עובד או לא.</p>
         <ol>
             <p>well,</p>
             <li>one<br>real<br>thing</li>
             <li>two lorem ipsum dolor sit amet consectetur adipiscing velit does the word wrapping actually work this time</li>
             <li>three</li>
+            <li>שלוש וחצי!!</li>
             <li>
                 <ul>
                     <li>four point one, lorem ipsum dolor sit amet consectetur adipiscing velit</li>
@@ -167,6 +180,12 @@ fileprivate struct HTMLElementView: View {
                 </blockquote>
             </blockquote>
         </blockquote>
+        <ol>
+            <li>הרשימה הזו כולה בעברית.</li>
+            <li>זה חשוב כדי לראות אם זה עובד או לא</li>
+            <li>כי יש סיכוי שזה לא!</li>
+            <li>ואם זה לא, אז אולי כדאי לגלות למה?</li>
+        </ol>
     """)
     }.padding()
 }

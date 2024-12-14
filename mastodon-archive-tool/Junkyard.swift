@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NaturalLanguage
 
 extension URL {
     func appendingPathComponentNonDeprecated(_ pathComponent: String) -> URL {
@@ -237,6 +238,35 @@ extension AttributedString {
         }
         
         return result
+    }
+}
+
+extension String {
+    func guessIfRtl() -> Bool? {
+        guard let language = NLLanguageRecognizer.dominantLanguage(for: self) else {
+            return nil
+        }
+        
+        switch language {
+        case .arabic, .persian, .urdu, .punjabi, .hebrew:
+            return true
+        case .undetermined:
+            return nil
+        default:
+            return false
+        }
+    }
+}
+
+func getLayoutDirection(isRtl: Bool?) -> LayoutDirection? {
+    guard let isRtl = isRtl else {
+        return nil
+    }
+    
+    if isRtl {
+        return .rightToLeft
+    } else {
+        return .leftToRight
     }
 }
 
