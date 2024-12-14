@@ -9,21 +9,27 @@ import SwiftUI
 import SwiftSoup
 
 struct HtmlBodyTextView: View {
-    private let parsedHtml: ParseState
+    @Environment(\.sizeCategory) var sizeCategory
     
-    init(htmlString: String) {
+    let htmlString: String
+
+    
+    private func parseHtml() -> ParseState {
+        let document: Document
         do {
-            let document = try SwiftSoup.parseBodyFragment(htmlString)
-            
-            parsedHtml = .success(convertHTMLToBlocks(element: document.body()!))
+            document = try SwiftSoup.parseBodyFragment(htmlString)
         } catch {
-            parsedHtml = .error("Error parsing HTML: \(error)\n\nOriginal HTML: \(htmlString)")
-            
+            return .error("Error parsing HTML: \(error)\n\nOriginal HTML: \(htmlString)")
         }
+        
+        return .success(convertHTMLToBlocks(
+            element: document.body()!,
+            defaultFont: UIFont.preferredFont(forTextStyle: .body)
+        ))
     }
     
     var body: some View {
-        switch parsedHtml {
+        switch parseHtml() {
         case .success(let nodes):
             VStack(alignment: .leading) {
                 ForEach(Array(nodes.enumerated()), id: \.offset) { (idx, node) in

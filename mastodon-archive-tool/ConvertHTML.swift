@@ -18,7 +18,7 @@ func stripHTML(_ htmlString: String) -> String {
         return htmlString
     }
     
-    let blocks = convertHTMLToBlocks(element: document.body()!)
+    let blocks = convertHTMLToBlocks(element: document.body()!, defaultFont: UIFont.preferredFont(forTextStyle: .body))
     
     return stripFormattingFromBlocks(blocks)
 }
@@ -47,8 +47,8 @@ fileprivate func stripFormattingFromBlocks(_ blocks: [ParsedHTMLNode]) -> String
     return result
 }
 
-func convertHTMLToBlocks(element: Element) -> [ParsedHTMLNode] {
-    return convertHTMLToBlocks(element: element, parentAttributes: []) ?? []
+func convertHTMLToBlocks(element: Element, defaultFont: UIFont) -> [ParsedHTMLNode] {
+    return convertHTMLToBlocks(element: element, parentAttributes: [], defaultFont: defaultFont) ?? []
 }
 
 indirect enum ParsedHTMLNode {
@@ -61,7 +61,8 @@ indirect enum ParsedHTMLNode {
 
 fileprivate func convertHTMLToBlocks(
     element: Element,
-    parentAttributes: [CustomAttributes]
+    parentAttributes: [CustomAttributes],
+    defaultFont: UIFont
 ) -> [ParsedHTMLNode]? {
     if element.hasClass("invisible") {
         return nil
@@ -72,7 +73,7 @@ fileprivate func convertHTMLToBlocks(
     if tagName == "br" {
         return [.text(text: AttributedString(
             "\n",
-            attributes: customAttributesToRealAttributes(parentAttributes)
+            attributes: customAttributesToRealAttributes(parentAttributes, defaultFont: defaultFont)
         ))]
     }
     
@@ -130,10 +131,10 @@ fileprivate func convertHTMLToBlocks(
                 keepNewlines
                     ? childNode.getWholeText()
                     : (childNode.text().replacingOccurrences(of: "\n", with: "")),
-                attributes: customAttributesToRealAttributes(updatedAttributes)
+                attributes: customAttributesToRealAttributes(updatedAttributes, defaultFont: defaultFont)
             )))
         } else if let childElement = childNode as? Element {
-            convertedChildren.append(contentsOf: convertHTMLToBlocks(element: childElement, parentAttributes: updatedAttributes) ?? [])
+            convertedChildren.append(contentsOf: convertHTMLToBlocks(element: childElement, parentAttributes: updatedAttributes, defaultFont: defaultFont) ?? [])
         }
     }
     
@@ -221,10 +222,8 @@ fileprivate enum CustomAttributes {
 
 fileprivate let BLOCK_DISPLAY_TAGS = ["p", "div", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "pre"]
 
-fileprivate func customAttributesToRealAttributes(_ customAttributes: [CustomAttributes]) -> AttributeContainer {
+fileprivate func customAttributesToRealAttributes(_ customAttributes: [CustomAttributes], defaultFont: UIFont) -> AttributeContainer {
     var result: [NSAttributedString.Key: Any] = [:]
-    
-    let defaultFont = UIFont.preferredFont(forTextStyle: .body)
     
     var requestedSize: CGFloat = defaultFont.pointSize
     var shouldBeBold = false
