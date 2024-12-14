@@ -27,7 +27,7 @@ struct HtmlBodyTextView: View {
         case .success(let nodes):
             VStack(alignment: .leading) {
                 ForEach(Array(nodes.enumerated()), id: \.offset) { (idx, node) in
-                    HTMLElementView(node: node)
+                    HTMLElementView(node: node, isFirst: idx == 0, isLast: idx == nodes.count - 1)
                 }
             }
         case .error(let errorText):
@@ -43,6 +43,8 @@ fileprivate enum ParseState {
 
 fileprivate struct HTMLElementView: View {
     let node: ParsedHTMLNode
+    let isFirst: Bool
+    let isLast: Bool
     
     private let listColumns = [
         GridItem(.fixed(10)),
@@ -59,7 +61,7 @@ fileprivate struct HTMLElementView: View {
         case .block(hasMargin: let hasMargin, children: let children):
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(Array(children.enumerated()), id: \.offset) { (idx, node) in
-                    HTMLElementView(node: node)
+                    HTMLElementView(node: node, isFirst: idx == 0, isLast: idx == children.count - 1)
                 }
             }.padding(.vertical, hasMargin ? 10 : 0)
         case .list(items: let children):
@@ -80,21 +82,21 @@ fileprivate struct HTMLElementView: View {
                         }
                     }
                     HStack {
-                        HTMLElementView(node: node)
+                        HTMLElementView(node: node, isFirst: idx == 0, isLast: idx == children.count - 1)
                     }
                 }
             }
         case .listItem(number: _, children: let children):
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(Array(children.enumerated()), id: \.offset) { (idx, node) in
-                    HTMLElementView(node: node)
+                    HTMLElementView(node: node, isFirst: idx == 0, isLast: idx == children.count - 1)
                 }
             }.padding(.vertical, 2)
         case .blockquote(children: let children):
             HStack {
                 VStack(alignment: .leading, spacing: 0) {
                     ForEach(Array(children.enumerated()), id: \.offset) { (idx, node) in
-                        HTMLElementView(node: node)
+                        HTMLElementView(node: node, isFirst: idx == 0, isLast: idx == children.count - 1)
                     }
                 }
                     .padding(.leading, 15)
@@ -104,6 +106,8 @@ fileprivate struct HTMLElementView: View {
                     Spacer()
                 }
             }
+            .padding(.top, isFirst ? 0 : 20)
+            .padding(.bottom, isLast ? 0 : 20)
         }
         
     }
