@@ -106,7 +106,7 @@ struct ActorView: View {
                     Text(" ")
                     
                     HStack {
-                        Text(convertHTML(actor.bio))
+                        HtmlBodyTextView(htmlString: actor.bio)
                             .padding(.horizontal)
                         Spacer()
                     }

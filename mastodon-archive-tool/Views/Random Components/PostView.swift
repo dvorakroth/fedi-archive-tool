@@ -113,7 +113,7 @@ struct PostView: View {
                 if post.cw != nil {
                     Spacer().frame(height: 10)
                 }
-                Text(convertHTML(post.content))
+                HtmlBodyTextView(htmlString: post.content)
             }
             
             if let pollOptions = post.pollOptions {
