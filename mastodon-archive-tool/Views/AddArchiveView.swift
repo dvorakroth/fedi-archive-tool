@@ -44,7 +44,7 @@ struct AddArchiveView: View {
             print(error)
             
         case .success(let urls):
-            importQueue.addToQueue(urls[0])
+            importQueue.addToQueue(import: urls[0])
         }
     }
 }
@@ -82,7 +82,13 @@ struct QueueItemView: View {
                         ScrollView {
                             VStack {
                                 VStack {
-                                    Text("Error importing \(queueItem.fileURL.lastPathComponent)").font(.title)
+                                    switch queueItem.action {
+                                    case .addArchive(let fileURL):
+                                        Text("Error importing \(fileURL.lastPathComponent)").font(.title)
+                                    case .deleteArchives(let actorIds, _):
+                                        Text("Error deleting \(actorIds.joined(separator: ", "))").font(.title)
+                                    }
+                                    
                                     Spacer().frame(height: 15)
                                     Text(errorText)
                                         .fixedSize(horizontal: false, vertical: true)
@@ -97,7 +103,13 @@ struct QueueItemView: View {
                     }
                 }
             }
-            Text("\(queueItem.fileURL.lastPathComponent)")
+            
+            switch queueItem.action {
+            case .addArchive(fileURL: let fileURL):
+                Text("\(fileURL.lastPathComponent)")
+            case .deleteArchives(actorIds: _, displayNames: let displayNames):
+                Text("Delete \(displayNames.joined(separator: ", "))")
+            }
             Spacer()
         }
     }
@@ -148,8 +160,16 @@ struct GodDamnCircularProgressViewStyle: ProgressViewStyle {
     AddArchiveView(importQueue: MockArchiveImportQueue(queueItems: [
         QueueItem(
             id: 1,
-            fileURL: URL(string: "file:///path/to/archive.zip")!,
+            action: .addArchive(fileURL: URL(string: "file:///path/to/archive.zip")!),
             status: .processing(0.6)
+        ),
+        QueueItem(
+            id: 2,
+            action: .deleteArchives(
+                actorIds: ["https://social.example.net/users/ish", "https://social.example.net/users/dog"],
+                displayNames: ["ish@social.example.net", "dog@social.example.net"]
+            ),
+            status: .waiting
         )
     ]))
 }

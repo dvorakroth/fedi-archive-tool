@@ -24,9 +24,19 @@ class ArchiveImportQueue: ObservableObject {
         return self.singletonInstance!
     }
     
-    func addToQueue(_ fileURL: URL) {
+    func addToQueue(import fileURL: URL) {
         globalIdCounter += 1
-        queue.append(QueueItem(id: globalIdCounter, fileURL: fileURL, status: .waiting))
+        queue.append(QueueItem(id: globalIdCounter, action: .addArchive(fileURL: fileURL), status: .waiting))
+        startHandlingImports()
+    }
+    
+    func addToQueue(delete actorIds: [String], withDisplayNames displayNames: [String]) {
+        globalIdCounter += 1
+        queue.append(QueueItem(
+            id: globalIdCounter,
+            action: .deleteArchives(actorIds: actorIds, displayNames: displayNames),
+            status: .waiting
+        ))
         startHandlingImports()
     }
     
@@ -39,20 +49,40 @@ class ArchiveImportQueue: ObservableObject {
         importInProgress = true
         
         Task {
-            while let nextImportIdx = getNextImportIdx() {
-                let fileURL = queue[nextImportIdx].fileURL
-                
+            while let nextImportIdx = await getNextImportIdx() {
+                let action = queue[nextImportIdx].action
                 updateImportStatus(atIndex: nextImportIdx, to: .processing(0.0))
                 
-                do {
-                    let _ = try await importArchive(fileURL) { progress in
-                        self.updateImportStatus(atIndex: nextImportIdx, to: .processing(progress))
+                switch action {
+                case .addArchive(let fileURL):
+                    do {
+                        let _ = try await importArchive(fileURL) { progress in
+                            self.updateImportStatus(atIndex: nextImportIdx, to: .processing(progress))
+                        }
+                    } catch {
+                        let mirror = Mirror(reflecting: error)
+                        updateImportStatus(atIndex: nextImportIdx, to: .error("\(mirror.subjectType) - \(error)"))
                     }
-                    updateImportStatus(atIndex: nextImportIdx, to: .done)
-                } catch {
-                    let mirror = Mirror(reflecting: error)
-                    updateImportStatus(atIndex: nextImportIdx, to: .error("\(mirror.subjectType) - \(error)"))
+                    
+                case .deleteArchives(let actorIds, _):
+                    let hideTask = Task { @MainActor in
+                        ActorList.shared.actors.removeAll(where: { actorIds.contains($0.id) })
+                    }
+                    
+                    let _ = await hideTask.result
+                    
+                    do {
+                        try APubActor.deleteActors(withIds: actorIds)
+                    } catch {
+                        let mirror = Mirror(reflecting: error)
+                        updateImportStatus(atIndex: nextImportIdx, to: .error("\(mirror.subjectType) - \(error)"))
+                    }
+                    
+                    refreshActorsList()
                 }
+                
+                
+                updateImportStatus(atIndex: nextImportIdx, to: .done)
                 
                 await Task.yield()
             }
@@ -61,20 +91,39 @@ class ArchiveImportQueue: ObservableObject {
         }
     }
     
-    private func getNextImportIdx() -> Int? {
-        return queue.firstIndex { item in
-            switch item.status {
-            case .waiting:
-                return true
-            default:
-                return false
+    private func getNextImportIdx() async -> Int? {
+        let task = Task { @MainActor in
+            return queue.firstIndex { item in
+                switch item.status {
+                case .waiting:
+                    return true
+                default:
+                    return false
+                }
             }
+        }
+        
+        do {
+            return try await task.result.get()
+        } catch {
+            print("Error getting next queue idx: \(error)")
+            return nil
         }
     }
     
     private func updateImportStatus(atIndex index: Int, to newState: ImportStatus) {
         DispatchQueue.main.schedule {
             self.queue[index].status = newState
+        }
+    }
+    
+    private func refreshActorsList() {
+        DispatchQueue.main.schedule {
+            do {
+                try ActorList.shared.forceRefresh()
+            } catch {
+                print("Error refreshing actor list: \(error)")
+            }
         }
     }
 }
@@ -92,8 +141,13 @@ class MockArchiveImportQueue: ArchiveImportQueue {
 
 struct QueueItem: Identifiable {
     let id: Int
-    let fileURL: URL
+    let action: QueueAction
     var status: ImportStatus
+}
+
+enum QueueAction {
+    case addArchive(fileURL: URL)
+    case deleteArchives(actorIds: [String], displayNames: [String])
 }
 
 enum ImportStatus {

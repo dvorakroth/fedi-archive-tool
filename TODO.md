@@ -80,6 +80,7 @@ slightly advanced functionality
 * in post view, change attachment icon by attachment type(s)
 * revisit whether it's still necessary to distinguish in the DB between announcing one's own post and announcing another user's post
 * DONE ~~in import queue, give imports an actual progress bar circle thing~~
+* proper(?) JSON-LD support(?)
 
 performance optimizations
 -------------------------
@@ -99,13 +100,14 @@ bugs and workarounds
 --------------------
 
 * DONE ~~on iPad/Mac, when deleting an actor, navigate away from its ActorView if open~~
-* deleting an actor makes the actor list freeze??
+* DONE ~~deleting an actor makes the actor list freeze??~~
 * on mac catalyst, in PostView, the "Show less" button doesn't work when the attachment is hidden
 * on mac catalyst, because of how UIActivityViewController works, there's always a blank popover, with the actual share sheet popover next to it; find some workaround for this bullshit i guess!!! or not lol
 * on mac catalyst, the share sheet's copy functionality doesn't work????
+* on mac catalyst, when deleting an actor, the sidebar list becomes unresponsive (probably an apple bug?)
 * DONE ~~show RTL text properly; just,,, in general,~~
-* perform deletions async so they don't stick the ui thread?
-* deleting an actor while an import for it is ongoing causes a crash? -- maybe, add deletions to the import queue
+* DONE? ~~perform deletions async so they don't stick the ui thread?~~
+* DONE ~~deleting an actor while an import for it is ongoing causes a crash? -- maybe, add deletions to the import queue~~
 * it seems like my mastodon server is actually exporting malformed `outbox.json` files right now!!! they contain two `orderedItems` properties, and Swift's JSON parser seems to just ignore the second one, so we always get an empty array for it
     ```json
     "type": "OrderedCollection",
@@ -115,3 +117,4 @@ bugs and workarounds
         {
             "id":
     ```
+* text should take up entire width of post, especially when RTL

@@ -31,22 +31,18 @@ struct ContentView: View {
                         }
                     }
                     .onDelete { indexSet in
-                        do {
-                            let actorIds = actorList.actors.get(indexSet: indexSet).map(\.id)
-                            
-                            try APubActor.deleteActors(withIds: actorIds)
-                            try actorList.forceRefresh()
-                            
-                            if let selectedActorId = selectedActorId {
-                                if actorIds.firstIndex(of: selectedActorId) != nil {
-                                    withAnimation {
-                                        refreshId = UUID()
-                                    }
-                                }
+                        let actorIds = actorList.actors.get(indexSet: indexSet).map(\.id)
+                        let displayNames = actorList.actors.get(indexSet: indexSet).map(\.fullUsername)
+                        
+                        ActorList.shared.actors.removeAll { actor in
+                            actorIds.contains(actor.id)
+                        }
+                        ArchiveImportQueue.getQueue().addToQueue(delete: actorIds, withDisplayNames: displayNames)
+                        
+                        if let selectedActorId = selectedActorId {
+                            if actorIds.firstIndex(of: selectedActorId) != nil {
+                                refreshId = UUID()
                             }
-                        } catch {
-                            // TODO handle error gracefully
-                            print(error)
                         }
                     }
                     
