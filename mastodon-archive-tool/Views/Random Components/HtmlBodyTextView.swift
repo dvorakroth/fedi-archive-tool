@@ -73,6 +73,7 @@ fileprivate struct HTMLElementView: View {
                 Text(attrStr)
                     .fixedSize(horizontal: false, vertical: true)
                     .environment(\.layoutDirection, getLayoutDirection(isRtl: isRtl) ?? layoutDirection)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
         case .block(hasMargin: let hasMargin, children: let children, isRtl: let isRtl):
             VStack(alignment: .leading, spacing: 0) {
@@ -139,6 +140,10 @@ fileprivate struct HTMLElementView: View {
 }
 
 #Preview {
+//    VStack {
+//        HtmlBodyTextView(htmlString: MockData.posts[3].action.getNote()?.content ?? "")
+//            .frame(maxWidth: .infinity)
+//    }
     ScrollView {
         HtmlBodyTextView(htmlString: """
         <h1>Test post</h1>

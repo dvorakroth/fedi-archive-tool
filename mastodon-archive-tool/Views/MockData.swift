@@ -33,6 +33,29 @@ class MockData {
             )
         ),
         APubActionEntry(
+            id: "https://social.example.net/posts/133",
+            actorId: MockData.actor.id,
+            published: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 24 * 3600)),
+            action: .create(
+                APubNote(
+                    id: "https://social.example.net/posts/133",
+                    actorId: MockData.actor.id,
+                    published: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 24 * 3600)),
+                    visibilityLevel: ._public,
+                    url: "https://social.example.net/posts/133",
+                    replyingToNoteId: nil,
+                    cw: nil, //"אזהרת תוכן בעברית",
+                    content: "<p>זה פוסט עם טקסט בעברית<br>יש שבירות שורה<br>כדי לבדוק רינדור<br>של ימין לשמאל</p><p>וגם שבירת פסקה<br>בשביל הכיף ככה<br>באהבה אחי, עליי!</p>",
+                    searchableContent: "",
+                    sensitive: false, //true,
+                    mediaAttachments: nil,
+                    pollOptions: nil,
+                    pollEndTime: nil,
+                    pollIsClosed: nil
+                )
+            )
+        ),
+        APubActionEntry(
             id: "https://social.example.net/posts/124",
             actorId: MockData.actor.id,
             published: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 24 * 3600)),

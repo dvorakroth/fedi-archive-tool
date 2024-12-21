@@ -117,4 +117,5 @@ bugs and workarounds
         {
             "id":
     ```
-* text should take up entire width of post, especially when RTL
+* DONE ~~text should take up entire width of post, especially when RTL~~
+* when deciding if a piece of text is LTR or RTL, ignore @mentions, and surround them with those cursed unicode LTR markers
