@@ -47,6 +47,66 @@ fileprivate func stripFormattingFromBlocks(_ blocks: [ParsedHTMLNode]) -> String
     return result
 }
 
+func getOnlyAtMentions(htmlString: String, defaultFont: UIFont) -> AttributedString? {
+    let document: Document
+    do {
+        document = try SwiftSoup.parseBodyFragment(htmlString)
+    } catch {
+        print("Error parsing HTML: \(error)")
+        return nil
+    }
+    
+    return getOnlyAtMentions(element: document.body()!, defaultFont: defaultFont)
+}
+
+func getOnlyAtMentions(element: Element, defaultFont: UIFont) -> AttributedString? {
+    let blocks = convertHTMLToBlocks(element: element, defaultFont: defaultFont)
+    let textBlocks = getOnlyText(fromBlocks: blocks)
+    
+    let allMentions = textBlocks.flatMap { str in
+        str.distinctRanges {
+            run in run.isMention == true
+        }.map { range in
+            var result = AttributedString(String(str[range].characters))
+            result.link = str[range].link
+            return result
+        }
+    }
+    
+    if allMentions.count == 0 {
+        return nil
+    } else {
+        return allMentions.reduce(into: AttributedString()) { partialResult, str in
+            if partialResult.characters.count > 0 {
+                partialResult += " "
+            }
+            
+            partialResult += str
+        }
+    }
+}
+
+fileprivate func getOnlyText(fromBlocks blocks: [ParsedHTMLNode]) -> [AttributedString] {
+    var result: [AttributedString] = []
+    
+    for block in blocks {
+        switch block {
+        case .text(let text, let isRtl):
+            result.append(text)
+        case .block(_, let children, _):
+            fallthrough
+        case .listItem(_, let children, _):
+            fallthrough
+        case .list(let children, _):
+            fallthrough
+        case .blockquote(let children, _):
+            result.append(contentsOf: getOnlyText(fromBlocks: children))
+        }
+    }
+    
+    return result
+}
+
 func convertHTMLToBlocks(element: Element, defaultFont: UIFont) -> [ParsedHTMLNode] {
     return convertHTMLToBlocks(element: element, parentAttributes: [], defaultFont: defaultFont) ?? []
 }

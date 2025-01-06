@@ -239,6 +239,28 @@ extension AttributedString {
         
         return result
     }
+    
+    func distinctRanges(where predicate: (AttributedString.Runs.Run) -> Bool) -> [Range<Index>] {
+        var result: [Range<Index>] = []
+        
+        for run in runs {
+            if !predicate(run) {
+                continue
+            }
+            
+            if let lastRange = result.last {
+                if lastRange.upperBound == run.range.lowerBound {
+                    result.removeLast()
+                    result.append(Range(uncheckedBounds: (lastRange.lowerBound, run.range.upperBound)))
+                    continue
+                }
+            }
+            
+            result.append(run.range)
+        }
+        
+        return result
+    }
 }
 
 extension String {

@@ -75,7 +75,7 @@ slightly advanced functionality
     * DONE ~~use the new refactored attachment import code to better utilize both AVPlayer and the share sheet, with no temp files~~
     * gap above the AVPlayer so you can see the close/alt/share buttons more clearly
 * when searching, highlight the places where the text matches
-* when a post's text is hidden, still show all @mention links (and only them), like in the mastodon web ui
+* DONE ~~when a post's text is hidden, still show all @mention links (and only them), like in the mastodon web ui~~
 * in actor view, use a GeometryReader to make the Posts/Posts&Replies/Media "tabs" "responsive"
 * in post view, change attachment icon by attachment type(s)
 * revisit whether it's still necessary to distinguish in the DB between announcing one's own post and announcing another user's post
@@ -122,4 +122,4 @@ bugs and workarounds
     ```
 * DONE ~~text should take up entire width of post, especially when RTL~~
 * DONE ~~when deciding if a piece of text is LTR or RTL, ignore @mentions~~
-* surround @mentions with those cursed unicode LTR markers?
+* WONTFIX not important enough (to me) ~~surround blocks of @mentions with those cursed unicode LTR markers?~~

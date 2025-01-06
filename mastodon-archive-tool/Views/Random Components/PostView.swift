@@ -114,6 +114,11 @@ struct PostView: View {
                     Spacer().frame(height: 10)
                 }
                 HtmlBodyTextView(htmlString: post.content)
+            } else if let mentionPreview = getOnlyAtMentions(htmlString: post.content, defaultFont: UIFont.preferredFont(forTextStyle: .body)) {
+                
+                Spacer().frame(height: 10)
+                
+                Text(mentionPreview)
             }
             
             if let pollOptions = post.pollOptions {
@@ -188,7 +193,7 @@ struct PostView: View {
     ScrollView {
         PostView(
             actor: MockData.actor,
-            post: MockData.posts[3].action.getNote()!,
+            post: MockData.posts[0].action.getNote()!,
             announcedBy: MockData.actor,
             onMediaClicked: nil
         )

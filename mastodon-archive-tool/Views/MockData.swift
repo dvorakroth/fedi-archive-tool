@@ -136,6 +136,29 @@ class MockData {
                     pollIsClosed: false
                 )
             )
+        ),
+        APubActionEntry(
+            id: "https://social.example.net/posts/127",
+            actorId: MockData.actor.id,
+            published: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 120 * 3600)),
+            action: .create(
+                APubNote(
+                    id: "https://social.example.net/posts/127",
+                    actorId: MockData.actor.id,
+                    published: Date(timeIntervalSince1970: TimeInterval(integerLiteral: 120 * 3600)),
+                    visibilityLevel: ._public,
+                    url: "https://social.example.net/posts/127",
+                    replyingToNoteId: nil,
+                    cw: "warning: mentions inside!",
+                    content: "<p><span class=\"h-card\" translate=\"no\"><a href=\"https://social.example.net/users/admin\" class=\"u-url mention\">@<span>admin</span></a></span> for more questions, please:</p><h1>ask <span class=\"h-card\" translate=\"no\"><a href=\"https://social.example.net/users/notadmin\" class=\"u-url mention\">@<span>notadmin</span></a></span></h1>",
+                    searchableContent: "@admin for more questions, please: ask @notadmin",
+                    sensitive: true,
+                    mediaAttachments: nil,
+                    pollOptions: nil,
+                    pollEndTime: nil,
+                    pollIsClosed: nil
+                )
+            )
         )
     ].reversed())
     
