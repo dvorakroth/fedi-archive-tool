@@ -91,7 +91,7 @@ fileprivate func getOnlyText(fromBlocks blocks: [ParsedHTMLNode]) -> [Attributed
     
     for block in blocks {
         switch block {
-        case .text(let text, let isRtl):
+        case .text(let text, _):
             result.append(text)
         case .block(_, let children, _):
             fallthrough
@@ -189,7 +189,7 @@ fileprivate func convertHTMLToBlocks(
                 : (childNode.text().replacingOccurrences(of: "\n", with: ""))
             
             let attrsContainMentionLink = updatedAttributes.contains { attr in
-                if case .link(let to, let isMention) = attr {
+                if case .link(_, let isMention) = attr {
                     return isMention
                 }
                 
