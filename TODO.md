@@ -95,6 +95,9 @@ have to do before publishing lol
 
 * about page lol
 * localization??????
+* app name??????????
+* icon??????????????
+* create some fake datasets for the app review team + screenshots to use
 
 bugs and workarounds
 --------------------
@@ -118,4 +121,5 @@ bugs and workarounds
             "id":
     ```
 * DONE ~~text should take up entire width of post, especially when RTL~~
-* when deciding if a piece of text is LTR or RTL, ignore @mentions, and surround them with those cursed unicode LTR markers
+* DONE ~~when deciding if a piece of text is LTR or RTL, ignore @mentions~~
+* surround @mentions with those cursed unicode LTR markers?

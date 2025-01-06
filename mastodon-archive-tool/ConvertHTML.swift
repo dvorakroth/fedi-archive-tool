@@ -71,10 +71,7 @@ fileprivate func convertHTMLToBlocks(
     let tagName = element.tagName()
     
     if tagName == "br" {
-        return [.text(text: AttributedString(
-            "\n",
-            attributes: customAttributesToRealAttributes(parentAttributes, defaultFont: defaultFont)
-        ))]
+        return [.text(text: AttributedString("\n", customAttributes: parentAttributes, defaultFont: defaultFont))]
     }
     
     var updatedAttributes = parentAttributes
@@ -114,7 +111,7 @@ fileprivate func convertHTMLToBlocks(
         updatedAttributes.append(.heading(6))
     case "a":
         if let href = try? element.attr("href") {
-            updatedAttributes.append(.link(to: href))
+            updatedAttributes.append(.link(to: href, isMention: element.hasClass("mention")))
         }
     default: break
     }
@@ -130,12 +127,22 @@ fileprivate func convertHTMLToBlocks(
             let text = keepNewlines
                 ? childNode.getWholeText()
                 : (childNode.text().replacingOccurrences(of: "\n", with: ""))
+            
+            let attrsContainMentionLink = updatedAttributes.contains { attr in
+                if case .link(let to, let isMention) = attr {
+                    return isMention
+                }
+                
+                return false
+            }
+            
             convertedChildren.append(.text(
                 text: AttributedString(
                     text,
-                    attributes: customAttributesToRealAttributes(updatedAttributes, defaultFont: defaultFont)
+                    customAttributes: updatedAttributes,
+                    defaultFont: defaultFont
                 ),
-                isRtl: text.guessIfRtl()
+                isRtl: attrsContainMentionLink ? nil : text.guessIfRtl()
             ))
         } else if let childElement = childNode as? Element {
             convertedChildren.append(contentsOf: convertHTMLToBlocks(element: childElement, parentAttributes: updatedAttributes, defaultFont: defaultFont) ?? [])
@@ -238,101 +245,121 @@ fileprivate enum CustomAttributes {
     case sub
     case sup
     case heading(Int)
-    case link(to: String)
+    case link(to: String, isMention: Bool = false)
 }
 
 fileprivate let BLOCK_DISPLAY_TAGS = ["p", "div", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "pre"]
 
-fileprivate func customAttributesToRealAttributes(_ customAttributes: [CustomAttributes], defaultFont: UIFont) -> AttributeContainer {
-    var result: [NSAttributedString.Key: Any] = [:]
-    
-    var requestedSize: CGFloat = defaultFont.pointSize
-    var shouldBeBold = false
-    var shouldBeItalic = false
-    var shouldBeMonospaced = false
-    var subOrSuperLevel = 0
-    
-    for customAttribute in customAttributes {
-        switch customAttribute {
-        case .bold:
-            shouldBeBold = true
-            
-        case .italic:
-            shouldBeItalic = true
-            
-        case .underline:
-            result[.underlineStyle] = NSUnderlineStyle.single.rawValue
+fileprivate extension AttributedString {
+    init(_ string: String, customAttributes: [CustomAttributes], defaultFont: UIFont) {
+        self.init(string)
         
-        case .strikethrough:
-            result[.strikethroughStyle] = NSUnderlineStyle.single.rawValue
-            
-        case .code:
-            shouldBeMonospaced = true
         
-        case .sub:
-            subOrSuperLevel -= 1
+        var requestedSize: CGFloat = defaultFont.pointSize
+        var shouldBeBold = false
+        var shouldBeItalic = false
+        var shouldBeMonospaced = false
+        var subOrSuperLevel = 0
         
-        case .sup:
-            subOrSuperLevel += 1
+        for customAttribute in customAttributes {
+            switch customAttribute {
+            case .bold:
+                shouldBeBold = true
+                
+            case .italic:
+                shouldBeItalic = true
+                
+            case .underline:
+                self.underlineStyle = .single
             
-        case .heading(let level):
-            shouldBeBold = true
+            case .strikethrough:
+                self.strikethroughStyle = .single
+                
+            case .code:
+                shouldBeMonospaced = true
             
-            switch level {
-            case 1:
-                requestedSize *= 2
-            case 2:
-                requestedSize *= 1.5
-            case 3:
-                requestedSize *= 1.17
-            case 4:
-                requestedSize *= 1
-            case 5:
-                requestedSize *= 0.83
-            case 6:
-                requestedSize *= 0.67
+            case .sub:
+                subOrSuperLevel -= 1
+            
+            case .sup:
+                subOrSuperLevel += 1
+                
+            case .heading(let level):
+                shouldBeBold = true
+                
+                switch level {
+                case 1:
+                    requestedSize *= 2
+                case 2:
+                    requestedSize *= 1.5
+                case 3:
+                    requestedSize *= 1.17
+                case 4:
+                    requestedSize *= 1
+                case 5:
+                    requestedSize *= 0.83
+                case 6:
+                    requestedSize *= 0.67
+                default: break
+                }
+                
+            case .link(to: let href, isMention: let isMention):
+                if let url = URL(string: href) {
+                    self.link = url
+                } else {
+                    print("Could not parse URL: \(href)")
+                }
+                
+                if isMention {
+                    self.isMention = true
+                }
+            
             default: break
             }
-            
-        case .link(to: let href):
-            if let url = URL(string: href) {
-                result[.link] = url
-            } else {
-                print("Could not parse URL: \(href)")
-            }
+        }
         
-        default: break
+        var baselineOffset: CGFloat = 0
+        for _ in 0..<abs(subOrSuperLevel) {
+            requestedSize *= 0.65
+            if subOrSuperLevel > 0 {
+                baselineOffset += requestedSize * 0.45
+            } else {
+                baselineOffset -= requestedSize * 0.2
+            }
         }
-    }
-    
-    var baselineOffset: CGFloat = 0
-    for _ in 0..<abs(subOrSuperLevel) {
-        requestedSize *= 0.65
-        if subOrSuperLevel > 0 {
-            baselineOffset += requestedSize * 0.45
-        } else {
-            baselineOffset -= requestedSize * 0.2
+        self.baselineOffset = baselineOffset
+        
+        var symbolicTraits: UIFontDescriptor.SymbolicTraits = []
+        if shouldBeBold {
+            symbolicTraits.insert(.traitBold)
         }
+        if shouldBeItalic {
+            symbolicTraits.insert(.traitItalic)
+        }
+        if shouldBeMonospaced {
+            symbolicTraits.insert(.traitMonoSpace)
+        }
+        
+        let font = UIFont(
+            descriptor: defaultFont.fontDescriptor.withSymbolicTraits(symbolicTraits)!,
+            size: requestedSize
+        )
+        
+        self.font = font
     }
-    result[.baselineOffset] = baselineOffset
-    
-    var symbolicTraits: UIFontDescriptor.SymbolicTraits = []
-    if shouldBeBold {
-        symbolicTraits.insert(.traitBold)
+}
+
+enum IsMentionAttribute : AttributedStringKey {
+    typealias Value = Bool
+    static let name = "isMention"
+}
+
+struct IsMentionStyleAttributes : AttributeScope {
+    let isMention: IsMentionAttribute
+}
+
+extension AttributeDynamicLookup {
+    subscript<T: AttributedStringKey>(dynamicMember keyPath: KeyPath<IsMentionStyleAttributes, T>) -> T {
+        return self[T.self]
     }
-    if shouldBeItalic {
-        symbolicTraits.insert(.traitItalic)
-    }
-    if shouldBeMonospaced {
-        symbolicTraits.insert(.traitMonoSpace)
-    }
-    
-    let font = UIFont(
-        descriptor: defaultFont.fontDescriptor.withSymbolicTraits(symbolicTraits)!,
-        size: requestedSize
-    )
-    
-    result[.font] = font
-    
-    return AttributeContainer(result)
 }
