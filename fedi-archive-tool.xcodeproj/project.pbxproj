@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		392D46E42C273CC900561231 /* mastodon_archive_toolApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392D46E32C273CC900561231 /* mastodon_archive_toolApp.swift */; };
+		392D46E42C273CC900561231 /* fedi_archive_toolApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392D46E32C273CC900561231 /* fedi_archive_toolApp.swift */; };
 		392D46E62C273CC900561231 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392D46E52C273CC900561231 /* ContentView.swift */; };
 		392D46E82C273CCA00561231 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 392D46E72C273CCA00561231 /* Assets.xcassets */; };
 		392D46EB2C273CCA00561231 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 392D46EA2C273CCA00561231 /* Preview Assets.xcassets */; };
@@ -62,7 +62,7 @@
 
 /* Begin PBXFileReference section */
 		392D46E02C273CC900561231 /* fedi-archive-tool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "fedi-archive-tool.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		392D46E32C273CC900561231 /* mastodon_archive_toolApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mastodon_archive_toolApp.swift; sourceTree = "<group>"; };
+		392D46E32C273CC900561231 /* fedi_archive_toolApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fedi_archive_toolApp.swift; sourceTree = "<group>"; };
 		392D46E52C273CC900561231 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		392D46E72C273CCA00561231 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		392D46EA2C273CCA00561231 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -119,7 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				39816D112C2CB6CF0074740C /* TODO.md */,
-				392D46E22C273CC900561231 /* mastodon-archive-tool */,
+				392D46E22C273CC900561231 /* fedi-archive-tool */,
 				392D46E12C273CC900561231 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -132,13 +132,13 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		392D46E22C273CC900561231 /* mastodon-archive-tool */ = {
+		392D46E22C273CC900561231 /* fedi-archive-tool */ = {
 			isa = PBXGroup;
 			children = (
 				39B02D022C89CC3900EA7AAD /* Info.plist */,
 				39A192362C285DC4000C3FE6 /* Views */,
 				39A1921A2C2746E9000C3FE6 /* APub */,
-				392D46E32C273CC900561231 /* mastodon_archive_toolApp.swift */,
+				392D46E32C273CC900561231 /* fedi_archive_toolApp.swift */,
 				392D46E72C273CCA00561231 /* Assets.xcassets */,
 				392D46E92C273CCA00561231 /* Preview Content */,
 				39A1922B2C2755A2000C3FE6 /* ReadArchive.swift */,
@@ -148,7 +148,7 @@
 				39816D122C3060D10074740C /* ConvertHTML.swift */,
 				39ACFA142C7CD300003C9CD5 /* ArchiveImportQueue.swift */,
 			);
-			path = "mastodon-archive-tool";
+			path = "fedi-archive-tool";
 			sourceTree = "<group>";
 		};
 		392D46E92C273CCA00561231 /* Preview Content */ = {
@@ -237,7 +237,7 @@
 				393F12552C42C30A0083FB03 /* BlurHash */,
 				39ACFA172C8223B1003C9CD5 /* LazyPager */,
 			);
-			productName = "mastodon-archive-tool";
+			productName = "fedi-archive-tool";
 			productReference = 392D46E02C273CC900561231 /* fedi-archive-tool.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -303,7 +303,7 @@
 				392D46E62C273CC900561231 /* ContentView.swift in Sources */,
 				3955BC682C4C5FF4001D073F /* PollView.swift in Sources */,
 				393F12532C42A1410083FB03 /* AttachmentPreviewView.swift in Sources */,
-				392D46E42C273CC900561231 /* mastodon_archive_toolApp.swift in Sources */,
+				392D46E42C273CC900561231 /* fedi_archive_toolApp.swift in Sources */,
 				39A192212C2746F2000C3FE6 /* APubAction.swift in Sources */,
 				39816CEC2C2B4BBB0074740C /* ActorTable.swift in Sources */,
 				39816CF22C2C76340074740C /* ActionView.swift in Sources */,
@@ -461,16 +461,16 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"mastodon-archive-tool/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"fedi-archive-tool/Preview Content\"";
 				DEVELOPMENT_TEAM = 66HAW66T63;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/mastodon-archive-tool/Preview\\ Content",
+					"$(PROJECT_DIR)/fedi-archive-tool/Preview\\ Content",
 					"$(PROJECT_DIR)",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "mastodon-archive-tool/Info.plist";
+				INFOPLIST_FILE = "fedi-archive-tool/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Fedi Archive";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This lets you save media from your archives to your device's photo library";
@@ -500,16 +500,16 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"mastodon-archive-tool/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"fedi-archive-tool/Preview Content\"";
 				DEVELOPMENT_TEAM = 66HAW66T63;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/mastodon-archive-tool/Preview\\ Content",
+					"$(PROJECT_DIR)/fedi-archive-tool/Preview\\ Content",
 					"$(PROJECT_DIR)",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "mastodon-archive-tool/Info.plist";
+				INFOPLIST_FILE = "fedi-archive-tool/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Fedi Archive";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This lets you save media from your archives to your device's photo library";
