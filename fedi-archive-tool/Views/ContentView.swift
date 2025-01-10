@@ -64,7 +64,7 @@ struct ContentView: View {
                 
                 Section("Misc") {
                     NavigationLink(tag: "ABOUT", selection: $selectedActorId) {
-                        AboutView()
+                        AboutView().navigationTitle("Fedi Archive")
                     } label: {
                         Label("About", systemImage: "info.circle")
                     }
