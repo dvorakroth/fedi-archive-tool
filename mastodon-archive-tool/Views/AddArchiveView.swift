@@ -14,7 +14,7 @@ struct AddArchiveView: View {
     
     var body: some View {
         VStack {
-            Spacer().frame(height: 15)
+//            Spacer().frame(height: 15)
             
             List {
                 ForEach(importQueue.queue, id: \.id) { item in
