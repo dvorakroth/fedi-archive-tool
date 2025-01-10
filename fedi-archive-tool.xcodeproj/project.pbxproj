@@ -61,7 +61,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		392D46E02C273CC900561231 /* mastodon-archive-tool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "mastodon-archive-tool.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		392D46E02C273CC900561231 /* fedi-archive-tool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "fedi-archive-tool.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		392D46E32C273CC900561231 /* mastodon_archive_toolApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mastodon_archive_toolApp.swift; sourceTree = "<group>"; };
 		392D46E52C273CC900561231 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		392D46E72C273CCA00561231 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -127,7 +127,7 @@
 		392D46E12C273CC900561231 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				392D46E02C273CC900561231 /* mastodon-archive-tool.app */,
+				392D46E02C273CC900561231 /* fedi-archive-tool.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -214,9 +214,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		392D46DF2C273CC900561231 /* mastodon-archive-tool */ = {
+		392D46DF2C273CC900561231 /* fedi-archive-tool */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 392D46EE2C273CCA00561231 /* Build configuration list for PBXNativeTarget "mastodon-archive-tool" */;
+			buildConfigurationList = 392D46EE2C273CCA00561231 /* Build configuration list for PBXNativeTarget "fedi-archive-tool" */;
 			buildPhases = (
 				392D46DC2C273CC900561231 /* Sources */,
 				392D46DD2C273CC900561231 /* Frameworks */,
@@ -227,7 +227,7 @@
 			);
 			dependencies = (
 			);
-			name = "mastodon-archive-tool";
+			name = "fedi-archive-tool";
 			packageProductDependencies = (
 				39A192182C274486000C3FE6 /* SQLite */,
 				39A192262C27549E000C3FE6 /* ZIPFoundation */,
@@ -238,7 +238,7 @@
 				39ACFA172C8223B1003C9CD5 /* LazyPager */,
 			);
 			productName = "mastodon-archive-tool";
-			productReference = 392D46E02C273CC900561231 /* mastodon-archive-tool.app */;
+			productReference = 392D46E02C273CC900561231 /* fedi-archive-tool.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -256,7 +256,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 392D46DB2C273CC900561231 /* Build configuration list for PBXProject "mastodon-archive-tool" */;
+			buildConfigurationList = 392D46DB2C273CC900561231 /* Build configuration list for PBXProject "fedi-archive-tool" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -278,7 +278,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				392D46DF2C273CC900561231 /* mastodon-archive-tool */,
+				392D46DF2C273CC900561231 /* fedi-archive-tool */,
 			);
 		};
 /* End PBXProject section */
@@ -471,6 +471,8 @@
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "mastodon-archive-tool/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Fedi Archive";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This lets you save media from your archives to your device's photo library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -483,7 +485,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "works.ish.mastodon-archive-tool";
+				PRODUCT_BUNDLE_IDENTIFIER = "works.ish.fedi-archive-tool";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -508,6 +510,8 @@
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "mastodon-archive-tool/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Fedi Archive";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This lets you save media from your archives to your device's photo library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -520,7 +524,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "works.ish.mastodon-archive-tool";
+				PRODUCT_BUNDLE_IDENTIFIER = "works.ish.fedi-archive-tool";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -531,7 +535,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		392D46DB2C273CC900561231 /* Build configuration list for PBXProject "mastodon-archive-tool" */ = {
+		392D46DB2C273CC900561231 /* Build configuration list for PBXProject "fedi-archive-tool" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				392D46EC2C273CCA00561231 /* Debug */,
@@ -540,7 +544,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		392D46EE2C273CCA00561231 /* Build configuration list for PBXNativeTarget "mastodon-archive-tool" */ = {
+		392D46EE2C273CCA00561231 /* Build configuration list for PBXNativeTarget "fedi-archive-tool" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				392D46EF2C273CCA00561231 /* Debug */,
