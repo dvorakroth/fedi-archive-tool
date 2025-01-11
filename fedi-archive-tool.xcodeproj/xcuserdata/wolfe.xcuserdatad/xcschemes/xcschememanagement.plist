@@ -25,7 +25,7 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
-		<key>mastodon-archive-tool.xcscheme_^#shared#^_</key>
+		<key>fedi-archive-tool.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
