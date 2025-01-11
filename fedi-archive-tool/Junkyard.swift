@@ -453,3 +453,13 @@ class DocumentSaveDialogController: UIDocumentPickerViewController, UIDocumentPi
 //    "video/3gpp": ".3gp",
 //    "video/3gpp2": ".3g2"
 //]
+
+extension Bundle {
+    var appName: String {
+        Bundle.main.infoDictionary?[kCFBundleNameKey as String] as? String ?? "Fedi Archive"
+    }
+    
+    var version: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "??"
+    }
+}

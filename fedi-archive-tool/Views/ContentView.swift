@@ -64,9 +64,9 @@ struct ContentView: View {
                 
                 Section("Misc") {
                     NavigationLink(tag: "ABOUT", selection: $selectedActorId) {
-                        AboutView().navigationTitle("Fedi Archive")
+                        AboutView().navigationTitle(Bundle.main.appName)
                     } label: {
-                        Label("About", systemImage: "info.circle")
+                        Label("About \(Bundle.main.appName)", systemImage: "info.circle")
                     }
                 }
             }
