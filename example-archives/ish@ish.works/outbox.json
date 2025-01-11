@@ -1,0 +1,427 @@
+{
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "id": "outbox.json",
+    "type": "OrderedCollection",
+    "totalItems": 7,
+    "orderedItems": [
+        {
+            "id": "https://social.ish.works/users/ish/statuses/00001/activity",
+            "type": "Create",
+            "actor": "https://social.ish.works/users/ish",
+            "published": "2025-01-01T08:00:00Z",
+            "to": [
+                "https://www.w3.org/ns/activitystreams#Public"
+            ],
+            "cc": [
+                "https://social.ish.works/users/ish/followers"
+            ],
+            "object": {
+                "id": "https://social.ish.works/users/ish/statuses/00001",
+                "type": "Note",
+                "summary": null,
+                "inReplyTo": null,
+                "published": "2025-01-01T08:00:00Z",
+                "url": "https://social.ish.works/@ish/00001",
+                "attributedTo": "https://social.ish.works/users/ish",
+                "to": [
+                    "https://www.w3.org/ns/activitystreams#Public"
+                ],
+                "cc": [
+                    "https://social.ish.works/users/ish/followers"
+                ],
+                "sensitive": false,
+                "atomUri": "https://social.ish.works/users/ish/statuses/00001",
+                "inReplyToAtomUri": null,
+                "conversation": "tag:social.ish.works,2025-01-26:objectId=00001:objectType=Conversation",
+                "content": "<p>hello, world!</p>",
+                "contentMap": {
+                    "en": "<p>hello, world!</p>"
+                },
+                "attachment": [],
+                "tag": [],
+                "replies": {
+                    "id": "https://social.ish.works/users/ish/00001/replies",
+                    "type": "Collection",
+                    "first": {
+                        "type": "CollectionPage",
+                        "next": "https://social.ish.works/users/ish/statuses/00001/replies?only_other_accounts=true&page=true",
+                        "partOf": "https://social.ish.works/users/ish/statuses/00001/replies",
+                        "items": []
+                    }
+                }
+            }
+        },
+        {
+            "id": "https://social.ish.works/users/ish/statuses/00002/activity",
+            "type": "Create",
+            "actor": "https://social.ish.works/users/ish",
+            "published": "2025-01-01T09:00:00Z",
+            "to": [
+                "https://www.w3.org/ns/activitystreams#Public"
+            ],
+            "cc": [
+                "https://social.ish.works/users/ish/followers"
+            ],
+            "object": {
+                "id": "https://social.ish.works/users/ish/statuses/00002",
+                "type": "Note",
+                "summary": null,
+                "inReplyTo": null,
+                "published": "2025-01-01T09:00:00Z",
+                "url": "https://social.ish.works/@ish/00002",
+                "attributedTo": "https://social.ish.works/users/ish",
+                "to": [
+                    "https://www.w3.org/ns/activitystreams#Public"
+                ],
+                "cc": [
+                    "https://social.ish.works/users/ish/followers"
+                ],
+                "sensitive": false,
+                "atomUri": "https://social.ish.works/users/ish/statuses/00002",
+                "inReplyToAtomUri": null,
+                "conversation": "tag:social.ish.works,2025-01-26:objectId=00002:objectType=Conversation",
+                "content": "<p>look at this cool underpass i found:</p>",
+                "contentMap": {
+                    "en": "<p>look at this cool underpass i found:</p>"
+                },
+                "attachment": [
+                    {
+                        "type": "Document",
+                        "mediaType": "image/jpeg",
+                        "url": "/media_attachments/IMG_8735.jpeg",
+                        "name": null,
+                        "blurhash": "L9GR;s-O-m.AW;RnoKRP00XAE2Vq",
+                        "width": 4032,
+                        "height": 3024
+                    }
+                ],
+                "tag": [],
+                "replies": {
+                    "id": "https://social.ish.works/users/ish/00002/replies",
+                    "type": "Collection",
+                    "first": {
+                        "type": "CollectionPage",
+                        "next": "https://social.ish.works/users/ish/statuses/00002/replies?only_other_accounts=true&page=true",
+                        "partOf": "https://social.ish.works/users/ish/statuses/00002/replies",
+                        "items": []
+                    }
+                }
+            }
+        },
+        {
+            "id": "https://social.ish.works/users/ish/statuses/00003/activity",
+            "type": "Create",
+            "actor": "https://social.ish.works/users/ish",
+            "published": "2025-01-01T10:00:00Z",
+            "to": [
+                "https://www.w3.org/ns/activitystreams#Public"
+            ],
+            "cc": [
+                "https://social.ish.works/users/ish/followers"
+            ],
+            "object": {
+                "id": "https://social.ish.works/users/ish/statuses/00003",
+                "type": "Note",
+                "summary": "spoilers for episode 5",
+                "inReplyTo": null,
+                "published": "2025-01-01T10:00:00Z",
+                "url": "https://social.ish.works/@ish/00003",
+                "attributedTo": "https://social.ish.works/users/ish",
+                "to": [
+                    "https://www.w3.org/ns/activitystreams#Public"
+                ],
+                "cc": [
+                    "https://social.ish.works/users/ish/followers"
+                ],
+                "sensitive": true,
+                "atomUri": "https://social.ish.works/users/ish/statuses/00003",
+                "inReplyToAtomUri": null,
+                "conversation": "tag:social.ish.works,2025-01-26:objectId=00003:objectType=Conversation",
+                "content": "<p>man, i can't believe they got rid of the main character like that!</p><p>i feel as destroyed as this building</p>",
+                "contentMap": {
+                    "en": "<p>man, i can't believe they got rid of the main character like that!</p><p>i feel as destroyed as this building</p>"
+                },
+                "attachment": [
+                    {
+                        "type": "Document",
+                        "mediaType": "image/jpeg",
+                        "url": "/media_attachments/IMG_7760.jpeg",
+                        "name": "a close up photo of a recently demolished building; just a pile of bricks and wooden beams. european city streets and an excavator in the background",
+                        "blurhash": "LUHeB^T0%NxaTKxZoeIo~qXTo#kC",
+                        "width": 4284,
+                        "height": 5712
+                    }
+                ],
+                "tag": [],
+                "replies": {
+                    "id": "https://social.ish.works/users/ish/00003/replies",
+                    "type": "Collection",
+                    "first": {
+                        "type": "CollectionPage",
+                        "next": "https://social.ish.works/users/ish/statuses/00003/replies?only_other_accounts=true&page=true",
+                        "partOf": "https://social.ish.works/users/ish/statuses/00003/replies",
+                        "items": []
+                    }
+                }
+            }
+        },
+        {
+            "id": "https://social.ish.works/users/ish/statuses/00004/activity",
+            "type": "Create",
+            "actor": "https://social.ish.works/users/ish",
+            "published": "2025-01-01T11:00:00Z",
+            "to": [
+                "https://social.ish.works/users/ish/followers"
+            ],
+            "cc": [
+                "https://social.example.com/users/mx123"
+            ],
+            "object": {
+                "id": "https://social.ish.works/users/ish/statuses/00004",
+                "type": "Note",
+                "summary": null,
+                "inReplyTo": "https://social.example.net/users/mx123/statuses/82991",
+                "published": "2025-01-01T11:00:00Z",
+                "url": "https://social.ish.works/@ish/00004",
+                "attributedTo": "https://social.ish.works/users/ish",
+                "to": [
+                    "https://social.ish.works/users/ish/followers"
+                ],
+                "cc": [
+                    "https://social.example.com/users/mx123"
+                ],
+                "sensitive": false,
+                "atomUri": "https://social.ish.works/users/ish/statuses/00004",
+                "inReplyToAtomUri": "https://social.example.net/users/mx123/statuses/82991",
+                "conversation": "tag:social.ish.works,2025-01-26:objectId=00004:objectType=Conversation",
+                "content": "<p><span class=\"h-card\" translate=\"no\"><a href=\"https://social.ish.works/@mx123\" class=\"u-url mention\" rel=\"nofollow noopener noreferrer\" target=\"_blank\">@<span>mx123</span></a></span> hope you feel better soon! sending well wishes</p>",
+                "contentMap": {
+                    "en": "<p><span class=\"h-card\" translate=\"no\"><a href=\"https://social.ish.works/@mx123\" class=\"u-url mention\" rel=\"nofollow noopener noreferrer\" target=\"_blank\">@<span>mx123</span></a></span> hope you feel better soon! sending well wishes</p>"
+                },
+                "attachment": [],
+                "tag": [
+                    {
+                        "type": "Mention",
+                        "href": "https://social.example.net/users/mx123",
+                        "name": "@mx123@example.net"
+                    }
+                ],
+                "replies": {
+                    "id": "https://social.ish.works/users/ish/00004/replies",
+                    "type": "Collection",
+                    "first": {
+                        "type": "CollectionPage",
+                        "next": "https://social.ish.works/users/ish/statuses/00004/replies?only_other_accounts=true&page=true",
+                        "partOf": "https://social.ish.works/users/ish/statuses/00004/replies",
+                        "items": []
+                    }
+                }
+            }
+        },
+        {
+            "id": "https://social.ish.works/users/ish/statuses/00005/activity",
+            "type": "Create",
+            "actor": "https://social.ish.works/users/ish",
+            "published": "2025-01-01T11:30:00Z",
+            "to": [
+                "https://social.example.com/users/mx123"
+            ],
+            "cc": [],
+            "object": {
+                "id": "https://social.ish.works/users/ish/statuses/00005",
+                "type": "Note",
+                "summary": null,
+                "inReplyTo": "https://social.example.net/users/mx123/statuses/82991",
+                "published": "2025-01-01T11:30:00Z",
+                "url": "https://social.ish.works/@ish/00005",
+                "attributedTo": "https://social.ish.works/users/ish",
+                "to": [
+                    "https://social.example.com/users/mx123"
+                ],
+                "cc": [],
+                "sensitive": false,
+                "atomUri": "https://social.ish.works/users/ish/statuses/00005",
+                "inReplyToAtomUri": "https://social.example.net/users/mx123/statuses/82992",
+                "conversation": "tag:social.ish.works,2025-01-26:objectId=00005:objectType=Conversation",
+                "content": "<p><span class=\"h-card\" translate=\"no\"><a href=\"https://social.ish.works/@mx123\" class=\"u-url mention\" rel=\"nofollow noopener noreferrer\" target=\"_blank\">@<span>mx123</span></a></span> sure! i'll come by later today</p>",
+                "contentMap": {
+                    "en": "<p><span class=\"h-card\" translate=\"no\"><a href=\"https://social.ish.works/@mx123\" class=\"u-url mention\" rel=\"nofollow noopener noreferrer\" target=\"_blank\">@<span>mx123</span></a></span> sure! i'll come by later today</p>"
+                },
+                "attachment": [],
+                "tag": [
+                    {
+                        "type": "Mention",
+                        "href": "https://social.example.net/users/mx123",
+                        "name": "@mx123@example.net"
+                    }
+                ],
+                "replies": {
+                    "id": "https://social.ish.works/users/ish/00005/replies",
+                    "type": "Collection",
+                    "first": {
+                        "type": "CollectionPage",
+                        "next": "https://social.ish.works/users/ish/statuses/00005/replies?only_other_accounts=true&page=true",
+                        "partOf": "https://social.ish.works/users/ish/statuses/00005/replies",
+                        "items": []
+                    }
+                }
+            }
+        },
+        {
+            "id": "https://social.ish.works/users/ish/statuses/00006/activity",
+            "type": "Create",
+            "actor": "https://social.ish.works/users/ish",
+            "published": "2025-01-01T12:00:00Z",
+            "to": [
+                "https://social.ish.works/users/ish/followers"
+            ],
+            "cc": [],
+            "object": {
+                "id": "https://social.ish.works/users/ish/statuses/00006",
+                "type": "Note",
+                "summary": null,
+                "inReplyTo": null,
+                "published": "2025-01-01T12:00:00Z",
+                "url": "https://social.ish.works/@ish/00006",
+                "attributedTo": "https://social.ish.works/users/ish",
+                "to": [
+                    "https://social.ish.works/users/ish/followers"
+                ],
+                "cc": [],
+                "sensitive": false,
+                "atomUri": "https://social.ish.works/users/ish/statuses/00006",
+                "inReplyToAtomUri": null,
+                "conversation": "tag:social.ish.works,2025-01-26:objectId=00006:objectType=Conversation",
+                "content": "<p>secret post for just my followers: i actually in fact DO enjoy posting!</p><p>i know it's popular to bash social media these days, but i, for one, welcome it. we should all post as much as possible on the internet, especially on the fediverse</p>",
+                "contentMap": {
+                    "en": "<p>secret post for just my followers: i actually in fact DO enjoy posting!</p><p>i know it's popular to bash social media these days, but i, for one, welcome it. we should all post as much as possible on the internet, especially on the fediverse</p>"
+                },
+                "attachment": [],
+                "tag": [],
+                "replies": {
+                    "id": "https://social.ish.works/users/ish/00006/replies",
+                    "type": "Collection",
+                    "first": {
+                        "type": "CollectionPage",
+                        "next": "https://social.ish.works/users/ish/statuses/00006/replies?only_other_accounts=true&page=true",
+                        "partOf": "https://social.ish.works/users/ish/statuses/00006/replies",
+                        "items": []
+                    }
+                }
+            }
+        },
+        {
+            "id": "https://social.ish.works/users/ish/statuses/00007/activity",
+            "type": "Create",
+            "actor": "https://social.ish.works/users/ish",
+            "published": "2025-01-01T12:05:00Z",
+            "to": [
+                "https://social.ish.works/users/ish/followers"
+            ],
+            "cc": [],
+            "object": {
+                "id": "https://social.ish.works/users/ish/statuses/00007",
+                "type": "Note",
+                "summary": null,
+                "inReplyTo": "https://social.ish.works/users/ish/statuses/00006",
+                "published": "2025-01-01T12:05:00Z",
+                "url": "https://social.ish.works/@ish/00007",
+                "attributedTo": "https://social.ish.works/users/ish",
+                "to": [
+                    "https://social.ish.works/users/ish/followers"
+                ],
+                "cc": [],
+                "sensitive": false,
+                "atomUri": "https://social.ish.works/users/ish/statuses/00007",
+                "inReplyToAtomUri": null,
+                "conversation": "tag:social.ish.works,2025-01-26:objectId=00007:objectType=Conversation",
+                "content": "<p>i'll do you one better: we should all keep using computers and phones and tablets as much as possible!</p><p>touching grass is not enough anyway, so why don't we just give up on that altogether? grass is environmentally harmful and resource intensive to grow, and touching it makes me itchy and uncomfortable.</p><p>we should all just touch computers instead.</p><p>thanks for coming to my ted talk<br>your friendly neighborhood computer toucher</p>",
+                "contentMap": {
+                    "en": "<p>i'll do you one better: we should all keep using computers and phones and tablets as much as possible!</p><p>touching grass is not enough anyway, so why don't we just give up on that altogether? grass is environmentally harmful and resource intensive to grow, and touching it makes me itchy and uncomfortable.</p><p>we should all just touch computers instead.</p><p>thanks for coming to my ted talk<br>your friendly neighborhood computer toucher</p>"
+                },
+                "attachment": [],
+                "tag": [],
+                "replies": {
+                    "id": "https://social.ish.works/users/ish/00007/replies",
+                    "type": "Collection",
+                    "first": {
+                        "type": "CollectionPage",
+                        "next": "https://social.ish.works/users/ish/statuses/00007/replies?only_other_accounts=true&page=true",
+                        "partOf": "https://social.ish.works/users/ish/statuses/00007/replies",
+                        "items": []
+                    }
+                }
+            }
+        }
+    ],
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://w3id.org/security/v1",
+        {
+            "manuallyApprovesFollowers": "as:manuallyApprovesFollowers",
+            "sensitive": "as:sensitive",
+            "Hashtag": "as:Hashtag",
+            "movedTo": {
+                "@id": "as:movedTo",
+                "@type": "@id"
+            },
+            "alsoKnownAs": {
+                "@id": "as:alsoKnownAs",
+                "@type": "@id"
+            },
+            "toot": "http://joinmastodon.org/ns#",
+            "Emoji": "toot:Emoji",
+            "featured": {
+                "@id": "toot:featured",
+                "@type": "@id"
+            },
+            "featuredTags": {
+                "@id": "toot:featuredTags",
+                "@type": "@id"
+            },
+            "schema": "http://schema.org#",
+            "PropertyValue": "schema:PropertyValue",
+            "value": "schema:value",
+            "ostatus": "http://ostatus.org#",
+            "atomUri": "ostatus:atomUri",
+            "inReplyToAtomUri": "ostatus:inReplyToAtomUri",
+            "conversation": "ostatus:conversation",
+            "focalPoint": {
+                "@container": "@list",
+                "@id": "toot:focalPoint"
+            },
+            "blurhash": "toot:blurhash",
+            "discoverable": "toot:discoverable",
+            "indexable": "toot:indexable",
+            "memorial": "toot:memorial",
+            "votersCount": "toot:votersCount",
+            "Device": "toot:Device",
+            "Ed25519Signature": "toot:Ed25519Signature",
+            "Ed25519Key": "toot:Ed25519Key",
+            "Curve25519Key": "toot:Curve25519Key",
+            "EncryptedMessage": "toot:EncryptedMessage",
+            "publicKeyBase64": "toot:publicKeyBase64",
+            "deviceId": "toot:deviceId",
+            "claim": {
+                "@type": "@id",
+                "@id": "toot:claim"
+            },
+            "fingerprintKey": {
+                "@type": "@id",
+                "@id": "toot:fingerprintKey"
+            },
+            "identityKey": {
+                "@type": "@id",
+                "@id": "toot:identityKey"
+            },
+            "devices": {
+                "@type": "@id",
+                "@id": "toot:devices"
+            },
+            "messageFranking": "toot:messageFranking",
+            "messageType": "toot:messageType",
+            "cipherText": "toot:cipherText",
+            "suspended": "toot:suspended"
+        }
+    ]
+}

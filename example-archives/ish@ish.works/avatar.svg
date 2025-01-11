@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="400"
+   height="400"
+   viewBox="0 0 105.83333 105.83333"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
+   sodipodi:docname="avatar.svg"
+   inkscape:export-filename="avatar.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="0.89887065"
+     inkscape:cx="159.08852"
+     inkscape:cy="294.25813"
+     inkscape:window-width="1368"
+     inkscape:window-height="1186"
+     inkscape:window-x="568"
+     inkscape:window-y="57"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1"
+     showgrid="false" />
+  <defs
+     id="defs1">
+    <rect
+       x="114.58823"
+       y="64.525413"
+       width="456.12792"
+       height="290.36436"
+       id="rect1" />
+    <rect
+       x="114.58823"
+       y="64.525413"
+       width="387.15248"
+       height="264.77669"
+       id="rect2" />
+  </defs>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="bg">
+    <rect
+       style="fill:#ffeedd;stroke:none;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;fill-opacity:1"
+       id="rect3"
+       width="105.83333"
+       height="105.83333"
+       x="0"
+       y="8.8817842e-16" />
+  </g>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g2"
+       transform="translate(0,4.7219017)">
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,-5.3562631,-20.898909)"
+         id="text1"
+         style="font-size:192px;font-family:impact;-inkscape-font-specification:impact;text-align:start;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect1);display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:17;stroke-linecap:round;stroke-linejoin:round"><tspan
+           x="114.58789"
+           y="256.73318"
+           id="tspan4"><tspan
+             style="font-style:italic;font-family:'Gentium Plus';-inkscape-font-specification:'Gentium Plus Italic'"
+             id="tspan2">ish</tspan></tspan></text>
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,-11.156426,26.785926)"
+         id="text2"
+         style="font-size:160px;font-family:impact;-inkscape-font-specification:impact;text-align:start;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect2);display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:17;stroke-linecap:round;stroke-linejoin:round"><tspan
+           x="367.94727"
+           y="224.69855"
+           id="tspan6"><tspan
+             style="font-family:Alef;-inkscape-font-specification:Alef"
+             id="tspan5">איש</tspan></tspan></text>
+    </g>
+  </g>
+</svg>

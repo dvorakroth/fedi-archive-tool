@@ -1,0 +1,119 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://w3id.org/security/v1",
+        {
+            "manuallyApprovesFollowers": "as:manuallyApprovesFollowers",
+            "toot": "http://joinmastodon.org/ns#",
+            "featured": {
+                "@id": "toot:featured",
+                "@type": "@id"
+            },
+            "featuredTags": {
+                "@id": "toot:featuredTags",
+                "@type": "@id"
+            },
+            "alsoKnownAs": {
+                "@id": "as:alsoKnownAs",
+                "@type": "@id"
+            },
+            "movedTo": {
+                "@id": "as:movedTo",
+                "@type": "@id"
+            },
+            "schema": "http://schema.org#",
+            "PropertyValue": "schema:PropertyValue",
+            "value": "schema:value",
+            "discoverable": "toot:discoverable",
+            "Device": "toot:Device",
+            "Ed25519Signature": "toot:Ed25519Signature",
+            "Ed25519Key": "toot:Ed25519Key",
+            "Curve25519Key": "toot:Curve25519Key",
+            "EncryptedMessage": "toot:EncryptedMessage",
+            "publicKeyBase64": "toot:publicKeyBase64",
+            "deviceId": "toot:deviceId",
+            "claim": {
+                "@type": "@id",
+                "@id": "toot:claim"
+            },
+            "fingerprintKey": {
+                "@type": "@id",
+                "@id": "toot:fingerprintKey"
+            },
+            "identityKey": {
+                "@type": "@id",
+                "@id": "toot:identityKey"
+            },
+            "devices": {
+                "@type": "@id",
+                "@id": "toot:devices"
+            },
+            "messageFranking": "toot:messageFranking",
+            "messageType": "toot:messageType",
+            "cipherText": "toot:cipherText",
+            "suspended": "toot:suspended",
+            "memorial": "toot:memorial",
+            "indexable": "toot:indexable",
+            "focalPoint": {
+                "@container": "@list",
+                "@id": "toot:focalPoint"
+            }
+        }
+    ],
+    "id": "https://social.ish.works/users/ish",
+    "type": "Person",
+    "following": "https://social.ish.works/users/ish/following",
+    "followers": "https://social.ish.works/users/ish/followers",
+    "inbox": "https://social.ish.works/users/ish/inbox",
+    "outbox": "outbox.json",
+    "featured": "https://social.ish.works/users/ish/collections/featured",
+    "featuredTags": "https://social.ish.works/users/ish/collections/tags",
+    "preferredUsername": "ish",
+    "name": "Ish Works",
+    "summary": "<p>sometimes i make things, sometimes i post things</p>",
+    "url": "https://social.ish.works/@ish",
+    "manuallyApprovesFollowers": false,
+    "discoverable": false,
+    "indexable": false,
+    "published": "2025-01-01T00:00:00Z",
+    "memorial": false,
+    "devices": "https://social.ish.works/users/ish/collections/devices",
+    "publicKey": {
+        "id": "https://social.ish.works/users/ish#main-key",
+        "owner": "https://social.ish.works/users/ish",
+        "publicKeyPem": "(imagine i put a public key in here; the app just ignores it anyway)"
+    },
+    "tag": [],
+    "attachment": [
+        {
+            "type": "PropertyValue",
+            "name": "Pronouns",
+            "value": "they/them"
+        },
+        {
+            "type": "PropertyValue",
+            "name": "Website",
+            "value": "<a href=\"https://ish.works/\" target=\"_blank\" rel=\"nofollow noopener noreferrer me\" translate=\"no\"><span class=\"invisible\">https://</span><span class=\"\">ish.works</span><span class=\"invisible\"></span></a>"
+        },
+        {
+            "type": "PropertyValue",
+            "name": "Location",
+            "value": "Central Europe"
+        }
+    ],
+    "endpoints": {
+        "sharedInbox": "https://social.ish.works/inbox"
+    },
+    "icon": {
+        "type": "Image",
+        "mediaType": "image/png",
+        "url": "avatar.png"
+    },
+    "image": {
+        "type": "Image",
+        "mediaType": "image/jpeg",
+        "url": "header.jpg"
+    },
+    "likes": "likes.json",
+    "bookmarks": "bookmarks.json"
+}
