@@ -11,4 +11,5 @@ Currently waiting for App Store approval!
   <img src="screenshots/iphone/4 search.png" width="180" alt="A screenshot of Fedi Archive, showing search results for posts containing the word &quot;Building&quot; (1 result, a post reading &quot;spoilers for episode 5 -- man, i can't believe they got rid of the main character like that! i feel as destroyed as this building&quot; with a blurred image and a button reading &quot;Show Media&quot; under it">&nbsp;
 </div>
 
+
 (This app is neither affiliated with nor approved by Mastodon gGmbH or Mastodon, Inc.)
