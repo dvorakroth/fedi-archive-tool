@@ -95,6 +95,8 @@
 		39ACFA1B2C849157003C9CD5 /* ZoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomView.swift; sourceTree = "<group>"; };
 		39ACFA1E2C84B4A1003C9CD5 /* AttachmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentView.swift; sourceTree = "<group>"; };
 		39B02D022C89CC3900EA7AAD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		39D16A182D35944A00BAD50F /* COPYING */ = {isa = PBXFileReference; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+		39D16A192D35944A00BAD50F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +120,8 @@
 		392D46D72C273CC900561231 = {
 			isa = PBXGroup;
 			children = (
+				39D16A182D35944A00BAD50F /* COPYING */,
+				39D16A192D35944A00BAD50F /* README.md */,
 				39816D112C2CB6CF0074740C /* TODO.md */,
 				392D46E22C273CC900561231 /* fedi-archive-tool */,
 				392D46E12C273CC900561231 /* Products */,
